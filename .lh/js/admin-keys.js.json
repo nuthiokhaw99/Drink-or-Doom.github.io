@@ -1,0 +1,26 @@
+{
+    "sourceFile": "js/admin-keys.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 2,
+            "patches": [
+                {
+                    "date": 1774366446050,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1774366458002,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,30 +1,26 @@\n-admin-keys.js\r\n-/* =========================================\r\n-   admin-keys.js — Admin Auth Config\r\n-   ⚠ เปลี่ยน password ก่อน deploy จริง!\r\n-   ========================================= */\r\n+\r\n const ADMIN_CONFIG = {\r\n-  // เปลี่ยนเป็น hash จริงก่อน deploy (เช่น bcrypt หรือ SHA-256)\r\n-  passwordHash: btoa('admin1234'),  // base64 สำหรับทดสอบ\r\n-  sessionKey:   'ds_admin_session',\r\n-  sessionTTL:   60 * 60 * 1000,    // 1 ชั่วโมง (ms)\r\n+  // เปลี่ยนเป็น hash จริงก่อน deploy (เช่น bcrypt หรือ SHA-256)\r\n+  passwordHash: btoa('admin1234'),  // base64 สำหรับทดสอบ\r\n+  sessionKey:   'ds_admin_session',\r\n+  sessionTTL:   60 * 60 * 1000,    // 1 ชั่วโมง (ms)\r\n };\r\n function adminLogin(password) {\r\n-  if (btoa(password) === ADMIN_CONFIG.passwordHash) {\r\n-    const session = { ts: Date.now(), valid: true };\r\n-    localStorage.setItem(ADMIN_CONFIG.sessionKey, JSON.stringify(session));\r\n-    return true;\r\n-  }\r\n-  return false;\r\n+  if (btoa(password) === ADMIN_CONFIG.passwordHash) {\r\n+    const session = { ts: Date.now(), valid: true };\r\n+    localStorage.setItem(ADMIN_CONFIG.sessionKey, JSON.stringify(session));\r\n+    return true;\r\n+  }\r\n+  return false;\r\n }\r\n function adminLogout() {\r\n-  localStorage.removeItem(ADMIN_CONFIG.sessionKey);\r\n+  localStorage.removeItem(ADMIN_CONFIG.sessionKey);\r\n }\r\n function isAdminLoggedIn() {\r\n-  try {\r\n-    const s = JSON.parse(localStorage.getItem(ADMIN_CONFIG.sessionKey) || 'null');\r\n-    if (!s || !s.valid) return false;\r\n-    if (Date.now() - s.ts > ADMIN_CONFIG.sessionTTL) { adminLogout(); return false; }\r\n-    return true;\r\n-  } catch { return false; }\r\n+  try {\r\n+    const s = JSON.parse(localStorage.getItem(ADMIN_CONFIG.sessionKey) || 'null');\r\n+    if (!s || !s.valid) return false;\r\n+    if (Date.now() - s.ts > ADMIN_CONFIG.sessionTTL) { adminLogout(); return false; }\r\n+    return true;\r\n+  } catch { return false; }\r\n }\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1774366735592,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,7 +1,6 @@\n \r\n const ADMIN_CONFIG = {\r\n-  // เปลี่ยนเป็น hash จริงก่อน deploy (เช่น bcrypt หรือ SHA-256)\r\n   passwordHash: btoa('admin1234'),  // base64 สำหรับทดสอบ\r\n   sessionKey:   'ds_admin_session',\r\n   sessionTTL:   60 * 60 * 1000,    // 1 ชั่วโมง (ms)\r\n };\r\n"
+                }
+            ],
+            "date": 1774366446050,
+            "name": "Commit-0",
+            "content": "admin-keys.js\r\n/* =========================================\r\n   admin-keys.js — Admin Auth Config\r\n   ⚠ เปลี่ยน password ก่อน deploy จริง!\r\n   ========================================= */\r\nconst ADMIN_CONFIG = {\r\n  // เปลี่ยนเป็น hash จริงก่อน deploy (เช่น bcrypt หรือ SHA-256)\r\n  passwordHash: btoa('admin1234'),  // base64 สำหรับทดสอบ\r\n  sessionKey:   'ds_admin_session',\r\n  sessionTTL:   60 * 60 * 1000,    // 1 ชั่วโมง (ms)\r\n};\r\nfunction adminLogin(password) {\r\n  if (btoa(password) === ADMIN_CONFIG.passwordHash) {\r\n    const session = { ts: Date.now(), valid: true };\r\n    localStorage.setItem(ADMIN_CONFIG.sessionKey, JSON.stringify(session));\r\n    return true;\r\n  }\r\n  return false;\r\n}\r\nfunction adminLogout() {\r\n  localStorage.removeItem(ADMIN_CONFIG.sessionKey);\r\n}\r\nfunction isAdminLoggedIn() {\r\n  try {\r\n    const s = JSON.parse(localStorage.getItem(ADMIN_CONFIG.sessionKey) || 'null');\r\n    if (!s || !s.valid) return false;\r\n    if (Date.now() - s.ts > ADMIN_CONFIG.sessionTTL) { adminLogout(); return false; }\r\n    return true;\r\n  } catch { return false; }\r\n}"
+        }
+    ]
+}

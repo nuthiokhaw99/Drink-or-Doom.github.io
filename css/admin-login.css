@@ -1,0 +1,77 @@
+/* =============================================
+   admin-login.css — Admin Login Page Styles
+   ============================================= */
+
+.login-wrap {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 50%, rgba(229,9,20,.06) 0%, transparent 70%);
+}
+
+.login-box {
+  background: linear-gradient(145deg, #181818, #111);
+  border: 1px solid #252525;
+  border-radius: 20px;
+  padding: 44px 44px 36px;
+  max-width: 400px; width: 100%;
+  position: relative;
+}
+.login-box::before {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--red), transparent);
+  border-radius: 20px 20px 0 0;
+}
+
+.login-logo {
+  display: flex; align-items: center;
+  margin-bottom: 32px; justify-content: center;
+}
+.login-logo .logo-wordmark { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.login-logo .logo-main {
+  font-family: "Kanit", sans-serif; font-weight: 900;
+  font-size: 2.4rem; color: var(--red);
+  letter-spacing: -0.5px;
+  text-shadow: 0 0 20px rgba(229,9,20,.6), 0 2px 4px rgba(0,0,0,.8);
+  -webkit-text-stroke: 0.5px rgba(255,60,60,.3);
+}
+.login-logo .logo-sub {
+  font-family: "Kanit", sans-serif; font-weight: 300;
+  font-size: .6rem; color: var(--text2);
+  letter-spacing: 3.5px; text-transform: uppercase;
+}
+
+.login-title { font-family: "Kanit", sans-serif; font-weight: 800; font-size: 1.4rem; letter-spacing: 3px; text-align: center; margin-bottom: 6px; }
+.login-sub   { color: var(--text2); font-size: .82rem; text-align: center; margin-bottom: 28px; }
+
+.login-form { display: flex; flex-direction: column; gap: 16px; }
+
+.login-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+
+.btn-login {
+  background: var(--red); color: #fff; border: none;
+  padding: 13px; border-radius: 8px;
+  font-family: "Kanit", sans-serif; font-weight: 700; font-size: 1rem;
+  cursor: pointer; transition: .2s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%;
+}
+.btn-login:hover { background: var(--red3); box-shadow: 0 4px 20px var(--glow); }
+
+.login-back {
+  text-align: center; font-size: .82rem; color: var(--text2);
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  cursor: pointer; transition: .2s;
+}
+.login-back:hover { color: #fff; }
+
+.login-error {
+  background: rgba(229,9,20,.08);
+  border: 1px solid rgba(229,9,20,.3);
+  border-radius: 8px; padding: 10px 14px;
+  font-size: .82rem; color: var(--red);
+  display: none; align-items: center; gap: 8px;
+}
+.login-error.show { display: flex; }

@@ -1,0 +1,26 @@
+{
+    "sourceFile": "js/payment.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 2,
+            "patches": [
+                {
+                    "date": 1774366352729,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1774366359442,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,5 +1,5 @@\n-```javascript\r\n+javascript\r\n /* =========================================\r\n    payment.js — Payment & Credit System\r\n    =========================================\r\n    ⚠ ระบบชำระเงินยังไม่ได้เชื่อมต่อ\r\n@@ -67,6 +67,5 @@\n     date:     new Date().toISOString(),\r\n     provider: PAYMENT_CONFIG.provider\r\n   });\r\n   localStorage.setItem('ds_payments', JSON.stringify(history.slice(0, 50)));\r\n-}\r\n-```\n\\ No newline at end of file\n+}\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1774366611917,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,11 +1,4 @@\n-javascript\r\n-/* =========================================\r\n-   payment.js — Payment & Credit System\r\n-   =========================================\r\n-   ⚠ ระบบชำระเงินยังไม่ได้เชื่อมต่อ\r\n-   รอ integrate กับ payment gateway\r\n-   ========================================= */\r\n \r\n const PAYMENT_CONFIG = {\r\n   provider:   null,      // 'omise' | 'stripe' | 'promptpay' | etc.\r\n   apiKey:     null,\r\n"
+                }
+            ],
+            "date": 1774366352729,
+            "name": "Commit-0",
+            "content": "```javascript\r\n/* =========================================\r\n   payment.js — Payment & Credit System\r\n   =========================================\r\n   ⚠ ระบบชำระเงินยังไม่ได้เชื่อมต่อ\r\n   รอ integrate กับ payment gateway\r\n   ========================================= */\r\n\r\nconst PAYMENT_CONFIG = {\r\n  provider:   null,      // 'omise' | 'stripe' | 'promptpay' | etc.\r\n  apiKey:     null,\r\n  packages: [\r\n    { coins: 10,  price: 29,  bonus: 0  },\r\n    { coins: 30,  price: 79,  bonus: 5  },\r\n    { coins: 60,  price: 149, bonus: 15 },\r\n    { coins: 150, price: 349, bonus: 50 },\r\n  ]\r\n};\r\n\r\nlet selectedPackage = null;\r\n\r\n/* ---- SELECT PACKAGE ---- */\r\nfunction selPkg(el, amount) {\r\n  document.querySelectorAll('.topup-opt').forEach(o => o.classList.remove('sel'));\r\n  el.classList.add('sel');\r\n  selectedPackage = PAYMENT_CONFIG.packages.find(p => p.coins === amount) || null;\r\n}\r\n\r\n/* ---- INITIATE PAYMENT (placeholder) ---- */\r\nasync function initiatePayment() {\r\n  if (!selectedPackage) { toast('กรุณาเลือกแพ็กเกจก่อน', 'warning'); return; }\r\n  if (!PAYMENT_CONFIG.provider) {\r\n    toast('ระบบชำระเงินกำลังพัฒนา', 'info');\r\n    return;\r\n  }\r\n  // TODO: integrate with payment provider\r\n  // const result = await callPaymentAPI(selectedPackage);\r\n  // if (result.success) addCredits(selectedPackage.coins + selectedPackage.bonus);\r\n}\r\n\r\n/* ---- ADD CREDITS (called after successful payment) ---- */\r\nfunction addCredits(amount) {\r\n  credits += amount;\r\n  saveCr();\r\n  updateCr();\r\n  toast(`เติมเครดิตสำเร็จ! +${amount} เครดิต`, 'success');\r\n  closeTopup();\r\n}\r\n\r\n/* ---- FREE CREDITS (test mode only) ---- */\r\nfunction freeCredit() {\r\n  if (!DB.settings.testMode) { toast('โหมดทดสอบปิดอยู่', 'warning'); return; }\r\n  addCredits(10);\r\n}\r\n\r\n/* ---- PAYMENT HISTORY (stub) ---- */\r\nfunction getPaymentHistory() {\r\n  return JSON.parse(localStorage.getItem('ds_payments') || '[]');\r\n}\r\n\r\nfunction recordPayment(pkg, txId = null) {\r\n  const history = getPaymentHistory();\r\n  history.unshift({\r\n    id:       txId || ('tx_' + Date.now()),\r\n    coins:    pkg.coins + pkg.bonus,\r\n    price:    pkg.price,\r\n    date:     new Date().toISOString(),\r\n    provider: PAYMENT_CONFIG.provider\r\n  });\r\n  localStorage.setItem('ds_payments', JSON.stringify(history.slice(0, 50)));\r\n}\r\n```"
+        }
+    ]
+}

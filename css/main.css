@@ -1,0 +1,264 @@
+/* =========================================
+   main.css — Base styles, variables, layout
+   ========================================= */
+
+:root {
+  --bg: #0a0a0a;
+  --bg2: #111;
+  --bg3: #1a1a1a;
+  --red: #e50914;
+  --red2: #b81213;
+  --red3: #ff1a24;
+  --gold: #f5c518;
+  --text: #fff;
+  --text2: #b3b3b3;
+  --text3: #555;
+  --glow: rgba(229, 9, 20, 0.35);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Kanit", sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Grain overlay */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9998;
+  opacity: .35;
+}
+
+/* ---- DECK ICON COLOR THEMES ---- */
+.th-fire    { background: rgba(229,57,53,.13);  color: #ef5350; }
+.th-magic   { background: rgba(156,39,176,.13);  color: #ce93d8; }
+.th-skull   { background: rgba(229,9,20,.13);    color: var(--red); }
+.th-heart   { background: rgba(233,30,99,.13);   color: #f06292; }
+.th-star    { background: rgba(245,197,24,.13);  color: var(--gold); }
+.th-bolt    { background: rgba(255,152,0,.13);   color: #ffa726; }
+.th-default { background: rgba(255,255,255,.06); color: var(--text2); }
+
+/* ---- HEADER ---- */
+.hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 36px;
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  background: linear-gradient(180deg, rgba(0,0,0,.96) 0%, transparent 100%);
+  border-bottom: 1px solid rgba(229,9,20,.12);
+}
+.logo {
+  display: flex; align-items: center;
+  cursor: pointer; text-decoration: none;
+  user-select: none;
+}
+
+/* Netflix-style wordmark */
+.logo-wordmark {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+  gap: 1px;
+}
+
+.logo-main {
+  font-family: "Kanit", sans-serif;
+  font-weight: 900;
+  font-size: 1.75rem;
+  color: var(--red);
+  letter-spacing: -0.5px;   /* Netflix แน่น ไม่ห่าง */
+  text-transform: uppercase;
+  /* เงา glow แบบ Netflix */
+  text-shadow:
+    0 0 20px rgba(229,9,20,.6),
+    0 2px 4px rgba(0,0,0,.8);
+  /* ขอบบางๆ ให้ดู solid */
+  -webkit-text-stroke: 0.5px rgba(255,60,60,.3);
+  transition: text-shadow .2s;
+}
+
+.logo-sub {
+  font-family: "Kanit", sans-serif;
+  font-weight: 300;
+  font-size: .58rem;
+  color: var(--text2);
+  letter-spacing: 3.5px;
+  text-transform: uppercase;
+  padding-left: 1px;
+}
+
+.logo:hover .logo-main {
+  text-shadow:
+    0 0 30px rgba(229,9,20,.9),
+    0 0 60px rgba(229,9,20,.4),
+    0 2px 4px rgba(0,0,0,.8);
+}
+
+/* ลบ class เก่าที่ไม่ใช้แล้ว */
+.logo-ico { display: none; }
+.logo-txt { display: none; }
+.hdr-r { display: flex; align-items: center; gap: 11px; }
+
+/* ---- CREDIT PILL ---- */
+.credit-pill {
+  display: flex; align-items: center; gap: 7px;
+  background: linear-gradient(135deg, #1a0505, #2d0808);
+  border: 1px solid var(--red2); border-radius: 30px;
+  padding: 7px 16px; cursor: pointer; transition: .2s;
+  box-shadow: 0 0 18px rgba(229,9,20,.12);
+}
+.credit-pill:hover { border-color: var(--red); box-shadow: 0 0 24px var(--glow); }
+.credit-pill .amt  { color: var(--gold); font-weight: 700; font-size: .95rem; }
+.credit-pill .lbl  { color: var(--text2); font-size: .75rem; }
+
+/* ---- BUTTONS ---- */
+.btn-topup {
+  background: var(--red); color: #fff; border: none;
+  padding: 8px 17px; border-radius: 6px;
+  font-family: "Kanit", sans-serif; font-weight: 700; font-size: .85rem;
+  cursor: pointer; transition: .2s;
+  display: flex; align-items: center; gap: 6px;
+  white-space: nowrap;   /* เพิ่ม — ไม่ตัดบรรทัด */
+  flex-shrink: 0;        /* เพิ่ม — ไม่ให้หด */
+}
+.btn-topup:hover { background: var(--red3); transform: translateY(-1px); box-shadow: 0 4px 18px var(--glow); }
+
+.btn-ghost {
+  background: transparent; color: var(--text2); border: 1px solid #333;
+  padding: 8px 13px; border-radius: 6px;
+  font-family: "Kanit", sans-serif; font-size: .82rem;
+  cursor: pointer; transition: .2s;
+  display: flex; align-items: center; gap: 6px;
+}
+.btn-ghost:hover { border-color: var(--text2); color: #fff; }
+
+/* ---- HERO ---- */
+.hero {
+  min-height: 100vh; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 100px 20px 60px; position: relative;
+}
+.hero::before {
+  content: ""; position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 55% at 50% 40%, rgba(229,9,20,.07) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 35% at 15% 85%, rgba(229,9,20,.04) 0%, transparent 60%);
+}
+.big-title {
+  font-family: "Kanit", sans-serif; font-weight: 900;
+  font-size: clamp(3.5rem, 10vw, 7.5rem);
+  letter-spacing: 8px; text-align: center; line-height: .88; position: relative; z-index: 1;
+}
+.big-title .r { color: var(--red); text-shadow: 0 0 50px var(--glow), 0 0 100px rgba(229,9,20,.2); }
+.hero-sub {
+  color: var(--text2); font-size: .95rem; font-weight: 300; letter-spacing: 1px;
+  margin: 18px 0 50px; position: relative; z-index: 1;
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center;
+}
+.hero-sub .chip { display: flex; align-items: center; gap: 5px; }
+.hero-sub .sep  { color: var(--red); opacity: .4; }
+.sec-label {
+  font-family: "Kanit", sans-serif; font-weight: 800; font-size: 1.3rem;
+  letter-spacing: 5px; color: var(--text2); text-align: center;
+  margin-bottom: 28px; position: relative; z-index: 1;
+}
+.sec-label::after { content: ""; display: block; width: 50px; height: 2px; background: var(--red); margin: 8px auto 0; }
+
+/* ---- DECK GRID ---- */
+.deck-grid {
+  display: flex; flex-wrap: wrap; gap: 18px; justify-content: center;
+  position: relative; z-index: 1; max-width: 900px;
+}
+.deck-card {
+  background: linear-gradient(145deg, #1c1c1c, #111);
+  border: 1px solid #252525; border-radius: 14px;
+  padding: 16px 18px;        /* ลดจาก 24px 28px */
+  cursor: pointer;
+  transition: all .3s cubic-bezier(.23,1,.32,1);
+  position: relative; overflow: hidden;
+  min-width: 140px;          /* ลดจาก 188px */
+  text-align: center;
+}
+.deck-card::before {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--red), transparent);
+  opacity: 0; transition: opacity .3s;
+}
+.deck-card:hover             { border-color: var(--red2); transform: translateY(-5px); box-shadow: 0 18px 44px rgba(229,9,20,.18); }
+.deck-card:hover::before,
+.deck-card.sel::before       { opacity: 1; }
+.deck-card.sel               { border-color: var(--red); box-shadow: 0 0 28px var(--glow); background: linear-gradient(145deg, #1f0505, #130303); }
+.d-ico-wrap {
+  width: 38px; height: 38px;  /* ลดจาก 50px */
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 8px;         /* ลดจาก 12px */
+  font-size: 1.1rem;          /* ลดจาก 1.5rem */
+}
+
+.d-name { font-weight: 700; font-size: .9rem; margin-bottom: 2px; }  /* ลดจาก 1.05rem */
+.d-cnt  { color: var(--text2); font-size: .72rem; display: flex; align-items: center; gap: 5px; justify-content: center; margin-top: 2px; }
+.d-desc { color: var(--text3); font-size: .68rem; margin-top: 3px; }
+.d-cost { display: inline-flex; align-items: center; gap: 5px; background: rgba(245,197,24,.08); border: 1px solid rgba(245,197,24,.25); border-radius: 20px; padding: 2px 9px; font-size: .68rem; color: var(--gold); margin-top: 8px; }
+.btn-play {
+  background: var(--red); color: #fff; border: none;
+  padding: 13px 44px; border-radius: 8px;
+  font-family: "Kanit", sans-serif; font-weight: 700; font-size: 1.1rem;
+  cursor: pointer; margin-top: 0;   /* ลดจาก 40px */
+  letter-spacing: 1px; transition: .25s;
+  position: relative; z-index: 1;
+  box-shadow: 0 4px 28px var(--glow);
+  display: inline-flex; align-items: center; gap: 10px;
+}
+.btn-play:hover    { background: var(--red3); transform: translateY(-2px); box-shadow: 0 8px 40px var(--glow); }
+.btn-play:disabled { background: #2a2a2a; color: #555; cursor: not-allowed; box-shadow: none; transform: none; }
+
+/* ---- TOAST ---- */
+.toast {
+  position: fixed; bottom: 28px; left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: #1e1e1e; border: 1px solid #333; border-radius: 30px;
+  padding: 11px 22px; font-size: .88rem; z-index: 1000;
+  transition: transform .3s; pointer-events: none;
+  display: flex; align-items: center; gap: 9px;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ---- SPARKLE ---- */
+.spk {
+  position: fixed; pointer-events: none; z-index: 9000;
+  width: 5px; height: 5px; border-radius: 50%;
+  animation: spk-a .75s ease-out forwards;
+}
+@keyframes spk-a {
+  0%   { transform: scale(1); opacity: 1; }
+  100% { transform: scale(0) translate(var(--tx), var(--ty)); opacity: 0; }
+}
+
+/* ---- RESPONSIVE ---- */
+@media (max-width: 580px) {
+  .hdr        { padding: 13px 16px; }
+  .big-title  { font-size: 3rem; }
+  /* .btn-topup .lbl-txt { display: none; } */
+}
+
+html, body {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+.deck-grid-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  position: relative;
+  z-index: 1;
+}

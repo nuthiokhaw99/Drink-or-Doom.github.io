@@ -1,0 +1,26 @@
+{
+    "sourceFile": "js/api.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 2,
+            "patches": [
+                {
+                    "date": 1774366410049,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1774366417162,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,7 +1,5 @@\n-api.js\r\n-\r\n-```javascript\r\n+javascript\r\n /* =========================================\r\n    api.js — Google Sheets / API Integration\r\n    ========================================= */\r\n \r\n@@ -83,5 +81,4 @@\n       renderDecks();\r\n     })\r\n     .catch(() => toast('เชื่อมต่อไม่ได้ — ตรวจสอบ URL และ Share settings', 'error'));\r\n }\r\n-```\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1774366602700,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,8 +1,4 @@\n-javascript\r\n-/* =========================================\r\n-   api.js — Google Sheets / API Integration\r\n-   ========================================= */\r\n \r\n const API = {\r\n   sheetUrl: localStorage.getItem('ds_sheet_url') || '',\r\n \r\n"
+                }
+            ],
+            "date": 1774366410049,
+            "name": "Commit-0",
+            "content": "api.js\r\n\r\n```javascript\r\n/* =========================================\r\n   api.js — Google Sheets / API Integration\r\n   ========================================= */\r\n\r\nconst API = {\r\n  sheetUrl: localStorage.getItem('ds_sheet_url') || '',\r\n\r\n  setSheetUrl(url) {\r\n    this.sheetUrl = url;\r\n    localStorage.setItem('ds_sheet_url', url);\r\n  },\r\n\r\n  /* แปลง Google Sheets URL → JSON export URL */\r\n  toJsonUrl(sheetUrl, sheetIndex = 0) {\r\n    const match = sheetUrl.match(/\\/d\\/([a-zA-Z0-9-_]+)/);\r\n    if (!match) return null;\r\n    return `https://docs.google.com/spreadsheets/d/${match[1]}/gviz/tq?tqx=out:json&sheet=${sheetIndex}`;\r\n  },\r\n\r\n  /* ดึงข้อมูล Sheets แล้ว parse เป็น array of objects */\r\n  async fetchSheet(sheetUrl, sheetName = '') {\r\n    try {\r\n      const match = sheetUrl.match(/\\/d\\/([a-zA-Z0-9-_]+)/);\r\n      if (!match) throw new Error('URL ไม่ถูกต้อง');\r\n      const url = `https://docs.google.com/spreadsheets/d/${match[1]}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`;\r\n      const res  = await fetch(url);\r\n      const text = await res.text();\r\n      const json = JSON.parse(text.replace(/^[^{]+/, '').replace(/[^}]+$/, ''));\r\n      const cols = json.table.cols.map(c => c.label);\r\n      return json.table.rows.map(row => {\r\n        const obj = {};\r\n        row.c.forEach((cell, i) => { obj[cols[i]] = cell ? cell.v : ''; });\r\n        return obj;\r\n      });\r\n    } catch (e) {\r\n      console.error('fetchSheet error:', e);\r\n      throw e;\r\n    }\r\n  },\r\n\r\n  /* โหลด decks + cards จาก Sheets แล้วอัพเดต DB */\r\n  async syncFromSheets(url) {\r\n    const decksRaw = await this.fetchSheet(url, 'decks');\r\n    const cardsRaw = await this.fetchSheet(url, 'cards');\r\n\r\n    DB.decks = decksRaw.map(r => ({\r\n      id:   r.id   || ('d' + Date.now()),\r\n      name: r.name || 'ไม่มีชื่อ',\r\n      icon: r.icon || 'fi-sr-flame',\r\n      theme:r.theme || 'default',\r\n      cost: parseInt(r.cost_per_card) || 1,\r\n      desc: r.description || ''\r\n    }));\r\n\r\n    DB.cards = {};\r\n    DB.decks.forEach(d => { DB.cards[d.id] = []; });\r\n    cardsRaw.forEach(r => {\r\n      const did = r.deck_id;\r\n      if (DB.cards[did]) DB.cards[did].push({ cat: r.category || 'ทั่วไป', text: r.text || '' });\r\n    });\r\n\r\n    saveDB();\r\n    return { decks: DB.decks.length, cards: cardsRaw.length };\r\n  }\r\n};\r\n\r\n/* ---- UI handler ---- */\r\nfunction connectSheet() {\r\n  const url = document.getElementById('sheet-url').value.trim();\r\n  if (!url) { toast('กรุณาใส่ URL', 'warning'); return; }\r\n\r\n  API.setSheetUrl(url);\r\n  toast('กำลังดึงข้อมูล...', 'info');\r\n\r\n  API.syncFromSheets(url)\r\n    .then(({ decks, cards }) => {\r\n      toast(`โหลดสำเร็จ! ${decks} กอง, ${cards} ใบ`, 'success');\r\n      renderAdmDecks();\r\n      renderAdmSel();\r\n      renderDecks();\r\n    })\r\n    .catch(() => toast('เชื่อมต่อไม่ได้ — ตรวจสอบ URL และ Share settings', 'error'));\r\n}\r\n```"
+        }
+    ]
+}

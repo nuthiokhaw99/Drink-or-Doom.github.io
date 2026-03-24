@@ -1,0 +1,153 @@
+/* ========================================
+   admin.css — Admin Panel Styles
+   ======================================== */
+
+#admin-screen { display: none; min-height: 100vh; padding: 90px 36px 40px; }
+
+.adm-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 36px; }
+.adm-ttl { font-family: "Kanit", sans-serif; font-weight: 900; font-size: 1.85rem; letter-spacing: 4px; display: flex; align-items: center; gap: 10px; }
+.adm-ttl .r { color: var(--red); }
+.adm-sub { color: var(--text2); font-size: .82rem; margin-top: 3px; }
+
+/* ---- TABS ---- */
+.tabs {
+  display: flex; gap: 3px;
+  background: #111; padding: 4px; border-radius: 10px;
+  border: 1px solid #1e1e1e; margin-bottom: 28px;
+}
+.tab {
+  padding: 9px 20px; border-radius: 7px; border: none;
+  background: transparent; color: var(--text2);
+  font-family: "Kanit", sans-serif; font-weight: 600; font-size: .84rem;
+  cursor: pointer; transition: .2s;
+  display: flex; align-items: center; gap: 7px;
+}
+.tab.act { background: var(--red); color: #fff; }
+.tab-content     { display: none; }
+.tab-content.act { display: block; }
+
+/* ---- DECK LIST ---- */
+.deck-list-adm { display: flex; flex-direction: column; gap: 13px; margin-bottom: 22px; }
+
+.drow {
+  background: #111; border: 1px solid #1e1e1e; border-radius: 11px;
+  padding: 18px 22px;
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+}
+.drow-info  { display: flex; align-items: center; gap: 12px; flex: 1; }
+.drow-ico   { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0; }
+.drow-nm    { font-weight: 700; font-size: .95rem; }
+.drow-meta  { color: var(--text2); font-size: .78rem; display: flex; align-items: center; gap: 10px; margin-top: 3px; flex-wrap: wrap; }
+.drow-meta .tag { display: flex; align-items: center; gap: 4px; }
+.drow-acts  { display: flex; gap: 7px; }
+
+/* ---- SMALL BUTTONS ---- */
+.btn-sm {
+  padding: 7px 13px; border-radius: 6px; border: none;
+  font-family: "Kanit", sans-serif; font-size: .78rem;
+  cursor: pointer; font-weight: 600; transition: .2s;
+  display: flex; align-items: center; gap: 5px;
+}
+.btn-edit           { background: #1e1e1e; border: 1px solid #2e2e2e; color: var(--text2); }
+.btn-edit:hover     { border-color: var(--text2); color: #fff; }
+.btn-del            { background: rgba(229,9,20,.08); border: 1px solid rgba(229,9,20,.25); color: var(--red); }
+.btn-del:hover      { background: var(--red); color: #fff; }
+.btn-add            { background: var(--red); color: #fff; border: none; padding: 10px 22px; border-radius: 8px; font-family: "Kanit", sans-serif; font-weight: 700; font-size: .88rem; cursor: pointer; display: flex; align-items: center; gap: 7px; }
+.btn-add:hover      { background: var(--red3); }
+
+/* ---- SHEET SECTION ---- */
+.sheet-sec { background: #111; border: 1px solid #1e1e1e; border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+.sheet-sec h3 { font-size: .95rem; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.sheet-sec p  { color: var(--text2); font-size: .82rem; margin-bottom: 14px; }
+
+.sheet-row { display: flex; gap: 9px; }
+.sh-inp {
+  flex: 1; background: #1a1a1a; border: 1px solid #2e2e2e;
+  border-radius: 8px; padding: 9px 13px;
+  color: #fff; font-family: "Kanit", sans-serif; font-size: .88rem; outline: none;
+}
+.sh-inp:focus { border-color: var(--red); }
+
+.btn-conn {
+  background: var(--red); color: #fff; border: none;
+  padding: 9px 18px; border-radius: 8px;
+  font-family: "Kanit", sans-serif; font-weight: 700;
+  cursor: pointer; white-space: nowrap;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-conn:hover       { background: var(--red3); }
+.btn-conn.ghost       { background: #1a1a1a; border: 1px solid #2e2e2e; color: var(--text2); }
+.btn-conn.ghost:hover { border-color: var(--text2); color: #fff; background: #222; }
+
+/* ---- CARD EDITOR ---- */
+.card-editor-box { background: #111; border: 1px solid #1e1e1e; border-radius: 12px; padding: 22px; }
+.card-editor-box h3 { margin-bottom: 14px; font-size: .95rem; display: flex; align-items: center; gap: 8px; }
+
+.card-list-ed {
+  display: flex; flex-direction: column; gap: 9px;
+  max-height: 380px; overflow-y: auto; margin-bottom: 14px; padding-right: 4px;
+}
+.card-list-ed::-webkit-scrollbar       { width: 3px; }
+.card-list-ed::-webkit-scrollbar-thumb { background: var(--red2); border-radius: 4px; }
+
+.ced-row {
+  display: flex; gap: 8px; align-items: center;
+  background: #1a1a1a; border: 1px solid #252525; border-radius: 8px; padding: 9px 12px;
+}
+.ced-row input   { background: transparent; border: none; color: #fff; font-family: "Kanit", sans-serif; font-size: .88rem; flex: 1; outline: none; }
+.ced-row .ci     { width: 110px; flex: none; color: var(--text2); }
+.ced-row .del-btn {
+  background: none; border: none; color: var(--text3); cursor: pointer;
+  font-size: .82rem; width: 24px; height: 24px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 4px; transition: .2s;
+}
+.ced-row .del-btn:hover { color: var(--red); background: rgba(229,9,20,.1); }
+
+.btn-add-card {
+  background: transparent; border: 1px dashed #2e2e2e; color: var(--text2);
+  padding: 9px; border-radius: 8px; width: 100%;
+  font-family: "Kanit", sans-serif; cursor: pointer; transition: .2s; font-size: .85rem;
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+}
+.btn-add-card:hover { border-color: #444; color: #fff; }
+
+/* ---- FORM FIELDS ---- */
+.fg { margin-bottom: 14px; }
+.fg label { display: flex; align-items: center; gap: 6px; font-size: .78rem; color: var(--text2); margin-bottom: 5px; }
+.fc {
+  width: 100%; background: #1a1a1a; border: 1px solid #2e2e2e;
+  border-radius: 8px; padding: 9px 12px;
+  color: #fff; font-family: "Kanit", sans-serif; font-size: .9rem; outline: none;
+  transition: border-color .2s;
+}
+.fc:focus { border-color: var(--red); }
+
+/* ---- DECK FORM OVERLAY ---- */
+.form-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.88); z-index: 700; display: none; align-items: center; justify-content: center; backdrop-filter: blur(6px); }
+.form-overlay.show { display: flex; }
+
+.form-box { background: #181818; border: 1px solid #272727; border-radius: 16px; padding: 34px; max-width: 400px; width: 90%; position: relative; }
+.form-box h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 18px; display: flex; align-items: center; gap: 9px; }
+
+.form-x {
+  position: absolute; top: 12px; right: 14px;
+  background: none; border: none; color: var(--text2); cursor: pointer;
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; transition: .2s; font-size: .9rem;
+}
+.form-x:hover { background: #222; color: #fff; }
+
+.form-acts  { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; }
+.btn-cancel { background: transparent; border: 1px solid #2e2e2e; color: var(--text2); padding: 9px 18px; border-radius: 8px; font-family: "Kanit", sans-serif; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+.btn-save   { background: var(--red); color: #fff; border: none; padding: 9px 22px; border-radius: 8px; font-family: "Kanit", sans-serif; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+
+/* ---- RESPONSIVE ---- */
+@media (max-width: 580px) {
+  #admin-screen { padding: 88px 14px 30px; }
+  .tabs { flex-wrap: wrap; }
+}
+
+.btn-visible { background: rgba(76,175,80,.12); color: #4caf50; border-color: rgba(76,175,80,.3); }
+.btn-hidden  { background: rgba(255,255,255,.05); color: var(--text3); border-color: #333; }

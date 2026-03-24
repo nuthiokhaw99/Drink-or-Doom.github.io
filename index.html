@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DEALSHOT — ไพ่วงเหล้า</title>
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+
+<!-- Flaticon Uicons -->
+<link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
+<link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
+<link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-brands/css/uicons-brands.css">
+
+<!-- Styles -->
+<link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header class="hdr">
+  <div class="logo" onclick="goHome()">
+    <div class="logo-wordmark">
+      <span class="logo-main">DRINKORDOOM</span>
+      <span class="logo-sub">ยกหรือยับ</span>
+    </div>
+  </div>
+  <div class="hdr-r">
+    <div class="credit-pill" onclick="openTopup()">
+      <i class="fi fi-sr-coins" style="color:var(--gold);font-size:.95rem;"></i>
+      <span class="amt" id="cr-disp">0</span>
+      <span class="lbl">เครดิต</span>
+    </div>
+    <button class="btn-topup" onclick="openTopup()">
+      <i class="fi fi-sr-plus"></i><span class="lbl-txt">เติมเครดิต</span>
+    </button>
+      <button class="btn-ghost" onclick="showAdmin()">
+        <i class="fi fi-sr-tools"></i>
+      </button>
+  </div>
+</header>
+
+<!-- ============ HOME SCREEN ============ -->
+<div id="home-screen">
+  <section class="hero">
+    <div class="big-title"><div>Drink or Doom</div><div class="r">ยกหรือยับ</div></div>
+    <p class="hero-sub">
+      <span class="chip"><i class="fi fi-sr-layers" style="color:var(--red);font-size:.85rem;"></i> เลือกกองไพ่</span>
+      <span class="sep">·</span>
+      <span class="chip"><i class="fi fi-sr-coins" style="color:var(--gold);font-size:.85rem;"></i> จ่ายเครดิต</span>
+      <span class="sep">·</span>
+      <span class="chip"><i class="fi fi-sr-bolt" style="color:var(--red);font-size:.85rem;"></i> รับชะตากรรม</span>
+    </p>
+    <p class="sec-label">เลือกกองไพ่</p>
+    <div class="deck-grid-wrap">
+      <div class="deck-grid" id="deck-grid"></div>
+      <button class="btn-play" id="btn-play" onclick="startGame()" disabled>
+        <i class="fi fi-sr-play"></i> เริ่มเล่น
+      </button>
+    </div>
+  </section>
+</div>
+
+<!-- ============ GAME SCREEN ============ -->
+<div id="game-screen">
+  <div class="game-hdr">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <button class="btn-ghost" onclick="goHome()"><i class="fi fi-sr-angle-left"></i> กลับ</button>
+      <div class="g-deck-info">
+        <div class="g-deck-ico" id="g-ico-wrap"><i id="g-ico" class="fi fi-sr-flame"></i></div>
+        <div>
+          <div class="g-nm" id="g-nm"></div>
+          <div class="g-rm"><i class="fi fi-rr-copy" style="font-size:.7rem;opacity:.5;"></i><span id="g-rm"></span></div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <!-- โหมด toggle -->
+      <div class="layout-toggle">
+        <button class="lt-btn act" id="lt-scatter" onclick="setLayout('scatter')" title="กระจายเละ">
+          <i class="fi fi-sr-shuffle"></i>
+        </button>
+        <button class="lt-btn" id="lt-stack" onclick="setLayout('stack')" title="เรียงตับ">
+          <i class="fi fi-sr-layers"></i>
+        </button>
+      </div>
+      <div class="g-credit"><i class="fi fi-sr-coins"></i> <span id="g-cr">0</span> เครดิต</div>
+    </div>
+  </div>
+  <div class="table-area">
+    <div class="cards-wrap" id="cards-wrap"></div>
+    <div class="cost-hint">
+      <i class="fi fi-rr-cursor" style="opacity:.6;"></i>
+      แตะการ์ดเพื่อเปิด · ใช้ <span class="hl" id="cost-show">1</span> เครดิต/ใบ
+    </div>
+  </div>
+</div>
+
+<!-- ============ ADMIN SCREEN ============ -->
+<div id="admin-screen">
+  <div class="adm-hdr">
+    <div>
+      <div class="adm-ttl"><i class="fi fi-sr-settings-sliders" style="color:var(--red);"></i> <span class="r">ADMIN</span> PANEL</div>
+      <div class="adm-sub">จัดการไพ่และกองไพ่ทั้งหมด</div>
+    </div>
+    <button class="btn-ghost" onclick="goHome()"><i class="fi fi-sr-home"></i> หน้าหลัก</button>
+  </div>
+  <div class="tabs">
+    <button class="tab act" onclick="switchTab('decks',0)"><i class="fi fi-sr-layers"></i> กองไพ่</button>
+    <button class="tab" onclick="switchTab('cards',1)"><i class="fi fi-sr-pencil"></i> แก้ไขไพ่</button>
+    <button class="tab" onclick="switchTab('settings',2)"><i class="fi fi-sr-settings"></i> ตั้งค่า</button>
+    <button class="tab" onclick="switchTab('sheet',3)"><i class="fi fi-sr-table"></i> Spreadsheet</button>
+  </div>
+
+  <!-- Tab: Decks -->
+  <div class="tab-content act" id="tc-decks">
+    <div class="deck-list-adm" id="adm-deck-list"></div>
+    <button class="btn-add" onclick="openDeckForm()"><i class="fi fi-sr-plus"></i> เพิ่มกองไพ่ใหม่</button>
+  </div>
+
+  <!-- Tab: Cards -->
+  <div class="tab-content" id="tc-cards">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+      <label style="color:var(--text2);font-size:.85rem;display:flex;align-items:center;gap:6px;">
+        <i class="fi fi-sr-layers"></i> กองไพ่:
+      </label>
+      <select class="fc" id="adm-deck-sel" style="width:200px" onchange="loadCE()"></select>
+    </div>
+    <div class="card-editor-box">
+      <h3 id="ce-title"><i class="fi fi-sr-layers" style="color:var(--red);"></i> เลือกกองไพ่ก่อน</h3>
+      <div class="card-list-ed" id="card-list-ed"></div>
+      <button class="btn-add-card" onclick="addCRow()"><i class="fi fi-sr-plus"></i> เพิ่มไพ่</button>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-top:14px;">
+      <button class="btn-save" onclick="saveCards()"><i class="fi fi-sr-disk"></i> บันทึก</button>
+    </div>
+  </div>
+
+  <!-- Tab: Settings -->
+  <div class="tab-content" id="tc-settings">
+    <div class="sheet-sec">
+      <h3><i class="fi fi-sr-settings" style="color:var(--red);"></i> ตั้งค่าระบบ</h3>
+      <p>กำหนดเครดิตเริ่มต้นและชื่อเว็บ</p>
+      <div class="fg"><label><i class="fi fi-sr-coins"></i> เครดิตเริ่มต้น (ทดสอบ)</label><input type="number" class="fc" id="st-cr" value="10"></div>
+      <div class="fg"><label><i class="fi fi-sr-tag"></i> ชื่อเว็บ</label><input type="text" class="fc" id="st-nm" value="DEALSHOT"></div>
+      <div class="fg">
+        <label><i class="fi fi-sr-flask"></i> โหมดทดสอบ</label>
+        <select class="fc" id="st-test"><option value="1">เปิด</option><option value="0">ปิด</option></select>
+      </div>
+      <button class="btn-save" onclick="saveSettings()"><i class="fi fi-sr-disk"></i> บันทึก</button>
+    </div>
+  </div>
+
+  <!-- Tab: Spreadsheet -->
+  <div class="tab-content" id="tc-sheet">
+    <div class="sheet-sec">
+      <h3><i class="fi fi-brands-google" style="color:var(--red);"></i> เชื่อม Google Spreadsheet</h3>
+      <p>ใส่ URL ของ Google Sheets (Share → Anyone with link can view)</p>
+      <div class="sheet-row">
+        <input type="text" class="sh-inp" id="sheet-url" placeholder="https://docs.google.com/spreadsheets/d/...">
+        <button class="btn-conn" onclick="connectSheet()"><i class="fi fi-sr-link"></i> เชื่อมต่อ</button>
+      </div>
+      <div style="margin-top:16px;padding:14px;background:#1a1a1a;border-radius:8px;font-size:.8rem;color:var(--text2);line-height:2;">
+        <strong style="color:#fff;display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+          <i class="fi fi-sr-info" style="color:var(--red);"></i> รูปแบบ Sheet ที่รองรับ:
+        </strong>
+        Sheet 1: <code style="color:var(--gold);">decks</code> — id | name | icon | theme | cost_per_card | description<br>
+        Sheet 2: <code style="color:var(--gold);">cards</code> — deck_id | category | text
+      </div>
+    </div>
+    <div class="sheet-sec">
+      <h3><i class="fi fi-sr-database" style="color:var(--red);"></i> Export / Import</h3>
+      <p>สำรองหรือนำเข้าข้อมูลไพ่ทั้งหมด</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn-conn" onclick="exportData()"><i class="fi fi-sr-download"></i> Export JSON</button>
+        <button class="btn-conn ghost" onclick="importData()"><i class="fi fi-sr-upload"></i> Import JSON</button>
+        <button class="btn-conn ghost" onclick="resetData()"><i class="fi fi-sr-rotate-left"></i> รีเซ็ต</button>
+      </div>
+      <input type="file" id="imp-file" accept=".json" style="display:none" onchange="handleImport(event)">
+    </div>
+  </div>
+</div>
+
+<!-- ============ RESULT MODAL ============ -->
+<div class="overlay" id="res-overlay">
+  <div class="res-card">
+    <div class="res-deck-lbl" id="res-dlbl"></div>
+    <div class="res-ico-wrap" id="res-ico-wrap"><i id="res-ico" class="fi fi-sr-flame"></i></div>
+    <div class="res-cat" id="res-cat"></div>
+    <div class="res-txt" id="res-txt"></div>
+    <div class="res-acts">
+      <button class="btn-close-r" onclick="closeRes()"><i class="fi fi-sr-cross"></i> ปิด</button>
+      <button class="btn-next" onclick="closeRes()">ไพ่ใบต่อไป <i class="fi fi-sr-arrow-right"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TOP-UP MODAL ============ -->
+<div class="overlay" id="topup-overlay">
+  <div class="modal-box">
+    <button class="modal-x" onclick="closeTopup()"><i class="fi fi-sr-cross"></i></button>
+    <div class="modal-ttl"><i class="fi fi-sr-coins" style="color:var(--gold);"></i> เติม<span class="r">เครดิต</span></div>
+    <div class="modal-sub">เลือกแพ็กเกจที่ต้องการ</div>
+    <div class="topup-grid">
+      <div class="topup-opt" onclick="selPkg(this,10)">
+        <div class="coins"><i class="fi fi-sr-coins"></i> 10</div><div class="price">฿29</div>
+      </div>
+      <div class="topup-opt" onclick="selPkg(this,30)">
+        <div class="coins"><i class="fi fi-sr-coins"></i> 30</div><div class="price">฿79</div>
+        <div class="bonus"><i class="fi fi-sr-plus"></i> +5 โบนัส</div>
+      </div>
+      <div class="topup-opt" onclick="selPkg(this,60)">
+        <div class="coins"><i class="fi fi-sr-coins"></i> 60</div><div class="price">฿149</div>
+        <div class="bonus"><i class="fi fi-sr-plus"></i> +15 โบนัส</div>
+      </div>
+      <div class="topup-opt" onclick="selPkg(this,150)">
+        <div class="coins"><i class="fi fi-sr-coins"></i> 150</div><div class="price">฿349</div>
+        <div class="bonus"><i class="fi fi-sr-star"></i> +50 โบนัส</div>
+      </div>
+    </div>
+    <div class="coming-banner">
+      <strong><i class="fi fi-sr-triangle-warning"></i> ระบบชำระเงินกำลังพัฒนา</strong>
+      <span style="font-size:.75rem;">กด "รับฟรี" ด้านล่างเพื่อทดสอบ</span>
+    </div>
+    <button class="btn-free" onclick="freeCredit()"><i class="fi fi-sr-gift"></i> รับฟรี 10 เครดิต (ทดสอบ)</button>
+  </div>
+</div>
+
+<!-- ============ DECK FORM MODAL ============ -->
+<div class="form-overlay" id="deck-form-ov">
+  <div class="form-box">
+    <button class="form-x" onclick="closeDeckForm()"><i class="fi fi-sr-cross"></i></button>
+    <h3 id="df-title"><i class="fi fi-sr-layers" style="color:var(--red);"></i> เพิ่มกองไพ่ใหม่</h3>
+    <div class="fg"><label><i class="fi fi-sr-tag"></i> ชื่อกองไพ่</label><input class="fc" id="df-name" placeholder="เช่น ความกล้า"></div>
+    <div class="fg">
+      <label><i class="fi fi-sr-apps"></i> Flaticon Uicons (เช่น fi-sr-flame)</label>
+      <input class="fc" id="df-icon" placeholder="fi-sr-flame">
+    </div>
+    <div class="fg">
+      <label><i class="fi fi-sr-palette"></i> ธีมสี</label>
+      <select class="fc" id="df-theme">
+        <option value="fire">ไฟ — แดง</option>
+        <option value="magic">เวทมนตร์ — ม่วง</option>
+        <option value="skull">กะโหลก — แดงเข้ม</option>
+        <option value="heart">หัวใจ — ชมพู</option>
+        <option value="star">ดาว — ทอง</option>
+        <option value="bolt">ฟ้าผ่า — ส้ม</option>
+        <option value="default">ค่าเริ่มต้น — เทา</option>
+      </select>
+    </div>
+    <div class="fg"><label><i class="fi fi-sr-align-left"></i> คำอธิบาย</label><input class="fc" id="df-desc" placeholder="คำอธิบายสั้นๆ"></div>
+    <div class="fg"><label><i class="fi fi-sr-coins"></i> ค่าเครดิต/ใบ</label><input class="fc" type="number" id="df-cost" value="1" min="0"></div>
+    <div class="form-acts">
+      <button class="btn-cancel" onclick="closeDeckForm()"><i class="fi fi-sr-cross"></i> ยกเลิก</button>
+      <button class="btn-save" onclick="saveDeck()"><i class="fi fi-sr-disk"></i> บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TOAST ============ -->
+<div class="toast" id="toast">
+  <i id="toast-ico" class="fi fi-sr-check-circle" style="color:#4caf50;"></i>
+  <span id="toast-msg"></span>
+</div>
+
+<!-- ============ SCRIPTS ============ -->
+<!-- โหลด db.js ก่อน เพราะไฟล์อื่นใช้ DB -->
+<script src="js/db.js"></script>
+<script src="js/admin-keys.js"></script>
+<script src="js/payment.js"></script>
+<script src="js/api.js"></script>
+<script src="js/components.js"></script>
+<script src="js/admin.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
+
+<div class="coming-banner" id="test-banner">
+  <strong><i class="fi fi-sr-triangle-warning"></i> ระบบชำระเงินกำลังพัฒนา</strong>
+  <span style="font-size:.75rem;">กด "รับฟรี" ด้านล่างเพื่อทดสอบ</span>
+</div>
+<button class="btn-free" id="test-btn" onclick="freeCredit()"><i class="fi fi-sr-gift"></i> รับฟรี 10 เครดิต (ทดสอบ)</button>
