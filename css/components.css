@@ -48,12 +48,6 @@
   font-size: 1.4rem !important;
 }
 
-.crd:not(.revealed):not(.flipping):hover {
-  transform: translateY(-14px) scale(1.07) !important;
-  border-color: var(--red);
-  box-shadow: 0 22px 44px rgba(229,9,20,.28), 0 0 0 1px var(--red);
-  z-index: 60 !important;
-}
 .crd-back {
   width: 76px; height: 116px; border-radius: 8px;
   display: flex; align-items: center; justify-content: center;
