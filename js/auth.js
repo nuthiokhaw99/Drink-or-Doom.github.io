@@ -369,8 +369,8 @@ function closeAnnouncePopup() {
   if (ov) ov.remove();
 }
 
-<<<<<<< HEAD
-// [FIX #18] ลบ updateLastSeen ซ้ำออก — ถูก call ใน onAuthStateChange แล้ว
-=======
-// [FIX #18] ลบ updateLastSeen ซ้ำออก — ถูก call ใน onAuthStateChange แล้ว
->>>>>>> 35c8474b63db1f7722e0f8c3738916b5f76e4a23
+// <<<<<<< HEAD
+// // [FIX #18] ลบ updateLastSeen ซ้ำออก — ถูก call ใน onAuthStateChange แล้ว
+// =======
+// // [FIX #18] ลบ updateLastSeen ซ้ำออก — ถูก call ใน onAuthStateChange แล้ว
+// >>>>>>> 35c8474b63db1f7722e0f8c3738916b5f76e4a23

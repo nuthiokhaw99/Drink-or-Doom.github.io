@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 14,
+            "activePatchIndex": 17,
             "patches": [
                 {
                     "date": 1774366446050,
@@ -64,6 +64,18 @@
                 {
                     "date": 1775213965899,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -2,20 +2,27 @@\n    admin-keys.js — Admin Auth via Supabase Metadata\r\n    ========================================= */\r\n \r\n let _cachedIsAdmin = null;\r\n+let _adminCacheTime = 0;\r\n+const ADMIN_CACHE_TTL_MS = 5 * 60 * 1000; // re-check ทุก 5 นาที\r\n \r\n async function isAdminLoggedIn() {\r\n   if (!currentUser) return false;\r\n-  if (_cachedIsAdmin !== null) return _cachedIsAdmin;\r\n+  const now = Date.now();\r\n+  // [FIX] ใช้ cache แค่ภายใน TTL — หลังจากนั้น re-check จาก server\r\n+  if (_cachedIsAdmin !== null && now - _adminCacheTime < ADMIN_CACHE_TTL_MS) {\r\n+    return _cachedIsAdmin;\r\n+  }\r\n \r\n   const { data } = await _sb\r\n     .from('profiles')\r\n     .select('is_admin')\r\n     .eq('id', currentUser.id)\r\n     .single();\r\n \r\n   _cachedIsAdmin = data?.is_admin === true;\r\n+  _adminCacheTime = now;\r\n   return _cachedIsAdmin;\r\n }\r\n \r\n async function showAdmin() {\r\n"
+                },
+                {
+                    "date": 1775236334368,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -47,5 +47,4 @@\n   setVal('st-test',  DB.settings?.testMode     ?? 1);\r\n   setVal('st-modal', DB.settings?.showModal    ?? 1);\r\n   setVal('st-cost',  DB.settings?.defaultCost  ?? 1);\r\n   setVal('st-topup', DB.settings?.topupEnabled ?? 1);\r\n-}\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1775236342602,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -47,4 +47,9 @@\n   setVal('st-test',  DB.settings?.testMode     ?? 1);\r\n   setVal('st-modal', DB.settings?.showModal    ?? 1);\r\n   setVal('st-cost',  DB.settings?.defaultCost  ?? 1);\r\n   setVal('st-topup', DB.settings?.topupEnabled ?? 1);\r\n+<<<<<<< HEAD\r\n+}\r\n+=======\r\n+}\r\n+>>>>>>> 35c8474b63db1f7722e0f8c3738916b5f76e4a23\r\n"
+                },
+                {
+                    "date": 1775236347906,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -49,7 +49,6 @@\n   setVal('st-cost',  DB.settings?.defaultCost  ?? 1);\r\n   setVal('st-topup', DB.settings?.topupEnabled ?? 1);\r\n <<<<<<< HEAD\r\n }\r\n-=======\r\n+\r\n }\r\n->>>>>>> 35c8474b63db1f7722e0f8c3738916b5f76e4a23\r\n"
                 }
             ],
             "date": 1774366446050,

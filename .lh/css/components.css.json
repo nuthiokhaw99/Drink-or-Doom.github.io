@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 82,
+            "activePatchIndex": 84,
             "patches": [
                 {
                     "date": 1774371359015,
@@ -336,6 +336,14 @@
                 {
                     "date": 1775214427924,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -3,9 +3,9 @@\n    ============================================== */\r\n \r\n /* ---- GAME SCREEN ---- */\r\n \r\n-* {\r\n+{\r\n   touch-action: manipulation;\r\n }\r\n \r\n #game-screen { display: none; min-height: 100vh; }\r\n"
+                },
+                {
+                    "date": 1775236293123,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -3,9 +3,9 @@\n    ============================================== */\r\n \r\n /* ---- GAME SCREEN ---- */\r\n \r\n-{\r\n+* {\r\n   touch-action: manipulation;\r\n }\r\n \r\n #game-screen { display: none; min-height: 100vh; }\r\n@@ -364,8 +364,9 @@\n   0%, 100% { box-shadow: 0 0 22px var(--glow), 3px 6px 18px rgba(0,0,0,.8); }\r\n   50%       { box-shadow: 0 0 44px rgba(229,9,20,.75), 3px 6px 18px rgba(0,0,0,.8); }\r\n }\r\n \r\n+\r\n /* ============================================\r\n    TOP-UP MODAL — REDESIGN\r\n    ============================================ */\r\n .topup-box {\r\n@@ -561,5 +562,7 @@\n \r\n @media (max-width: 400px) {\r\n   .topup-row-small { grid-template-columns: repeat(3, 1fr); }\r\n   .pkg-coins-big   { font-size: 2.2rem !important; }\r\n-}\n\\ No newline at end of file\n+}\r\n+=======\r\n+>>>>>>> 35c8474b63db1f7722e0f8c3738916b5f76e4a23\r\n"
+                },
+                {
+                    "date": 1775236301650,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -563,6 +563,4 @@\n @media (max-width: 400px) {\r\n   .topup-row-small { grid-template-columns: repeat(3, 1fr); }\r\n   .pkg-coins-big   { font-size: 2.2rem !important; }\r\n }\r\n-=======\r\n->>>>>>> 35c8474b63db1f7722e0f8c3738916b5f76e4a23\r\n"
                 }
             ],
             "date": 1774371359015,

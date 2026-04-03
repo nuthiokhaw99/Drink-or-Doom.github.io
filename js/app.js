@@ -214,8 +214,8 @@ window.addEventListener('load', function () {
   applyTestMode();
   renderDecks();
   // credits โหลดจาก auth.js → INITIAL_SESSION → loadCredits() → updateCr()
-<<<<<<< HEAD
+// <<<<<<< HEAD
 });
-=======
-});
->>>>>>> 35c8474b63db1f7722e0f8c3738916b5f76e4a23
+// =======
+// });
+// >>>>>>> 35c8474b63db1f7722e0f8c3738916b5f76e4a23

@@ -150,8 +150,8 @@ const API = {
     if (error) { console.error(error); return []; }
     return data;
   }
-<<<<<<< HEAD
+// <<<<<<< HEAD
 };
-=======
-};
->>>>>>> 35c8474b63db1f7722e0f8c3738916b5f76e4a23
+// =======
+// };
+// >>>>>>> 35c8474b63db1f7722e0f8c3738916b5f76e4a23

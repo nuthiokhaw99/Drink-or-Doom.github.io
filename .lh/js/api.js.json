@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 7,
+            "activePatchIndex": 8,
             "patches": [
                 {
                     "date": 1774366410049,
@@ -36,6 +36,10 @@
                 {
                     "date": 1775213931127,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -151,21 +151,5 @@\n     return data;\r\n   }\r\n };\r\n \r\n-/* ---- UI handler ---- */\r\n-function connectSheet() {\r\n-  const url = document.getElementById('sheet-url').value.trim();\r\n-  if (!url) { toast('กรุณาใส่ URL', 'warning'); return; }\r\n-\r\n-  API.setSheetUrl(url);\r\n-  toast('กำลังดึงข้อมูล...', 'info');\r\n-\r\n-  API.syncFromSheets(url)\r\n-    .then(({ decks, cards }) => {\r\n-      toast(`โหลดสำเร็จ! ${decks} กอง, ${cards} ใบ`, 'success');\r\n-      renderAdmDecks();\r\n-      renderAdmSel();\r\n-      renderDecks();\r\n-    })\r\n-    .catch(() => toast('เชื่อมต่อไม่ได้ — ตรวจสอบ URL และ Share settings', 'error'));\r\n-}\n\\ No newline at end of file\n+// connectSheet() นิยามใน admin.js — ห้ามเพิ่มที่นี่อีก\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1775236365116,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -149,7 +149,9 @@\n       .order('id', { ascending: false });\r\n     if (error) { console.error(error); return []; }\r\n     return data;\r\n   }\r\n-};\r\n-\r\n-// connectSheet() นิยามใน admin.js — ห้ามเพิ่มที่นี่อีก\n\\ No newline at end of file\n+// <<<<<<< HEAD\r\n+// };\r\n+// =======\r\n+// };\r\n+// >>>>>>> 35c8474b63db1f7722e0f8c3738916b5f76e4a23\r\n"
                 }
             ],
             "date": 1774366410049,
