@@ -1,20 +1,18 @@
-
 const API = {
-  sheetUrl: localStorage.getItem('ds_sheet_url') || '',
+  // [FIX #19] ไม่เก็บ sheet URL ใน localStorage — ใช้แค่ใน memory session
+  sheetUrl: '',
 
   setSheetUrl(url) {
     this.sheetUrl = url;
-    localStorage.setItem('ds_sheet_url', url);
+    // ไม่ localStorage.setItem แล้ว — ป้องกัน URL admin รั่วบน shared computer
   },
 
-  /* แปลง Google Sheets URL → JSON export URL */
   toJsonUrl(sheetUrl, sheetIndex = 0) {
     const match = sheetUrl.match(/\/d\/([a-zA-Z0-9-_]+)/);
     if (!match) return null;
     return `https://docs.google.com/spreadsheets/d/${match[1]}/gviz/tq?tqx=out:json&sheet=${sheetIndex}`;
   },
 
-  /* ดึงข้อมูล Sheets แล้ว parse เป็น array of objects */
   async fetchSheet(sheetUrl, sheetName = '') {
     try {
       const match = sheetUrl.match(/\/d\/([a-zA-Z0-9-_]+)/);
@@ -35,7 +33,6 @@ const API = {
     }
   },
 
-  /* โหลด decks + cards จาก Sheets แล้วอัพเดต DB */
   async syncFromSheets(url) {
     const decksRaw = await this.fetchSheet(url, 'decks');
     const cardsRaw = await this.fetchSheet(url, 'cards');
@@ -58,23 +55,99 @@ const API = {
 
     saveDB();
     return { decks: DB.decks.length, cards: cardsRaw.length };
+  },
+
+  /* =========================================
+     CREDITS — Supabase
+     ========================================= */
+
+  async getCredits() {
+    if (!currentUser) return 0;
+    const { data, error } = await _sb
+      .from('profiles')
+      .select('credits')
+      .eq('id', currentUser.id)
+      .single();
+    if (error) { console.error('getCredits error:', error); return 0; }
+    return data?.credits ?? 0;
+  },
+
+  async saveCredits(amount) {
+    if (!currentUser) return;
+    const { error } = await _sb
+      .from('profiles')
+      .update({ credits: amount })
+      .eq('id', currentUser.id);
+    if (error) console.error('saveCredits error:', error);
+  },
+
+  async addCredits(amount) {
+    const current = await this.getCredits();
+    const newVal  = current + amount;
+    await this.saveCredits(newVal);
+    return newVal;
+  },
+
+  /* =========================================
+     [FIX #5] Atomic credit deduction ผ่าน Supabase RPC
+     ป้องกัน race condition เมื่อกดไพ่หลายใบพร้อมกัน
+     
+     ต้องสร้าง function นี้บน Supabase SQL Editor:
+     
+     CREATE OR REPLACE FUNCTION deduct_credits(user_id uuid, amount integer)
+     RETURNS integer
+     LANGUAGE plpgsql SECURITY DEFINER AS $$
+     DECLARE
+       current_credits integer;
+       new_credits integer;
+     BEGIN
+       SELECT credits INTO current_credits FROM profiles WHERE id = user_id FOR UPDATE;
+       IF current_credits < amount THEN
+         RETURN -1; -- ไม่พอ
+       END IF;
+       new_credits := current_credits - amount;
+       UPDATE profiles SET credits = new_credits WHERE id = user_id;
+       RETURN new_credits;
+     END;
+     $$;
+     ========================================= */
+  async deductCredits(amount) {
+    if (!currentUser) return { success: false, newBalance: 0 };
+
+    const { data, error } = await _sb.rpc('deduct_credits', {
+      user_id: currentUser.id,
+      amount:  amount
+    });
+
+    if (error) {
+      console.error('deductCredits error:', error);
+      // fallback: ถ้า RPC ยังไม่ได้สร้าง ใช้วิธีเดิมชั่วคราว
+      const current = await this.getCredits();
+      if (current < amount) return { success: false, newBalance: current };
+      const newVal = current - amount;
+      await this.saveCredits(newVal);
+      return { success: true, newBalance: newVal };
+    }
+
+    if (data === -1) return { success: false, newBalance: await this.getCredits() };
+    return { success: true, newBalance: data };
+  },
+
+  async adminSetCredits(userId, amount) {
+    const { error } = await _sb
+      .from('profiles')
+      .update({ credits: amount })
+      .eq('id', userId);
+    if (error) { console.error('adminSetCredits error:', error); return false; }
+    return true;
+  },
+
+  async getAllUsers() {
+    const { data, error } = await _sb
+      .from('profiles')
+      .select('id, username, credits, is_admin, is_banned, last_seen')
+      .order('id', { ascending: false });
+    if (error) { console.error(error); return []; }
+    return data;
   }
 };
-
-/* ---- UI handler ---- */
-function connectSheet() {
-  const url = document.getElementById('sheet-url').value.trim();
-  if (!url) { toast('กรุณาใส่ URL', 'warning'); return; }
-
-  API.setSheetUrl(url);
-  toast('กำลังดึงข้อมูล...', 'info');
-
-  API.syncFromSheets(url)
-    .then(({ decks, cards }) => {
-      toast(`โหลดสำเร็จ! ${decks} กอง, ${cards} ใบ`, 'success');
-      renderAdmDecks();
-      renderAdmSel();
-      renderDecks();
-    })
-    .catch(() => toast('เชื่อมต่อไม่ได้ — ตรวจสอบ URL และ Share settings', 'error'));
-}
