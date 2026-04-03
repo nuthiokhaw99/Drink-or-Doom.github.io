@@ -364,6 +364,7 @@
   0%, 100% { box-shadow: 0 0 22px var(--glow), 3px 6px 18px rgba(0,0,0,.8); }
   50%       { box-shadow: 0 0 44px rgba(229,9,20,.75), 3px 6px 18px rgba(0,0,0,.8); }
 }
+<<<<<<< HEAD
 
 /* ============================================
    TOP-UP MODAL — REDESIGN
@@ -563,3 +564,5 @@
   .topup-row-small { grid-template-columns: repeat(3, 1fr); }
   .pkg-coins-big   { font-size: 2.2rem !important; }
 }
+=======
+>>>>>>> 35c8474b63db1f7722e0f8c3738916b5f76e4a23

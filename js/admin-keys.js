@@ -48,4 +48,8 @@ async function showAdmin() {
   setVal('st-modal', DB.settings?.showModal    ?? 1);
   setVal('st-cost',  DB.settings?.defaultCost  ?? 1);
   setVal('st-topup', DB.settings?.topupEnabled ?? 1);
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 35c8474b63db1f7722e0f8c3738916b5f76e4a23

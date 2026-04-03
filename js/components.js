@@ -397,4 +397,8 @@ function loadNextBatch() {
   const take = available.slice(0, DISPLAY_BATCH);
   take.forEach(i => usedIndices.add(i));
   return take.map(i => deckCards[i]);
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 35c8474b63db1f7722e0f8c3738916b5f76e4a23

@@ -335,4 +335,8 @@ function handleImport(e) {
   r.readAsText(f);
   // reset file input เพื่อให้ import ไฟล์เดิมซ้ำได้
   e.target.value = '';
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 35c8474b63db1f7722e0f8c3738916b5f76e4a23
