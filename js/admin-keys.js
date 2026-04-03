@@ -1,25 +1,51 @@
+/* =========================================
+   admin-keys.js — Admin Auth via Supabase Metadata
+   ========================================= */
 
-const ADMIN_CONFIG = {
-  passwordHash: btoa('admin1234'),  // base64 สำหรับทดสอบ
-  sessionKey:   'ds_admin_session',
-  sessionTTL:   60 * 60 * 1000,    // 1 ชั่วโมง (ms)
-};
-function adminLogin(password) {
-  if (btoa(password) === ADMIN_CONFIG.passwordHash) {
-    const session = { ts: Date.now(), valid: true };
-    localStorage.setItem(ADMIN_CONFIG.sessionKey, JSON.stringify(session));
-    return true;
+let _cachedIsAdmin = null;
+let _adminCacheTime = 0;
+const ADMIN_CACHE_TTL_MS = 5 * 60 * 1000; // re-check ทุก 5 นาที
+
+async function isAdminLoggedIn() {
+  if (!currentUser) return false;
+  const now = Date.now();
+  // [FIX] ใช้ cache แค่ภายใน TTL — หลังจากนั้น re-check จาก server
+  if (_cachedIsAdmin !== null && now - _adminCacheTime < ADMIN_CACHE_TTL_MS) {
+    return _cachedIsAdmin;
   }
-  return false;
+
+  const { data } = await _sb
+    .from('profiles')
+    .select('is_admin')
+    .eq('id', currentUser.id)
+    .single();
+
+  _cachedIsAdmin = data?.is_admin === true;
+  _adminCacheTime = now;
+  return _cachedIsAdmin;
 }
-function adminLogout() {
-  localStorage.removeItem(ADMIN_CONFIG.sessionKey);
-}
-function isAdminLoggedIn() {
-  try {
-    const s = JSON.parse(localStorage.getItem(ADMIN_CONFIG.sessionKey) || 'null');
-    if (!s || !s.valid) return false;
-    if (Date.now() - s.ts > ADMIN_CONFIG.sessionTTL) { adminLogout(); return false; }
-    return true;
-  } catch { return false; }
+
+async function showAdmin() {
+  if (!currentUser) { toast('กรุณาเข้าสู่ระบบก่อน', 'warning'); openLogin(); return; }
+  if (!(await isAdminLoggedIn())) { toast('คุณไม่มีสิทธิ์เข้าหน้านี้', 'error'); return; }
+
+  document.querySelectorAll('#home-screen, #game-screen, #admin-screen')
+    .forEach(el => el.style.display = 'none');
+  document.getElementById('admin-screen').style.display = 'block';
+  history.pushState({}, '', '#admin');
+
+  if (typeof renderAdmDecks === 'function') renderAdmDecks();
+  if (typeof renderAdmSel   === 'function') renderAdmSel();
+  if (typeof loadAdminUserList === 'function') loadAdminUserList();
+
+  const setVal = (id, val) => {
+    const el = document.getElementById(id);
+    if (el) el.value = val;
+  };
+  setVal('st-cr',    DB.settings?.startCredit  ?? 10);
+  setVal('st-nm',    DB.settings?.siteName     ?? 'DRINKORDOOM');
+  setVal('st-test',  DB.settings?.testMode     ?? 1);
+  setVal('st-modal', DB.settings?.showModal    ?? 1);
+  setVal('st-cost',  DB.settings?.defaultCost  ?? 1);
+  setVal('st-topup', DB.settings?.topupEnabled ?? 1);
 }
