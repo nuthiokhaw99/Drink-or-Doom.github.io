@@ -1,0 +1,22 @@
+{
+    "sourceFile": "config.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 1,
+            "patches": [
+                {
+                    "date": 1774656440165,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1774656819235,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,6 +0,0 @@\n-// config.js — ห้าม commit ไฟล์นี้เด็ดขาด\r\n-// ไฟล์นี้อยู่ใน .gitignore แล้ว\r\n-const CONFIG = {\r\n-  SUPABASE_URL:  'https://wslevsdsbcqjndskwyhz.supabase.co',\r\n-  SUPABASE_ANON: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndzbGV2c2RzYmNxam5kc2t3eWh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0NzIzODMsImV4cCI6MjA5MDA0ODM4M30.oqU-hjSy0ME_BBJq5zeyvUgjOC4g4sQHZmxbA0Tp9B8'\r\n-};\n\\ No newline at end of file\n"
+                }
+            ],
+            "date": 1774656440165,
+            "name": "Commit-0",
+            "content": "// config.js — ห้าม commit ไฟล์นี้เด็ดขาด\r\n// ไฟล์นี้อยู่ใน .gitignore แล้ว\r\nconst CONFIG = {\r\n  SUPABASE_URL:  'https://wslevsdsbcqjndskwyhz.supabase.co',\r\n  SUPABASE_ANON: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndzbGV2c2RzYmNxam5kc2t3eWh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0NzIzODMsImV4cCI6MjA5MDA0ODM4M30.oqU-hjSy0ME_BBJq5zeyvUgjOC4g4sQHZmxbA0Tp9B8'\r\n};"
+        }
+    ]
+}

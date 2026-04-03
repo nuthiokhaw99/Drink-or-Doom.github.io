@@ -3,11 +3,203 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 48,
             "patches": [
                 {
                     "date": 1774366341293,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1774397775687,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -260,5 +260,12 @@\n   align-items: center;\r\n   gap: 20px;\r\n   position: relative;\r\n   z-index: 1;\r\n+}\r\n+\r\n+body.in-game {\r\n+  overflow: hidden;\r\n+  position: fixed;\r\n+  width: 100%;\r\n+  height: 100%;\r\n }\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1774398534057,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -215,8 +215,14 @@\n   letter-spacing: 1px; transition: .25s;\r\n   position: relative; z-index: 1;\r\n   box-shadow: 0 4px 28px var(--glow);\r\n   display: inline-flex; align-items: center; gap: 10px;\r\n+\r\n+    position: fixed;\r\n+  bottom: 24px;\r\n+  left: 50%;\r\n+  transform: translateX(-50%);\r\n+  z-index: 100;\r\n }\r\n .btn-play:hover    { background: var(--red3); transform: translateY(-2px); box-shadow: 0 8px 40px var(--glow); }\r\n .btn-play:disabled { background: #2a2a2a; color: #555; cursor: not-allowed; box-shadow: none; transform: none; }\r\n \r\n"
+                },
+                {
+                    "date": 1774398543966,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -216,9 +216,9 @@\n   position: relative; z-index: 1;\r\n   box-shadow: 0 4px 28px var(--glow);\r\n   display: inline-flex; align-items: center; gap: 10px;\r\n \r\n-    position: fixed;\r\n+\r\n   bottom: 24px;\r\n   left: 50%;\r\n   transform: translateX(-50%);\r\n   z-index: 100;\r\n"
+                },
+                {
+                    "date": 1774398555091,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -212,17 +212,17 @@\n   padding: 13px 44px; border-radius: 8px;\r\n   font-family: \"Kanit\", sans-serif; font-weight: 700; font-size: 1.1rem;\r\n   cursor: pointer; margin-top: 0;   /* ลดจาก 40px */\r\n   letter-spacing: 1px; transition: .25s;\r\n-  position: relative; z-index: 1;\r\n+  position: fixed; z-index: 1;\r\n   box-shadow: 0 4px 28px var(--glow);\r\n   display: inline-flex; align-items: center; gap: 10px;\r\n \r\n \r\n   bottom: 24px;\r\n   left: 50%;\r\n   transform: translateX(-50%);\r\n-  z-index: 100;\r\n+  \r\n }\r\n .btn-play:hover    { background: var(--red3); transform: translateY(-2px); box-shadow: 0 8px 40px var(--glow); }\r\n .btn-play:disabled { background: #2a2a2a; color: #555; cursor: not-allowed; box-shadow: none; transform: none; }\r\n \r\n"
+                },
+                {
+                    "date": 1774399455770,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -212,13 +212,13 @@\n   padding: 13px 44px; border-radius: 8px;\r\n   font-family: \"Kanit\", sans-serif; font-weight: 700; font-size: 1.1rem;\r\n   cursor: pointer; margin-top: 0;   /* ลดจาก 40px */\r\n   letter-spacing: 1px; transition: .25s;\r\n-  position: fixed; z-index: 1;\r\n+  position: fixed; z-index: 100;\r\n   box-shadow: 0 4px 28px var(--glow);\r\n   display: inline-flex; align-items: center; gap: 10px;\r\n \r\n-\r\n+width: min(320px, 80vw);\r\n   bottom: 24px;\r\n   left: 50%;\r\n   transform: translateX(-50%);\r\n   \r\n"
+                },
+                {
+                    "date": 1774399460954,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -216,9 +216,9 @@\n   position: fixed; z-index: 100;\r\n   box-shadow: 0 4px 28px var(--glow);\r\n   display: inline-flex; align-items: center; gap: 10px;\r\n \r\n-width: min(320px, 80vw);\r\n+  width: min(320px, 80vw);\r\n   bottom: 24px;\r\n   left: 50%;\r\n   transform: translateX(-50%);\r\n   \r\n"
+                },
+                {
+                    "date": 1774399488057,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -220,9 +220,8 @@\n   width: min(320px, 80vw);\r\n   bottom: 24px;\r\n   left: 50%;\r\n   transform: translateX(-50%);\r\n-  \r\n }\r\n .btn-play:hover    { background: var(--red3); transform: translateY(-2px); box-shadow: 0 8px 40px var(--glow); }\r\n .btn-play:disabled { background: #2a2a2a; color: #555; cursor: not-allowed; box-shadow: none; transform: none; }\r\n \r\n"
+                },
+                {
+                    "date": 1774399506162,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -216,9 +216,9 @@\n   position: fixed; z-index: 100;\r\n   box-shadow: 0 4px 28px var(--glow);\r\n   display: inline-flex; align-items: center; gap: 10px;\r\n \r\n-  width: min(320px, 80vw);\r\n+  width: min(400px, calc(100vw - 48px));\r\n   bottom: 24px;\r\n   left: 50%;\r\n   transform: translateX(-50%);\r\n }\r\n"
+                },
+                {
+                    "date": 1774399534654,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -210,18 +210,21 @@\n .btn-play {\r\n   background: var(--red); color: #fff; border: none;\r\n   padding: 13px 44px; border-radius: 8px;\r\n   font-family: \"Kanit\", sans-serif; font-weight: 700; font-size: 1.1rem;\r\n-  cursor: pointer; margin-top: 0;   /* ลดจาก 40px */\r\n+  cursor: pointer; margin-top: 0;\r\n   letter-spacing: 1px; transition: .25s;\r\n   position: fixed; z-index: 100;\r\n   box-shadow: 0 4px 28px var(--glow);\r\n-  display: inline-flex; align-items: center; gap: 10px;\r\n+  display: flex; align-items: center; justify-content: center; gap: 10px;\r\n \r\n-  width: min(400px, calc(100vw - 48px));\r\n+  /* แก้ทั้งหมดนี้ */\r\n+  width: calc(100vw - 48px);\r\n+  max-width: 400px;\r\n   bottom: 24px;\r\n-  left: 50%;\r\n-  transform: translateX(-50%);\r\n+  left: 24px;\r\n+  right: 24px;\r\n+  transform: none;\r\n }\r\n .btn-play:hover    { background: var(--red3); transform: translateY(-2px); box-shadow: 0 8px 40px var(--glow); }\r\n .btn-play:disabled { background: #2a2a2a; color: #555; cursor: not-allowed; box-shadow: none; transform: none; }\r\n \r\n"
+                },
+                {
+                    "date": 1774399558898,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -210,21 +210,19 @@\n .btn-play {\r\n   background: var(--red); color: #fff; border: none;\r\n   padding: 13px 44px; border-radius: 8px;\r\n   font-family: \"Kanit\", sans-serif; font-weight: 700; font-size: 1.1rem;\r\n-  cursor: pointer; margin-top: 0;\r\n+  cursor: pointer; margin: 0 auto;\r\n   letter-spacing: 1px; transition: .25s;\r\n   position: fixed; z-index: 100;\r\n   box-shadow: 0 4px 28px var(--glow);\r\n   display: flex; align-items: center; justify-content: center; gap: 10px;\r\n \r\n-  /* แก้ทั้งหมดนี้ */\r\n   width: calc(100vw - 48px);\r\n   max-width: 400px;\r\n   bottom: 24px;\r\n-  left: 24px;\r\n-  right: 24px;\r\n-  transform: none;\r\n+  left: 0;\r\n+  right: 0;\r\n }\r\n .btn-play:hover    { background: var(--red3); transform: translateY(-2px); box-shadow: 0 8px 40px var(--glow); }\r\n .btn-play:disabled { background: #2a2a2a; color: #555; cursor: not-allowed; box-shadow: none; transform: none; }\r\n \r\n"
+                },
+                {
+                    "date": 1774399731233,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -263,9 +263,10 @@\n .deck-grid-wrap {\r\n   display: flex;\r\n   flex-direction: column;\r\n   align-items: center;\r\n-  gap: 20px;\r\n+  gap: 14px;\r\n+  max-width: 1000px;\r\n   position: relative;\r\n   z-index: 1;\r\n }\r\n \r\n"
+                },
+                {
+                    "date": 1774399755987,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -178,9 +178,9 @@\n }\r\n .deck-card {\r\n   background: linear-gradient(145deg, #1c1c1c, #111);\r\n   border: 1px solid #252525; border-radius: 14px;\r\n-  padding: 16px 18px;        /* ลดจาก 24px 28px */\r\n+  padding: 20px 16px;\r\n   cursor: pointer;\r\n   transition: all .3s cubic-bezier(.23,1,.32,1);\r\n   position: relative; overflow: hidden;\r\n   min-width: 140px;          /* ลดจาก 188px */\r\n"
+                },
+                {
+                    "date": 1774399763928,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -179,8 +179,10 @@\n .deck-card {\r\n   background: linear-gradient(145deg, #1c1c1c, #111);\r\n   border: 1px solid #252525; border-radius: 14px;\r\n   padding: 20px 16px;\r\n+    min-width: 160px;\r\n+  max-width: 180px;\r\n   cursor: pointer;\r\n   transition: all .3s cubic-bezier(.23,1,.32,1);\r\n   position: relative; overflow: hidden;\r\n   min-width: 140px;          /* ลดจาก 188px */\r\n"
+                },
+                {
+                    "date": 1774399771185,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -179,9 +179,9 @@\n .deck-card {\r\n   background: linear-gradient(145deg, #1c1c1c, #111);\r\n   border: 1px solid #252525; border-radius: 14px;\r\n   padding: 20px 16px;\r\n-    min-width: 160px;\r\n+  min-width: 160px;\r\n   max-width: 180px;\r\n   cursor: pointer;\r\n   transition: all .3s cubic-bezier(.23,1,.32,1);\r\n   position: relative; overflow: hidden;\r\n"
+                },
+                {
+                    "date": 1774399779562,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -181,8 +181,9 @@\n   border: 1px solid #252525; border-radius: 14px;\r\n   padding: 20px 16px;\r\n   min-width: 160px;\r\n   max-width: 180px;\r\n+  flex: 1;\r\n   cursor: pointer;\r\n   transition: all .3s cubic-bezier(.23,1,.32,1);\r\n   position: relative; overflow: hidden;\r\n   min-width: 140px;          /* ลดจาก 188px */\r\n"
+                },
+                {
+                    "date": 1774399802661,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -200,9 +200,9 @@\n .deck-card.sel               { border-color: var(--red); box-shadow: 0 0 28px var(--glow); background: linear-gradient(145deg, #1f0505, #130303); }\r\n .d-ico-wrap {\r\n   width: 38px; height: 38px;  /* ลดจาก 50px */\r\n   border-radius: 10px;\r\n-  display: flex; align-items: center; justify-content: center;\r\n+\r\n   margin: 0 auto 8px;         /* ลดจาก 12px */\r\n   font-size: 1.1rem;          /* ลดจาก 1.5rem */\r\n }\r\n \r\n"
+                },
+                {
+                    "date": 1774399808193,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -198,13 +198,13 @@\n .deck-card:hover::before,\r\n .deck-card.sel::before       { opacity: 1; }\r\n .deck-card.sel               { border-color: var(--red); box-shadow: 0 0 28px var(--glow); background: linear-gradient(145deg, #1f0505, #130303); }\r\n .d-ico-wrap {\r\n-  width: 38px; height: 38px;  /* ลดจาก 50px */\r\n-  border-radius: 10px;\r\n-\r\n-  margin: 0 auto 8px;         /* ลดจาก 12px */\r\n-  font-size: 1.1rem;          /* ลดจาก 1.5rem */\r\n+  width: 52px; height: 52px;\r\n+  border-radius: 14px;\r\n+  margin: 0 auto 10px;\r\n+  font-size: 1.4rem;\r\n+    display: flex; align-items: center; justify-content: center;\r\n }\r\n \r\n .d-name { font-weight: 700; font-size: .9rem; margin-bottom: 2px; }  /* ลดจาก 1.05rem */\r\n .d-cnt  { color: var(--text2); font-size: .72rem; display: flex; align-items: center; gap: 5px; justify-content: center; margin-top: 2px; }\r\n"
+                },
+                {
+                    "date": 1774399824318,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -202,12 +202,12 @@\n   width: 52px; height: 52px;\r\n   border-radius: 14px;\r\n   margin: 0 auto 10px;\r\n   font-size: 1.4rem;\r\n-    display: flex; align-items: center; justify-content: center;\r\n+  display: flex; align-items: center; justify-content: center;\r\n }\r\n \r\n-.d-name { font-weight: 700; font-size: .9rem; margin-bottom: 2px; }  /* ลดจาก 1.05rem */\r\n+.d-name { font-weight: 700; font-size: 1rem; margin-bottom: 2px; }  /* ลดจาก 1.05rem */\r\n .d-cnt  { color: var(--text2); font-size: .72rem; display: flex; align-items: center; gap: 5px; justify-content: center; margin-top: 2px; }\r\n .d-desc { color: var(--text3); font-size: .68rem; margin-top: 3px; }\r\n .d-cost { display: inline-flex; align-items: center; gap: 5px; background: rgba(245,197,24,.08); border: 1px solid rgba(245,197,24,.25); border-radius: 20px; padding: 2px 9px; font-size: .68rem; color: var(--gold); margin-top: 8px; }\r\n .btn-play {\r\n"
+                },
+                {
+                    "date": 1774399851185,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -141,9 +141,9 @@\n \r\n /* ---- HERO ---- */\r\n .hero {\r\n   min-height: 100vh; display: flex; flex-direction: column;\r\n-  align-items: center; justify-content: center;\r\n+  align-items: center; justify-content:  flex-start;\r\n   padding: 100px 20px 60px; position: relative;\r\n }\r\n .hero::before {\r\n   content: \"\"; position: absolute; inset: 0;\r\n"
+                },
+                {
+                    "date": 1774399856965,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -142,9 +142,9 @@\n /* ---- HERO ---- */\r\n .hero {\r\n   min-height: 100vh; display: flex; flex-direction: column;\r\n   align-items: center; justify-content:  flex-start;\r\n-  padding: 100px 20px 60px; position: relative;\r\n+  padding: 80px 20px 100px; position: relative;\r\n }\r\n .hero::before {\r\n   content: \"\"; position: absolute; inset: 0;\r\n   background:\r\n"
+                },
+                {
+                    "date": 1774399876589,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -152,9 +152,9 @@\n     radial-gradient(ellipse 40% 35% at 15% 85%, rgba(229,9,20,.04) 0%, transparent 60%);\r\n }\r\n .big-title {\r\n   font-family: \"Kanit\", sans-serif; font-weight: 900;\r\n-  font-size: clamp(3.5rem, 10vw, 7.5rem);\r\n+  font-size clamp(3.5rem, 10vw, 7.5rem);\r\n   letter-spacing: 8px; text-align: center; line-height: .88; position: relative; z-index: 1;\r\n }\r\n .big-title .r { color: var(--red); text-shadow: 0 0 50px var(--glow), 0 0 100px rgba(229,9,20,.2); }\r\n .hero-sub {\r\n"
+                },
+                {
+                    "date": 1774399885419,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -152,9 +152,9 @@\n     radial-gradient(ellipse 40% 35% at 15% 85%, rgba(229,9,20,.04) 0%, transparent 60%);\r\n }\r\n .big-title {\r\n   font-family: \"Kanit\", sans-serif; font-weight: 900;\r\n-  font-size clamp(3.5rem, 10vw, 7.5rem);\r\n+  font-size: clamp(2.8rem, 8vw, 6rem);\r\n   letter-spacing: 8px; text-align: center; line-height: .88; position: relative; z-index: 1;\r\n }\r\n .big-title .r { color: var(--red); text-shadow: 0 0 50px var(--glow), 0 0 100px rgba(229,9,20,.2); }\r\n .hero-sub {\r\n"
+                },
+                {
+                    "date": 1774399892600,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -153,9 +153,9 @@\n }\r\n .big-title {\r\n   font-family: \"Kanit\", sans-serif; font-weight: 900;\r\n   font-size: clamp(2.8rem, 8vw, 6rem);\r\n-  letter-spacing: 8px; text-align: center; line-height: .88; position: relative; z-index: 1;\r\n+  letter-spacing: 4px; text-align: center; line-height: .88; position: relative; z-index: 1;\r\n }\r\n .big-title .r { color: var(--red); text-shadow: 0 0 50px var(--glow), 0 0 100px rgba(229,9,20,.2); }\r\n .hero-sub {\r\n   color: var(--text2); font-size: .95rem; font-weight: 300; letter-spacing: 1px;\r\n"
+                },
+                {
+                    "date": 1774399907205,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -158,9 +158,9 @@\n }\r\n .big-title .r { color: var(--red); text-shadow: 0 0 50px var(--glow), 0 0 100px rgba(229,9,20,.2); }\r\n .hero-sub {\r\n   color: var(--text2); font-size: .95rem; font-weight: 300; letter-spacing: 1px;\r\n-  margin: 18px 0 50px; position: relative; z-index: 1;\r\n+  margin: 14px 0 32px;; position: relative; z-index: 1;\r\n   display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center;\r\n }\r\n .hero-sub .chip { display: flex; align-items: center; gap: 5px; }\r\n .hero-sub .sep  { color: var(--red); opacity: .4; }\r\n"
+                },
+                {
+                    "date": 1774399938595,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -219,8 +219,14 @@\n   position: fixed; z-index: 100;\r\n   box-shadow: 0 4px 28px var(--glow);\r\n   display: flex; align-items: center; justify-content: center; gap: 10px;\r\n \r\n+  border-radius: 12px;\r\n+  font-size: 1.2rem;\r\n+  padding: 16px 44px;\r\n+  bottom: 20px;\r\n+  letter-spacing: 2px;\r\n+\r\n   width: calc(100vw - 48px);\r\n   max-width: 400px;\r\n   bottom: 24px;\r\n   left: 0;\r\n"
+                },
+                {
+                    "date": 1774399946506,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -211,9 +211,9 @@\n .d-desc { color: var(--text3); font-size: .68rem; margin-top: 3px; }\r\n .d-cost { display: inline-flex; align-items: center; gap: 5px; background: rgba(245,197,24,.08); border: 1px solid rgba(245,197,24,.25); border-radius: 20px; padding: 2px 9px; font-size: .68rem; color: var(--gold); margin-top: 8px; }\r\n .btn-play {\r\n   background: var(--red); color: #fff; border: none;\r\n-  padding: 13px 44px; border-radius: 8px;\r\n+  padding: 13px 44px; \r\n   font-family: \"Kanit\", sans-serif; font-weight: 700; font-size: 1.1rem;\r\n   cursor: pointer; margin: 0 auto;\r\n   letter-spacing: 1px; transition: .25s;\r\n   position: fixed; z-index: 100;\r\n"
+                },
+                {
+                    "date": 1774399955229,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -212,9 +212,9 @@\n .d-cost { display: inline-flex; align-items: center; gap: 5px; background: rgba(245,197,24,.08); border: 1px solid rgba(245,197,24,.25); border-radius: 20px; padding: 2px 9px; font-size: .68rem; color: var(--gold); margin-top: 8px; }\r\n .btn-play {\r\n   background: var(--red); color: #fff; border: none;\r\n   padding: 13px 44px; \r\n-  font-family: \"Kanit\", sans-serif; font-weight: 700; font-size: 1.1rem;\r\n+  font-family: \"Kanit\", sans-serif; font-weight: 700; font-size: 1.2rem;\r\n   cursor: pointer; margin: 0 auto;\r\n   letter-spacing: 1px; transition: .25s;\r\n   position: fixed; z-index: 100;\r\n   box-shadow: 0 4px 28px var(--glow);\r\n"
+                },
+                {
+                    "date": 1774399963664,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -211,9 +211,9 @@\n .d-desc { color: var(--text3); font-size: .68rem; margin-top: 3px; }\r\n .d-cost { display: inline-flex; align-items: center; gap: 5px; background: rgba(245,197,24,.08); border: 1px solid rgba(245,197,24,.25); border-radius: 20px; padding: 2px 9px; font-size: .68rem; color: var(--gold); margin-top: 8px; }\r\n .btn-play {\r\n   background: var(--red); color: #fff; border: none;\r\n-  padding: 13px 44px; \r\n+  padding: 16px 44px; \r\n   font-family: \"Kanit\", sans-serif; font-weight: 700; font-size: 1.2rem;\r\n   cursor: pointer; margin: 0 auto;\r\n   letter-spacing: 1px; transition: .25s;\r\n   position: fixed; z-index: 100;\r\n"
+                },
+                {
+                    "date": 1774399970339,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -214,9 +214,9 @@\n   background: var(--red); color: #fff; border: none;\r\n   padding: 16px 44px; \r\n   font-family: \"Kanit\", sans-serif; font-weight: 700; font-size: 1.2rem;\r\n   cursor: pointer; margin: 0 auto;\r\n-  letter-spacing: 1px; transition: .25s;\r\n+  letter-spacing: 2px; transition: .25s;\r\n   position: fixed; z-index: 100;\r\n   box-shadow: 0 4px 28px var(--glow);\r\n   display: flex; align-items: center; justify-content: center; gap: 10px;\r\n \r\n"
+                },
+                {
+                    "date": 1774399976609,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -227,9 +227,9 @@\n   letter-spacing: 2px;\r\n \r\n   width: calc(100vw - 48px);\r\n   max-width: 400px;\r\n-  bottom: 24px;\r\n+  bottom: 20px;\r\n   left: 0;\r\n   right: 0;\r\n }\r\n .btn-play:hover    { background: var(--red3); transform: translateY(-2px); box-shadow: 0 8px 40px var(--glow); }\r\n"
+                },
+                {
+                    "date": 1774399989864,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -218,15 +218,8 @@\n   letter-spacing: 2px; transition: .25s;\r\n   position: fixed; z-index: 100;\r\n   box-shadow: 0 4px 28px var(--glow);\r\n   display: flex; align-items: center; justify-content: center; gap: 10px;\r\n-\r\n-  border-radius: 12px;\r\n-  font-size: 1.2rem;\r\n-  padding: 16px 44px;\r\n-  bottom: 20px;\r\n-  letter-spacing: 2px;\r\n-\r\n   width: calc(100vw - 48px);\r\n   max-width: 400px;\r\n   bottom: 20px;\r\n   left: 0;\r\n@@ -283,5 +276,17 @@\n   overflow: hidden;\r\n   position: fixed;\r\n   width: 100%;\r\n   height: 100%;\r\n+}\r\n+@media (max-width: 580px) {\r\n+  .deck-card {\r\n+    min-width: calc(50% - 8px);\r\n+    max-width: calc(50% - 8px);\r\n+    padding: 14px 10px;\r\n+  }\r\n+  .d-ico-wrap {\r\n+    width: 42px; height: 42px;\r\n+    font-size: 1.1rem;\r\n+  }\r\n+  .hero { padding: 70px 16px 100px; }\r\n }\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1774401541428,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -223,8 +223,9 @@\n   max-width: 400px;\r\n   bottom: 20px;\r\n   left: 0;\r\n   right: 0;\r\n+    border-radius: 50px;\r\n }\r\n .btn-play:hover    { background: var(--red3); transform: translateY(-2px); box-shadow: 0 8px 40px var(--glow); }\r\n .btn-play:disabled { background: #2a2a2a; color: #555; cursor: not-allowed; box-shadow: none; transform: none; }\r\n \r\n@@ -277,8 +278,9 @@\n   position: fixed;\r\n   width: 100%;\r\n   height: 100%;\r\n }\r\n+\r\n @media (max-width: 580px) {\r\n   .deck-card {\r\n     min-width: calc(50% - 8px);\r\n     max-width: calc(50% - 8px);\r\n"
+                },
+                {
+                    "date": 1774401548686,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -223,9 +223,9 @@\n   max-width: 400px;\r\n   bottom: 20px;\r\n   left: 0;\r\n   right: 0;\r\n-    border-radius: 50px;\r\n+  border-radius: 50px;\r\n }\r\n .btn-play:hover    { background: var(--red3); transform: translateY(-2px); box-shadow: 0 8px 40px var(--glow); }\r\n .btn-play:disabled { background: #2a2a2a; color: #555; cursor: not-allowed; box-shadow: none; transform: none; }\r\n \r\n"
+                },
+                {
+                    "date": 1774401558049,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -223,9 +223,9 @@\n   max-width: 400px;\r\n   bottom: 20px;\r\n   left: 0;\r\n   right: 0;\r\n-  border-radius: 50px;\r\n+  border-radius: 40px;\r\n }\r\n .btn-play:hover    { background: var(--red3); transform: translateY(-2px); box-shadow: 0 8px 40px var(--glow); }\r\n .btn-play:disabled { background: #2a2a2a; color: #555; cursor: not-allowed; box-shadow: none; transform: none; }\r\n \r\n"
+                },
+                {
+                    "date": 1774401568629,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -223,9 +223,9 @@\n   max-width: 400px;\r\n   bottom: 20px;\r\n   left: 0;\r\n   right: 0;\r\n-  border-radius: 40px;\r\n+  border-radius: 15px;\r\n }\r\n .btn-play:hover    { background: var(--red3); transform: translateY(-2px); box-shadow: 0 8px 40px var(--glow); }\r\n .btn-play:disabled { background: #2a2a2a; color: #555; cursor: not-allowed; box-shadow: none; transform: none; }\r\n \r\n"
+                },
+                {
+                    "date": 1774401577662,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -223,9 +223,9 @@\n   max-width: 400px;\r\n   bottom: 20px;\r\n   left: 0;\r\n   right: 0;\r\n-  border-radius: 15px;\r\n+  border-radius: 10px;\r\n }\r\n .btn-play:hover    { background: var(--red3); transform: translateY(-2px); box-shadow: 0 8px 40px var(--glow); }\r\n .btn-play:disabled { background: #2a2a2a; color: #555; cursor: not-allowed; box-shadow: none; transform: none; }\r\n \r\n"
+                },
+                {
+                    "date": 1774471504638,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -177,17 +177,16 @@\n   position: relative; z-index: 1; max-width: 900px;\r\n }\r\n .deck-card {\r\n   background: linear-gradient(145deg, #1c1c1c, #111);\r\n-  border: 1px solid #252525; border-radius: 14px;\r\n-  padding: 20px 16px;\r\n-  min-width: 160px;\r\n-  max-width: 180px;\r\n+  border: 1px solid #252525; border-radius: 12px;\r\n+  padding: 14px 12px;\r\n+  min-width: 120px;\r\n+  max-width: 145px;\r\n   flex: 1;\r\n   cursor: pointer;\r\n   transition: all .3s cubic-bezier(.23,1,.32,1);\r\n   position: relative; overflow: hidden;\r\n-  min-width: 140px;          /* ลดจาก 188px */\r\n   text-align: center;\r\n }\r\n .deck-card::before {\r\n   content: \"\"; position: absolute; top: 0; left: 0; right: 0; height: 2px;\r\n"
+                },
+                {
+                    "date": 1774471519557,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -197,16 +197,15 @@\n .deck-card:hover::before,\r\n .deck-card.sel::before       { opacity: 1; }\r\n .deck-card.sel               { border-color: var(--red); box-shadow: 0 0 28px var(--glow); background: linear-gradient(145deg, #1f0505, #130303); }\r\n .d-ico-wrap {\r\n-  width: 52px; height: 52px;\r\n-  border-radius: 14px;\r\n-  margin: 0 auto 10px;\r\n-  font-size: 1.4rem;\r\n+  width: 42px; height: 42px;\r\n+  border-radius: 10px;\r\n+  margin: 0 auto 8px;\r\n+  font-size: 1.15rem;\r\n   display: flex; align-items: center; justify-content: center;\r\n }\r\n-\r\n-.d-name { font-weight: 700; font-size: 1rem; margin-bottom: 2px; }  /* ลดจาก 1.05rem */\r\n+.d-name { font-weight: 700; font-size: .88rem; margin-bottom: 2px; }\r\n .d-cnt  { color: var(--text2); font-size: .72rem; display: flex; align-items: center; gap: 5px; justify-content: center; margin-top: 2px; }\r\n .d-desc { color: var(--text3); font-size: .68rem; margin-top: 3px; }\r\n .d-cost { display: inline-flex; align-items: center; gap: 5px; background: rgba(245,197,24,.08); border: 1px solid rgba(245,197,24,.25); border-radius: 20px; padding: 2px 9px; font-size: .68rem; color: var(--gold); margin-top: 8px; }\r\n .btn-play {\r\n"
+                },
+                {
+                    "date": 1774474092202,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -197,9 +197,9 @@\n .deck-card:hover::before,\r\n .deck-card.sel::before       { opacity: 1; }\r\n .deck-card.sel               { border-color: var(--red); box-shadow: 0 0 28px var(--glow); background: linear-gradient(145deg, #1f0505, #130303); }\r\n .d-ico-wrap {\r\n-  width: 42px; height: 42px;\r\n+  width: 52px; height: 52px;\r\n   border-radius: 10px;\r\n   margin: 0 auto 8px;\r\n   font-size: 1.15rem;\r\n   display: flex; align-items: center; justify-content: center;\r\n"
+                },
+                {
+                    "date": 1774490317692,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -65,33 +65,28 @@\n   display: flex;\r\n   flex-direction: column;\r\n   line-height: 1;\r\n   gap: 1px;\r\n+  border-left: 3.5px solid #e50914;\r\n+  padding-left: 14px;\r\n }\r\n \r\n .logo-main {\r\n   font-family: \"Kanit\", sans-serif;\r\n   font-weight: 900;\r\n   font-size: 1.75rem;\r\n-  color: var(--red);\r\n-  letter-spacing: -0.5px;   /* Netflix แน่น ไม่ห่าง */\r\n-  text-transform: uppercase;\r\n-  /* เงา glow แบบ Netflix */\r\n-  text-shadow:\r\n-    0 0 20px rgba(229,9,20,.6),\r\n-    0 2px 4px rgba(0,0,0,.8);\r\n-  /* ขอบบางๆ ให้ดู solid */\r\n-  -webkit-text-stroke: 0.5px rgba(255,60,60,.3);\r\n-  transition: text-shadow .2s;\r\n+  letter-spacing: -0.5px;\r\n+  line-height: 1;\r\n }\r\n \r\n+/* ลบ text-shadow และ -webkit-text-stroke เดิมออกทั้งหมด */\r\n+\r\n .logo-sub {\r\n   font-family: \"Kanit\", sans-serif;\r\n   font-weight: 300;\r\n   font-size: .58rem;\r\n   color: var(--text2);\r\n   letter-spacing: 3.5px;\r\n-  text-transform: uppercase;\r\n   padding-left: 1px;\r\n }\r\n \r\n .logo:hover .logo-main {\r\n"
+                },
+                {
+                    "date": 1774531870673,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -15,9 +15,9 @@\n   --text3: #555;\r\n   --glow: rgba(229, 9, 20, 0.35);\r\n }\r\n \r\n-* { margin: 0; padding: 0; box-sizing: border-box; }\r\n+* { margin: 0; padding: 0; box-sizing: border-box; }topup-opt\r\n \r\n body {\r\n   background: var(--bg);\r\n   color: var(--text);\r\n"
+                },
+                {
+                    "date": 1774531876666,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -15,9 +15,9 @@\n   --text3: #555;\r\n   --glow: rgba(229, 9, 20, 0.35);\r\n }\r\n \r\n-* { margin: 0; padding: 0; box-sizing: border-box; }topup-opt\r\n+* { margin: 0; padding: 0; box-sizing: border-box; }\r\n \r\n body {\r\n   background: var(--bg);\r\n   color: var(--text);\r\n"
+                },
+                {
+                    "date": 1774567166034,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -127,9 +127,9 @@\n \r\n .btn-ghost {\r\n   background: transparent; color: var(--text2); border: 1px solid #333;\r\n   padding: 8px 13px; border-radius: 6px;\r\n-  font-family: \"Kanit\", sans-serif; font-size: .82rem;\r\n+  font-family: \"Kanit\", sans-serif; font-size: .99rem;\r\n   cursor: pointer; transition: .2s;\r\n   display: flex; align-items: center; gap: 6px;\r\n }\r\n .btn-ghost:hover { border-color: var(--text2); color: #fff; }\r\n"
+                },
+                {
+                    "date": 1774567172093,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -127,9 +127,9 @@\n \r\n .btn-ghost {\r\n   background: transparent; color: var(--text2); border: 1px solid #333;\r\n   padding: 8px 13px; border-radius: 6px;\r\n-  font-family: \"Kanit\", sans-serif; font-size: .99rem;\r\n+  font-family: \"Kanit\", sans-serif; font-size: .90rem;\r\n   cursor: pointer; transition: .2s;\r\n   display: flex; align-items: center; gap: 6px;\r\n }\r\n .btn-ghost:hover { border-color: var(--text2); color: #fff; }\r\n"
+                },
+                {
+                    "date": 1774567181474,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -126,9 +126,9 @@\n .btn-topup:hover { background: var(--red3); transform: translateY(-1px); box-shadow: 0 4px 18px var(--glow); }\r\n \r\n .btn-ghost {\r\n   background: transparent; color: var(--text2); border: 1px solid #333;\r\n-  padding: 8px 13px; border-radius: 6px;\r\n+  padding: 10px 13px; border-radius: 6px;\r\n   font-family: \"Kanit\", sans-serif; font-size: .90rem;\r\n   cursor: pointer; transition: .2s;\r\n   display: flex; align-items: center; gap: 6px;\r\n }\r\n"
+                },
+                {
+                    "date": 1774567191406,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -126,9 +126,9 @@\n .btn-topup:hover { background: var(--red3); transform: translateY(-1px); box-shadow: 0 4px 18px var(--glow); }\r\n \r\n .btn-ghost {\r\n   background: transparent; color: var(--text2); border: 1px solid #333;\r\n-  padding: 10px 13px; border-radius: 6px;\r\n+  padding: 8px 13px; border-radius: 6px;\r\n   font-family: \"Kanit\", sans-serif; font-size: .90rem;\r\n   cursor: pointer; transition: .2s;\r\n   display: flex; align-items: center; gap: 6px;\r\n }\r\n"
+                },
+                {
+                    "date": 1774567205284,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -128,9 +128,9 @@\n .btn-ghost {\r\n   background: transparent; color: var(--text2); border: 1px solid #333;\r\n   padding: 8px 13px; border-radius: 6px;\r\n   font-family: \"Kanit\", sans-serif; font-size: .90rem;\r\n-  cursor: pointer; transition: .2s;\r\n+  cursor: pointer; transition: .5s;\r\n   display: flex; align-items: center; gap: 6px;\r\n }\r\n .btn-ghost:hover { border-color: var(--text2); color: #fff; }\r\n \r\n"
+                },
+                {
+                    "date": 1775234947338,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -128,9 +128,9 @@\n .btn-ghost {\r\n   background: transparent; color: var(--text2); border: 1px solid #333;\r\n   padding: 8px 13px; border-radius: 6px;\r\n   font-family: \"Kanit\", sans-serif; font-size: .90rem;\r\n-  cursor: pointer; transition: .5s;\r\n+  cursor: pointer; transition: .9s;\r\n   display: flex; align-items: center; gap: 6px;\r\n }\r\n .btn-ghost:hover { border-color: var(--text2); color: #fff; }\r\n \r\n@@ -283,5 +283,64 @@\n     width: 42px; height: 42px;\r\n     font-size: 1.1rem;\r\n   }\r\n   .hero { padding: 70px 16px 100px; }\r\n+}\r\n+\r\n+/* ---- DECK SECTION (category grouping) ---- */\r\n+.deck-grid {\r\n+  display: flex;\r\n+  flex-direction: column;\r\n+  align-items: stretch;\r\n+  gap: 0;\r\n+  width: 100%;\r\n+  max-width: 900px;\r\n+}\r\n+\r\n+.deck-section-header {\r\n+  display: flex;\r\n+  align-items: center;\r\n+  gap: 12px;\r\n+  margin: 28px 0 14px;\r\n+  font-family: \"Kanit\", sans-serif;\r\n+  font-weight: 800;\r\n+  font-size: 1rem;\r\n+  letter-spacing: 3px;\r\n+  color: var(--text2);\r\n+  text-transform: uppercase;\r\n+}\r\n+.deck-section-header::before {\r\n+  content: \"\";\r\n+  display: inline-block;\r\n+  width: 3px;\r\n+  height: 1.1em;\r\n+  background: var(--red);\r\n+  border-radius: 2px;\r\n+  flex-shrink: 0;\r\n+}\r\n+.deck-section-header:first-child {\r\n+  margin-top: 0;\r\n+}\r\n+\r\n+.deck-section-row {\r\n+  display: flex;\r\n+  flex-wrap: wrap;\r\n+  gap: 14px;\r\n+  justify-content: flex-start;\r\n+}\r\n+.deck-section-row .deck-card {\r\n+  min-width: 120px;\r\n+  max-width: 145px;\r\n+  flex: 0 0 auto;\r\n+}\r\n+\r\n+@media (max-width: 580px) {\r\n+  .deck-section-row .deck-card {\r\n+    min-width: calc(50% - 7px);\r\n+    max-width: calc(50% - 7px);\r\n+  }\r\n+  .deck-section-header {\r\n+    font-size: .85rem;\r\n+    letter-spacing: 2px;\r\n+    margin: 22px 0 10px;\r\n+  }\r\n }\n\\ No newline at end of file\n"
                 }
             ],
             "date": 1774366341293,

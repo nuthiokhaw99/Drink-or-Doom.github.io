@@ -1,0 +1,66 @@
+{
+    "sourceFile": "js/config.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 12,
+            "patches": [
+                {
+                    "date": 1774656113399,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1774656124532,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -0,0 +1,4 @@\n+const CONFIG = {\r\n+  SUPABASE_URL:  '',\r\n+  SUPABASE_ANON: ''\r\n+};\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1774656257411,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -0,0 +1,6 @@\n+// config.js — ห้าม commit ไฟล์นี้เด็ดขาด\r\n+// ไฟล์นี้อยู่ใน .gitignore แล้ว\r\n+const CONFIG = {\r\n+  SUPABASE_URL:  'https://wslevsdsbcqjndskwyhz.supabase.co',\r\n+  SUPABASE_ANON: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndzbGV2c2RzYmNxam5kc2t3eWh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0NzIzODMsImV4cCI6MjA5MDA0ODM4M30.oqU-hjSy0ME_BBJq5zeyvUgjOC4g4sQHZmxbA0Tp9B8'\r\n+};\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1774656418921,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,14 +0,0 @@\n-// config.js — ห้าม commit ไฟล์นี้เด็ดขาด\r\n-// ไฟล์นี้อยู่ใน .gitignore แล้ว\r\n-const CONFIG = {\r\n-  SUPABASE_URL:  'https://wslevsdsbcqjndskwyhz.supabase.co',\r\n-  SUPABASE_ANON: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndzbGV2c2RzYmNxam5kc2t3eWh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0NzIzODMsImV4cCI6MjA5MDA0ODM4M30.oqU-hjSy0ME_BBJq5zeyvUgjOC4g4sQHZmxbA0Tp9B8'\r\n-};\n-const CONFIG = {\r\n-  SUPABASE_URL:  '',\r\n-  SUPABASE_ANON: ''\r\n-};\n-const CONFIG = {\r\n-  SUPABASE_URL:  'https://wslevsdsbcqjndskwyhz.supabase.co',\r\n-  SUPABASE_ANON: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndzbGV2c2RzYmNxam5kc2t3eWh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0NzIzODMsImV4cCI6MjA5MDA0ODM4M30.oqU-hjSy0ME_BBJq5zeyvUgjOC4g4sQHZmxbA0Tp9B8'\r\n-};\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1774656826516,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -0,0 +1,6 @@\n+// config.js — ห้าม commit ไฟล์นี้เด็ดขาด\r\n+// ไฟล์นี้อยู่ใน .gitignore แล้ว\r\n+const CONFIG = {\r\n+  SUPABASE_URL:  'https://wslevsdsbcqjndskwyhz.supabase.co',\r\n+  SUPABASE_ANON: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndzbGV2c2RzYmNxam5kc2t3eWh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0NzIzODMsImV4cCI6MjA5MDA0ODM4M30.oqU-hjSy0ME_BBJq5zeyvUgjOC4g4sQHZmxbA0Tp9B8'\r\n+};\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1775214491198,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,6 +1,6 @@\n // config.js — ห้าม commit ไฟล์นี้เด็ดขาด\r\n // ไฟล์นี้อยู่ใน .gitignore แล้ว\r\n const CONFIG = {\r\n   SUPABASE_URL:  'https://wslevsdsbcqjndskwyhz.supabase.co',\r\n-  SUPABASE_ANON: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndzbGV2c2RzYmNxam5kc2t3eWh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0NzIzODMsImV4cCI6MjA5MDA0ODM4M30.oqU-hjSy0ME_BBJq5zeyvUgjOC4g4sQHZmxbA0Tp9B8'\r\n+  SUPABASE_ANON: 'กไกไ.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndzbGV2c2RzYmNxam5kc2t3eWh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0NzIzODMsImV4cCI6MjA5MDA0ODM4M30.oqU-hjSy0ME_BBJq5zeyvUgjOC4g4sQHZmxbA0Tp9B8'\r\n };\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1775214496661,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,6 +1,6 @@\n // config.js — ห้าม commit ไฟล์นี้เด็ดขาด\r\n // ไฟล์นี้อยู่ใน .gitignore แล้ว\r\n const CONFIG = {\r\n   SUPABASE_URL:  'https://wslevsdsbcqjndskwyhz.supabase.co',\r\n-  SUPABASE_ANON: 'กไกไ.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndzbGV2c2RzYmNxam5kc2t3eWh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0NzIzODMsImV4cCI6MjA5MDA0ODM4M30.oqU-hjSy0ME_BBJq5zeyvUgjOC4g4sQHZmxbA0Tp9B8'\r\n-};\n\\ No newline at end of file\n+  SUPABASE_ANON: 'wwwwwwwwwwwwwwwwwwwwwwwwwww'\r\n+};ww\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1775214535095,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,6 +1,6 @@\n // config.js — ห้าม commit ไฟล์นี้เด็ดขาด\r\n // ไฟล์นี้อยู่ใน .gitignore แล้ว\r\n const CONFIG = {\r\n   SUPABASE_URL:  'https://wslevsdsbcqjndskwyhz.supabase.co',\r\n-  SUPABASE_ANON: 'wwwwwwwwwwwwwwwwwwwwwwwwwww'\r\n-};ww\n\\ No newline at end of file\n+  SUPABASE_ANON: 'กไกไ.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndzbGV2c2RzYmNxam5kc2t3eWh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0NzIzODMsImV4cCI6MjA5MDA0ODM4M30.oqU-hjSy0ME_BBJq5zeyvUgjOC4g4sQHZmxbA0Tp9B8'\r\n+};\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1775214584849,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,6 +1,6 @@\n // config.js — ห้าม commit ไฟล์นี้เด็ดขาด\r\n // ไฟล์นี้อยู่ใน .gitignore แล้ว\r\n const CONFIG = {\r\n   SUPABASE_URL:  'https://wslevsdsbcqjndskwyhz.supabase.co',\r\n-  SUPABASE_ANON: 'กไกไ.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndzbGV2c2RzYmNxam5kc2t3eWh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0NzIzODMsImV4cCI6MjA5MDA0ODM4M30.oqU-hjSy0ME_BBJq5zeyvUgjOC4g4sQHZmxbA0Tp9B8'\r\n+  SUPABASE_ANON: 'wwwwwwwwwwwwwwwwwwwwwwwwwww'\r\n };\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1775214896456,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,6 +1,6 @@\n // config.js — ห้าม commit ไฟล์นี้เด็ดขาด\r\n // ไฟล์นี้อยู่ใน .gitignore แล้ว\r\n const CONFIG = {\r\n   SUPABASE_URL:  'https://wslevsdsbcqjndskwyhz.supabase.co',\r\n-  SUPABASE_ANON: 'wwwwwwwwwwwwwwwwwwwwwwwwwww'\r\n+  SUPABASE_ANON: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndzbGV2c2RzYmNxam5kc2t3eWh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0NzIzODMsImV4cCI6MjA5MDA0ODM4M30.oqU-hjSy0ME_BBJq5zeyvUgjOC4g4sQHZmxbA0Tp9B8'\r\n };\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1775215513619,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,6 +1,6 @@\n // config.js — ห้าม commit ไฟล์นี้เด็ดขาด\r\n // ไฟล์นี้อยู่ใน .gitignore แล้ว\r\n const CONFIG = {\r\n   SUPABASE_URL:  'https://wslevsdsbcqjndskwyhz.supabase.co',\r\n-  SUPABASE_ANON: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndzbGV2c2RzYmNxam5kc2t3eWh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0NzIzODMsImV4cCI6MjA5MDA0ODM4M30.oqU-hjSy0ME_BBJq5zeyvUgjOC4g4sQHZmxbA0Tp9B8'\r\n+  SUPABASE_ANON: 'sb_publishable_KV4dA3OcnSzWMZjdz3sTvA_cigdtjCj'\r\n };\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1775227039923,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,6 +1,6 @@\n // config.js — ห้าม commit ไฟล์นี้เด็ดขาด\r\n // ไฟล์นี้อยู่ใน .gitignore แล้ว\r\n const CONFIG = {\r\n   SUPABASE_URL:  'https://wslevsdsbcqjndskwyhz.supabase.co',\r\n-  SUPABASE_ANON: 'sb_publishable_KV4dA3OcnSzWMZjdz3sTvA_cigdtjCj'\r\n+  SUPABASE_ANON: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndzbGV2c2RzYmNxam5kc2t3eWh6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDQ3MjM4MywiZXhwIjoyMDkwMDQ4MzgzfQ.ypJuVVLvlBMczsm3eaEdetMt7BIWGF1Gt2GNSdKyMpA'\r\n };\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1775227091502,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,6 +1,6 @@\n // config.js — ห้าม commit ไฟล์นี้เด็ดขาด\r\n // ไฟล์นี้อยู่ใน .gitignore แล้ว\r\n const CONFIG = {\r\n   SUPABASE_URL:  'https://wslevsdsbcqjndskwyhz.supabase.co',\r\n-  SUPABASE_ANON: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndzbGV2c2RzYmNxam5kc2t3eWh6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDQ3MjM4MywiZXhwIjoyMDkwMDQ4MzgzfQ.ypJuVVLvlBMczsm3eaEdetMt7BIWGF1Gt2GNSdKyMpA'\r\n+  SUPABASE_ANON: 'sb_publishable_KV4dA3OcnSzWMZjdz3sTvA_cigdtjCj'\r\n };\n\\ No newline at end of file\n"
+                }
+            ],
+            "date": 1774656113399,
+            "name": "Commit-0",
+            "content": "const CONFIG = {\r\n  SUPABASE_URL:  'https://wslevsdsbcqjndskwyhz.supabase.co',\r\n  SUPABASE_ANON: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndzbGV2c2RzYmNxam5kc2t3eWh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0NzIzODMsImV4cCI6MjA5MDA0ODM4M30.oqU-hjSy0ME_BBJq5zeyvUgjOC4g4sQHZmxbA0Tp9B8'\r\n};"
+        }
+    ]
+}

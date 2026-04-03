@@ -66,23 +66,19 @@ body::before {
   flex-direction: column;
   line-height: 1;
   gap: 1px;
+  border-left: 3.5px solid #e50914;
+  padding-left: 14px;
 }
 
 .logo-main {
   font-family: "Kanit", sans-serif;
   font-weight: 900;
   font-size: 1.75rem;
-  color: var(--red);
-  letter-spacing: -0.5px;   /* Netflix แน่น ไม่ห่าง */
-  text-transform: uppercase;
-  /* เงา glow แบบ Netflix */
-  text-shadow:
-    0 0 20px rgba(229,9,20,.6),
-    0 2px 4px rgba(0,0,0,.8);
-  /* ขอบบางๆ ให้ดู solid */
-  -webkit-text-stroke: 0.5px rgba(255,60,60,.3);
-  transition: text-shadow .2s;
+  letter-spacing: -0.5px;
+  line-height: 1;
 }
+
+/* ลบ text-shadow และ -webkit-text-stroke เดิมออกทั้งหมด */
 
 .logo-sub {
   font-family: "Kanit", sans-serif;
@@ -90,7 +86,6 @@ body::before {
   font-size: .58rem;
   color: var(--text2);
   letter-spacing: 3.5px;
-  text-transform: uppercase;
   padding-left: 1px;
 }
 
@@ -133,8 +128,8 @@ body::before {
 .btn-ghost {
   background: transparent; color: var(--text2); border: 1px solid #333;
   padding: 8px 13px; border-radius: 6px;
-  font-family: "Kanit", sans-serif; font-size: .82rem;
-  cursor: pointer; transition: .2s;
+  font-family: "Kanit", sans-serif; font-size: .90rem;
+  cursor: pointer; transition: .9s;
   display: flex; align-items: center; gap: 6px;
 }
 .btn-ghost:hover { border-color: var(--text2); color: #fff; }
@@ -142,8 +137,8 @@ body::before {
 /* ---- HERO ---- */
 .hero {
   min-height: 100vh; display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  padding: 100px 20px 60px; position: relative;
+  align-items: center; justify-content:  flex-start;
+  padding: 80px 20px 100px; position: relative;
 }
 .hero::before {
   content: ""; position: absolute; inset: 0;
@@ -153,13 +148,13 @@ body::before {
 }
 .big-title {
   font-family: "Kanit", sans-serif; font-weight: 900;
-  font-size: clamp(3.5rem, 10vw, 7.5rem);
-  letter-spacing: 8px; text-align: center; line-height: .88; position: relative; z-index: 1;
+  font-size: clamp(2.8rem, 8vw, 6rem);
+  letter-spacing: 4px; text-align: center; line-height: .88; position: relative; z-index: 1;
 }
 .big-title .r { color: var(--red); text-shadow: 0 0 50px var(--glow), 0 0 100px rgba(229,9,20,.2); }
 .hero-sub {
   color: var(--text2); font-size: .95rem; font-weight: 300; letter-spacing: 1px;
-  margin: 18px 0 50px; position: relative; z-index: 1;
+  margin: 14px 0 32px;; position: relative; z-index: 1;
   display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center;
 }
 .hero-sub .chip { display: flex; align-items: center; gap: 5px; }
@@ -178,12 +173,14 @@ body::before {
 }
 .deck-card {
   background: linear-gradient(145deg, #1c1c1c, #111);
-  border: 1px solid #252525; border-radius: 14px;
-  padding: 16px 18px;        /* ลดจาก 24px 28px */
+  border: 1px solid #252525; border-radius: 12px;
+  padding: 14px 12px;
+  min-width: 120px;
+  max-width: 145px;
+  flex: 1;
   cursor: pointer;
   transition: all .3s cubic-bezier(.23,1,.32,1);
   position: relative; overflow: hidden;
-  min-width: 140px;          /* ลดจาก 188px */
   text-align: center;
 }
 .deck-card::before {
@@ -196,26 +193,31 @@ body::before {
 .deck-card.sel::before       { opacity: 1; }
 .deck-card.sel               { border-color: var(--red); box-shadow: 0 0 28px var(--glow); background: linear-gradient(145deg, #1f0505, #130303); }
 .d-ico-wrap {
-  width: 38px; height: 38px;  /* ลดจาก 50px */
+  width: 52px; height: 52px;
   border-radius: 10px;
+  margin: 0 auto 8px;
+  font-size: 1.15rem;
   display: flex; align-items: center; justify-content: center;
-  margin: 0 auto 8px;         /* ลดจาก 12px */
-  font-size: 1.1rem;          /* ลดจาก 1.5rem */
 }
-
-.d-name { font-weight: 700; font-size: .9rem; margin-bottom: 2px; }  /* ลดจาก 1.05rem */
+.d-name { font-weight: 700; font-size: .88rem; margin-bottom: 2px; }
 .d-cnt  { color: var(--text2); font-size: .72rem; display: flex; align-items: center; gap: 5px; justify-content: center; margin-top: 2px; }
 .d-desc { color: var(--text3); font-size: .68rem; margin-top: 3px; }
 .d-cost { display: inline-flex; align-items: center; gap: 5px; background: rgba(245,197,24,.08); border: 1px solid rgba(245,197,24,.25); border-radius: 20px; padding: 2px 9px; font-size: .68rem; color: var(--gold); margin-top: 8px; }
 .btn-play {
   background: var(--red); color: #fff; border: none;
-  padding: 13px 44px; border-radius: 8px;
-  font-family: "Kanit", sans-serif; font-weight: 700; font-size: 1.1rem;
-  cursor: pointer; margin-top: 0;   /* ลดจาก 40px */
-  letter-spacing: 1px; transition: .25s;
-  position: relative; z-index: 1;
+  padding: 16px 44px; 
+  font-family: "Kanit", sans-serif; font-weight: 700; font-size: 1.2rem;
+  cursor: pointer; margin: 0 auto;
+  letter-spacing: 2px; transition: .25s;
+  position: fixed; z-index: 100;
   box-shadow: 0 4px 28px var(--glow);
-  display: inline-flex; align-items: center; gap: 10px;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: calc(100vw - 48px);
+  max-width: 400px;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  border-radius: 10px;
 }
 .btn-play:hover    { background: var(--red3); transform: translateY(-2px); box-shadow: 0 8px 40px var(--glow); }
 .btn-play:disabled { background: #2a2a2a; color: #555; cursor: not-allowed; box-shadow: none; transform: none; }
@@ -258,7 +260,87 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: 14px;
+  max-width: 1000px;
   position: relative;
   z-index: 1;
+}
+
+body.in-game {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}
+
+@media (max-width: 580px) {
+  .deck-card {
+    min-width: calc(50% - 8px);
+    max-width: calc(50% - 8px);
+    padding: 14px 10px;
+  }
+  .d-ico-wrap {
+    width: 42px; height: 42px;
+    font-size: 1.1rem;
+  }
+  .hero { padding: 70px 16px 100px; }
+}
+
+/* ---- DECK SECTION (category grouping) ---- */
+.deck-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  width: 100%;
+  max-width: 900px;
+}
+
+.deck-section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 28px 0 14px;
+  font-family: "Kanit", sans-serif;
+  font-weight: 800;
+  font-size: 1rem;
+  letter-spacing: 3px;
+  color: var(--text2);
+  text-transform: uppercase;
+}
+.deck-section-header::before {
+  content: "";
+  display: inline-block;
+  width: 3px;
+  height: 1.1em;
+  background: var(--red);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.deck-section-header:first-child {
+  margin-top: 0;
+}
+
+.deck-section-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: flex-start;
+}
+.deck-section-row .deck-card {
+  min-width: 120px;
+  max-width: 145px;
+  flex: 0 0 auto;
+}
+
+@media (max-width: 580px) {
+  .deck-section-row .deck-card {
+    min-width: calc(50% - 7px);
+    max-width: calc(50% - 7px);
+  }
+  .deck-section-header {
+    font-size: .85rem;
+    letter-spacing: 2px;
+    margin: 22px 0 10px;
+  }
 }

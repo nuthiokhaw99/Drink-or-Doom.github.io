@@ -1,0 +1,8 @@
+# ── Secret files — ห้าม commit ──
+config.js
+
+# ── OS & Editor ──
+.DS_Store
+Thumbs.db
+.vscode/
+*.swp

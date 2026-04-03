@@ -1,0 +1,304 @@
+/* =========================================
+   auth.css — Login / Register Modal
+   เข้าธีม Drink or Doom (ดำ / แดง / ทอง)
+   ========================================= */
+
+/* ---- OVERLAY ---- */
+#login-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.92);
+  z-index: 600;
+  display: none; align-items: center; justify-content: center;
+  backdrop-filter: blur(8px);
+}
+#login-overlay.show { display: flex; }
+
+/* ---- MODAL BOX ---- */
+.login-box {
+  background: linear-gradient(145deg, #181818, #101010);
+  border: 1px solid #272727;
+  border-radius: 20px;
+  padding: 38px 38px 32px;
+  max-width: 420px; width: 92%;
+  position: relative;
+  box-shadow: 0 0 80px rgba(229,9,20,.15), 0 30px 80px rgba(0,0,0,.8);
+  animation: authSlideUp .35s cubic-bezier(.23,1,.32,1);
+}
+/* เส้นแดงบน */
+.login-box::before {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--red), transparent);
+  border-radius: 20px 20px 0 0;
+}
+
+@keyframes authSlideUp {
+  from { transform: translateY(32px) scale(.96); opacity: 0; }
+  to   { transform: translateY(0) scale(1);      opacity: 1; }
+}
+
+/* ---- LOGO ในmodal ---- */
+.auth-logo {
+  text-align: center;
+  margin-bottom: 22px;
+}
+.auth-logo .logo-main {
+  font-family: "Kanit", sans-serif;
+  font-weight: 900; font-size: 2rem;
+  color: var(--red);
+  letter-spacing: -0.5px;
+  text-shadow: 0 0 20px rgba(229,9,20,.6), 0 2px 4px rgba(0,0,0,.8);
+}
+.auth-logo .logo-sub {
+  font-family: "Kanit", sans-serif;
+  font-weight: 300; font-size: .55rem;
+  color: var(--text2); letter-spacing: 3.5px;
+  display: block; margin-top: 2px;
+}
+
+/* ---- TAB TOGGLE ---- */
+.login-tabs {
+  display: flex;
+  background: #111;
+  border: 1px solid #1e1e1e;
+  border-radius: 10px;
+  padding: 3px; gap: 3px;
+  margin-bottom: 24px;
+}
+.login-tab {
+  flex: 1; padding: 9px 0;
+  border-radius: 7px; border: none;
+  background: transparent; color: var(--text2);
+  font-family: "Kanit", sans-serif; font-weight: 600; font-size: .88rem;
+  cursor: pointer; transition: .2s;
+}
+.login-tab.act {
+  background: var(--red); color: #fff;
+}
+
+/* ---- MODAL TITLE ---- */
+.auth-ttl {
+  font-family: "Kanit", sans-serif;
+  font-weight: 900; font-size: 1.55rem;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+  display: flex; align-items: center; gap: 10px;
+}
+.auth-ttl .r { color: var(--red); }
+
+/* ---- FORM FIELDS (ใช้ .fg และ .fc จาก admin.css) ---- */
+
+/* ---- ERROR MESSAGE ---- */
+.login-err {
+  min-height: 20px;
+  font-size: .82rem;
+  color: var(--red);
+  margin-bottom: 10px;
+  display: flex; align-items: center; gap: 6px;
+}
+.login-err:not(:empty)::before {
+  content: "\f071"; /* fa warning icon — ใช้ text แทน */
+  font-family: inherit;
+}
+
+/* ---- AUTH BUTTON ---- */
+.btn-auth {
+  width: 100%; padding: 13px;
+  background: var(--red); color: #fff; border: none;
+  border-radius: 8px;
+  font-family: "Kanit", sans-serif; font-weight: 700; font-size: 1rem;
+  cursor: pointer; transition: .2s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  margin-top: 4px;
+}
+.btn-auth:hover:not(:disabled) {
+  background: var(--red3);
+  box-shadow: 0 4px 20px var(--glow);
+  transform: translateY(-1px);
+}
+.btn-auth:disabled {
+  opacity: .6; cursor: not-allowed;
+}
+
+/* ---- USER CHIP ใน Header ---- */
+/* User Chip — ต้องเป็น relative เพื่อให้ dropdown อิงตำแหน่งจาก chip */
+/* ---- USER CHIP ---- */
+.user-chip {
+  position: relative;
+  display: flex; align-items: center;
+  background: #111;
+  border: 1px solid #2a2a2a;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: border-color .2s;
+  overflow: visible;
+}
+.user-chip:hover,
+.user-chip.open { border-color: rgba(229,9,20,.5); }
+
+.chip-av {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: rgba(229,9,20,.15); border: 1px solid rgba(229,9,20,.2);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--red); font-size: .8rem; flex-shrink: 0;
+  margin: 4px 0 4px 4px;
+}
+
+.chip-name {
+  font-size: .82rem; font-weight: 700; color: #ddd;
+  padding: 0 8px;
+}
+
+.chip-divider {
+  width: 1px; height: 16px; background: #2a2a2a; flex-shrink: 0;
+}
+
+.chip-credit {
+  display: flex; align-items: center; gap: 5px;
+  padding: 0 8px 0 10px;
+}
+
+.chip-plus-circle {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: rgba(245,197,24,.15); border: 1px solid rgba(245,197,24,.35);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--gold); font-size: .72rem; font-weight: 900;
+  flex-shrink: 0; line-height: 1;
+  transition: background .15s, border-color .15s;
+}
+.user-chip:hover .chip-plus-circle {
+  background: rgba(245,197,24,.25); border-color: var(--gold);
+}
+
+.chip-credit .amt { color: var(--gold); font-weight: 700; font-size: .8rem; }
+.chip-credit .lbl { color: var(--text3); font-size: .65rem; }
+
+.chip-arr {
+  width: 26px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  border-left: 1px solid #2a2a2a;
+  color: #333; font-size: .62rem;
+  transition: color .2s;
+  border-radius: 0 30px 30px 0;
+}
+.user-chip:hover .chip-arr,
+.user-chip.open .chip-arr { color: var(--red); }
+.user-chip.open .chip-arr i { display: inline-block; transform: rotate(180deg); }
+
+/* Dropdown — วางชิดขวา ใต้ chip */
+
+/* ---- ปุ่ม Login ใน Header ---- */
+#btn-login {
+  display: flex; /* JS จะซ่อน/แสดง */
+  align-items: center; gap: 6px;
+  background: transparent;
+  border: 1px solid rgba(229,9,20,.4);
+  color: var(--text2);
+  padding: 7px 14px; border-radius: 6px;
+  font-family: "Kanit", sans-serif; font-size: .82rem;
+  cursor: pointer; transition: .2s;
+  white-space: nowrap;
+}
+#btn-login:hover {
+  border-color: var(--red); color: #fff;
+  background: rgba(229,9,20,.08);
+}
+
+/* ---- RESPONSIVE ---- */
+@media (max-width: 580px) {
+  .login-box { padding: 28px 20px 24px; }
+  .auth-ttl  { font-size: 1.3rem; }
+  #btn-login .lbl-txt { display: none; }
+  .user-chip #user-display-name { max-width: 70px; }
+}
+
+/* ---- SPIN ANIMATION สำหรับ loading ---- */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.fi-spin { animation: spin .7s linear infinite; display: inline-block; }
+
+/* Dropdown */
+.user-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  min-width: 180px;
+  z-index: 999;
+  background: #1a1a1a;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 8px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+
+  /* Animation */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  transition: opacity .2s ease, transform .2s ease, visibility .2s;
+}
+
+.user-chip.open .user-dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+
+/* Header ชื่อ + สมาชิก */
+.dropdown-header {
+  padding: 8px 10px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  margin-bottom: 6px;
+}
+
+.dh-name {
+  font-size: .95rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.dh-sub {
+  font-size: .75rem;
+  color: rgba(255,255,255,0.4);
+  margin-top: 2px;
+}
+
+/* ปุ่มใน dropdown */
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: rgba(255,255,255,0.8);
+  font-family: 'Kanit', sans-serif;
+  font-size: .88rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background .15s;
+}
+
+.dropdown-item:hover {
+  background: rgba(255,255,255,0.07);
+  color: #fff;
+}
+
+/* ปุ่มออกจากระบบ */
+.dropdown-item.danger {
+  color: #ff4d4d;
+}
+
+.dropdown-item.danger:hover {
+  background: rgba(255,77,77,0.1);
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.06);
+  margin: 6px 0;
+}

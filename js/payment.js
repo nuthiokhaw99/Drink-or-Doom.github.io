@@ -1,7 +1,6 @@
-
 const PAYMENT_CONFIG = {
-  provider:   null,      // 'omise' | 'stripe' | 'promptpay' | etc.
-  apiKey:     null,
+  provider: null,
+  apiKey:   null,
   packages: [
     { coins: 10,  price: 29,  bonus: 0  },
     { coins: 30,  price: 79,  bonus: 5  },
@@ -12,53 +11,86 @@ const PAYMENT_CONFIG = {
 
 let selectedPackage = null;
 
-/* ---- SELECT PACKAGE ---- */
-function selPkg(el, amount) {
-  document.querySelectorAll('.topup-opt').forEach(o => o.classList.remove('sel'));
-  el.classList.add('sel');
-  selectedPackage = PAYMENT_CONFIG.packages.find(p => p.coins === amount) || null;
-}
+// [FIX #15] ลบ selPkg ออกจากที่นี่แล้ว — นิยามครั้งเดียวใน app.js
+// selPkg ถูก call จาก HTML ด้วย onclick="selPkg(this, amount)"
 
-/* ---- INITIATE PAYMENT (placeholder) ---- */
+/* ---- INITIATE PAYMENT ---- */
 async function initiatePayment() {
   if (!selectedPackage) { toast('กรุณาเลือกแพ็กเกจก่อน', 'warning'); return; }
   if (!PAYMENT_CONFIG.provider) {
     toast('ระบบชำระเงินกำลังพัฒนา', 'info');
     return;
   }
-  // TODO: integrate with payment provider
-  // const result = await callPaymentAPI(selectedPackage);
-  // if (result.success) addCredits(selectedPackage.coins + selectedPackage.bonus);
 }
 
-/* ---- ADD CREDITS (called after successful payment) ---- */
-function addCredits(amount) {
-  credits += amount;
-  saveCr();
+/* ---- ADD CREDITS — บันทึกลง Supabase ---- */
+async function applyTopup(amount) {
+  if (!currentUser) { toast('กรุณาเข้าสู่ระบบก่อน', 'warning'); return; }
+  credits = await API.addCredits(amount);
   updateCr();
   toast(`เติมเครดิตสำเร็จ! +${amount} เครดิต`, 'success');
   closeTopup();
 }
 
-/* ---- FREE CREDITS (test mode only) ---- */
-function freeCredit() {
-  if (!DB.settings.testMode) { toast('โหมดทดสอบปิดอยู่', 'warning'); return; }
-  addCredits(10);
+/* ---- FREE CREDITS (test mode only)
+   [FIX #7] เพิ่ม rate limit ป้องกันกดซ้ำ
+   ========================================= */
+const FREE_CREDIT_COOLDOWN_MS = 60 * 1000; // 1 นาที
+
+async function freeCredit() {
+  if (!currentUser) { toast('กรุณาเข้าสู่ระบบก่อน', 'warning'); openLogin(); return; }
+  if (DB.settings?.testMode !== 1) { toast('โหมดทดสอบปิดอยู่', 'warning'); return; }
+
+  // Client-side rate limit (server-side RLS/trigger ควรทำด้วยถ้าเป็นไปได้)
+  const lastFreeCr = parseInt(localStorage.getItem('last_free_cr') || '0');
+  const now = Date.now();
+  if (now - lastFreeCr < FREE_CREDIT_COOLDOWN_MS) {
+    const wait = Math.ceil((FREE_CREDIT_COOLDOWN_MS - (now - lastFreeCr)) / 1000);
+    toast(`รอ ${wait} วินาทีก่อนรับเครดิตฟรีอีกครั้ง`, 'warning');
+    return;
+  }
+
+  try {
+    localStorage.setItem('last_free_cr', now.toString());
+    await applyTopup(10);
+    _sb.from('credit_history').insert({
+      user_id: currentUser.id,
+      amount:  10,
+      type:    'free',
+      note:    'รับเครดิตฟรี (ทดสอบ)'
+    }).then(({ error }) => { if (error) console.warn('history:', error.message); });
+  } catch (e) {
+    console.error('freeCredit error:', e);
+    localStorage.removeItem('last_free_cr'); // ถ้า error ให้ลองใหม่ได้
+    toast('เกิดข้อผิดพลาด', 'error');
+  }
 }
 
-/* ---- PAYMENT HISTORY (stub) ---- */
-function getPaymentHistory() {
-  return JSON.parse(localStorage.getItem('ds_payments') || '[]');
-}
-
-function recordPayment(pkg, txId = null) {
-  const history = getPaymentHistory();
-  history.unshift({
-    id:       txId || ('tx_' + Date.now()),
-    coins:    pkg.coins + pkg.bonus,
-    price:    pkg.price,
-    date:     new Date().toISOString(),
-    provider: PAYMENT_CONFIG.provider
+/* ---- PAYMENT HISTORY
+   [FIX #20] บันทึกลง Supabase แทน localStorage
+   ========================================= */
+async function recordPayment(pkg, txId = null) {
+  if (!currentUser) return;
+  const { error } = await _sb.from('credit_history').insert({
+    user_id:  currentUser.id,
+    amount:   pkg.coins + pkg.bonus,
+    type:     'purchase',
+    note:     `ซื้อ ${pkg.coins + pkg.bonus} เครดิต (${pkg.price} บาท) ผ่าน ${PAYMENT_CONFIG.provider || 'unknown'}`,
+    tx_id:    txId || ('tx_' + Date.now()),
   });
-  localStorage.setItem('ds_payments', JSON.stringify(history.slice(0, 50)));
+  if (error) console.error('recordPayment error:', error);
+}
+
+// [FIX #20] getPaymentHistory ดึงจาก Supabase แทน localStorage
+async function getPaymentHistory() {
+  if (!currentUser) return [];
+  const { data, error } = await _sb
+    .from('credit_history')
+    .select('*')
+    .eq('user_id', currentUser.id)
+    .eq('type', 'purchase')
+    .order('created_at', { ascending: false })
+    .limit(50);
+  if (error) { console.error(error); return []; }
+  return data || [];
 }

@@ -1,0 +1,30 @@
+{
+    "sourceFile": "js/config.example.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 3,
+            "patches": [
+                {
+                    "date": 1774656056345,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1774656084136,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,11 +1,6 @@\n-// config.example.js — commit ไฟล์นี้ได้ (ไม่มี key จริง)\r\n-// ───────────────────────────────────────────────────────\r\n-// วิธีใช้:\r\n-//   1. คัดลอกไฟล์นี้ → ตั้งชื่อใหม่เป็น config.js\r\n-//   2. ใส่ค่าจริงจาก Supabase Dashboard\r\n-//   3. ห้าม commit config.js (อยู่ใน .gitignore แล้ว)\r\n-// ───────────────────────────────────────────────────────\r\n+// config.js — ห้าม commit ไฟล์นี้เด็ดขาด\r\n+// ไฟล์นี้อยู่ใน .gitignore แล้ว\r\n const CONFIG = {\r\n-  SUPABASE_URL:  'YOUR_SUPABASE_PROJECT_URL',   // เช่น https://xxxx.supabase.co\r\n-  SUPABASE_ANON: 'YOUR_SUPABASE_ANON_KEY'       // จาก Settings → API → anon public\r\n+  SUPABASE_URL:  'https://wslevsdsbcqjndskwyhz.supabase.co',\r\n+  SUPABASE_ANON: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndzbGV2c2RzYmNxam5kc2t3eWh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0NzIzODMsImV4cCI6MjA5MDA0ODM4M30.oqU-hjSy0ME_BBJq5zeyvUgjOC4g4sQHZmxbA0Tp9B8'\r\n };\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1775214540336,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,6 +1,6 @@\n // config.js — ห้าม commit ไฟล์นี้เด็ดขาด\r\n // ไฟล์นี้อยู่ใน .gitignore แล้ว\r\n const CONFIG = {\r\n   SUPABASE_URL:  'https://wslevsdsbcqjndskwyhz.supabase.co',\r\n-  SUPABASE_ANON: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndzbGV2c2RzYmNxam5kc2t3eWh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0NzIzODMsImV4cCI6MjA5MDA0ODM4M30.oqU-hjSy0ME_BBJq5zeyvUgjOC4g4sQHZmxbA0Tp9B8'\r\n+  SUPABASE_ANON: 'z.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndzbGV2c2RzYmNxam5kc2t3eWh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0NzIzODMsImV4cCI6MjA5MDA0ODM4M30.oqU-hjSy0ME_BBJq5zeyvUgjOC4g4sQHZmxbA0Tp9B8'\r\n };\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1775214577714,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -0,0 +1,6 @@\n+// config.js — ห้าม commit ไฟล์นี้เด็ดขาด\r\n+// ไฟล์นี้อยู่ใน .gitignore แล้ว\r\n+const CONFIG = {\r\n+  SUPABASE_URL:  'https://wslevsdsbcqjndskwyhz.supabase.co',\r\n+  SUPABASE_ANON: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndzbGV2c2RzYmNxam5kc2t3eWh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0NzIzODMsImV4cCI6MjA5MDA0ODM4M30.oqU-hjSy0ME_BBJq5zeyvUgjOC4g4sQHZmxbA0Tp9B8'\r\n+};\n\\ No newline at end of file\n"
+                }
+            ],
+            "date": 1774656056345,
+            "name": "Commit-0",
+            "content": "// config.example.js — commit ไฟล์นี้ได้ (ไม่มี key จริง)\r\n// ───────────────────────────────────────────────────────\r\n// วิธีใช้:\r\n//   1. คัดลอกไฟล์นี้ → ตั้งชื่อใหม่เป็น config.js\r\n//   2. ใส่ค่าจริงจาก Supabase Dashboard\r\n//   3. ห้าม commit config.js (อยู่ใน .gitignore แล้ว)\r\n// ───────────────────────────────────────────────────────\r\nconst CONFIG = {\r\n  SUPABASE_URL:  'YOUR_SUPABASE_PROJECT_URL',   // เช่น https://xxxx.supabase.co\r\n  SUPABASE_ANON: 'YOUR_SUPABASE_ANON_KEY'       // จาก Settings → API → anon public\r\n};"
+        }
+    ]
+}

@@ -1,71 +1,83 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
+<link rel="icon" href="data:,">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DEALSHOT — ไพ่วงเหล้า</title>
+<title>DEALSHOT — ยกหรือยับ</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<!-- Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
-
-<!-- Flaticon Uicons -->
 <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
 <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
 <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-brands/css/uicons-brands.css">
 
-<!-- Styles -->
 <link rel="stylesheet" href="css/main.css">
 <link rel="stylesheet" href="css/components.css">
 <link rel="stylesheet" href="css/admin.css">
+<link rel="stylesheet" href="css/auth.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
-<!-- ============ HEADER ============ -->
+<!-- HEADER -->
 <header class="hdr">
   <div class="logo" onclick="goHome()">
     <div class="logo-wordmark">
-      <span class="logo-main">DRINKORDOOM</span>
+      <span class="logo-main"><span style="color:#e50914;">DRINK</span><span style="color:#fff;">ORDOOM</span></span>
       <span class="logo-sub">ยกหรือยับ</span>
     </div>
   </div>
   <div class="hdr-r">
-    <div class="credit-pill" onclick="openTopup()">
-      <i class="fi fi-sr-coins" style="color:var(--gold);font-size:.95rem;"></i>
-      <span class="amt" id="cr-disp">0</span>
-      <span class="lbl">เครดิต</span>
+    <div class="user-chip" id="user-chip" onclick="toggleUserDropdown()">
+      <div class="chip-av"><i class="fi fi-sr-user"></i></div>
+      <span class="chip-name" id="user-display-name"></span>
+      <div class="chip-divider"></div>
+      <div class="chip-credit">
+        <i class="fi fi-sr-coins" style="color:var(--gold);font-size:.75rem;"></i>
+        <span class="amt" id="cr-disp">0</span>
+        <span class="lbl">เครดิต</span>
+      </div>
+      <div class="chip-arr"><i class="fi fi-sr-angle-down"></i></div>
+      <div class="user-dropdown">
+        <div class="dropdown-header">
+          <div class="dh-avatar"><i class="fi fi-sr-user"></i></div>
+          <div>
+            <div class="dh-name" id="dropdown-username"></div>
+            <div class="dh-sub"><span class="dh-dot"></span> ออนไลน์</div>
+          </div>
+        </div>
+        <button class="dropdown-item" onclick="event.stopPropagation(); goHome()"><i class="fi fi-sr-home"></i> หน้าหลัก</button>
+        <button class="dropdown-item topup" onclick="event.stopPropagation(); openTopup()"><i class="fi fi-sr-coins"></i> เติมเครดิต</button>
+        <div class="dropdown-divider"></div>
+        <button class="dropdown-item danger" onclick="event.stopPropagation(); logout()"><i class="fi fi-sr-sign-out-alt"></i> ออกจากระบบ</button>
+      </div>
     </div>
-    <button class="btn-topup" onclick="openTopup()">
-      <i class="fi fi-sr-plus"></i><span class="lbl-txt">เติมเครดิต</span>
-    </button>
-      <button class="btn-ghost" onclick="showAdmin()">
-        <i class="fi fi-sr-tools"></i>
-      </button>
+    <button id="btn-login" onclick="openLogin()"><i class="fi fi-sr-user"></i><span class="lbl-txt">เข้าสู่ระบบ</span></button>
+    <button class="btn-ghost" id="btn-admin" onclick="showAdmin()"><i class="fi fi-sr-settings"></i></button>
   </div>
 </header>
 
-<!-- ============ HOME SCREEN ============ -->
+<!-- HOME -->
 <div id="home-screen">
   <section class="hero">
     <div class="big-title"><div>Drink or Doom</div><div class="r">ยกหรือยับ</div></div>
     <p class="hero-sub">
-      <span class="chip"><i class="fi fi-sr-layers" style="color:var(--red);font-size:.85rem;"></i> เลือกกองไพ่</span>
-      <span class="sep">·</span>
-      <span class="chip"><i class="fi fi-sr-coins" style="color:var(--gold);font-size:.85rem;"></i> จ่ายเครดิต</span>
-      <span class="sep">·</span>
-      <span class="chip"><i class="fi fi-sr-bolt" style="color:var(--red);font-size:.85rem;"></i> รับชะตากรรม</span>
+      <span class="chip"><i class="fi fi-sr-layers" style="color:var(--red);font-size:.85rem;"></i> ถ้านั่งกินเหล้าเหงาๆก็มาเข้าเว็บเราได้นะ</span>
     </p>
     <p class="sec-label">เลือกกองไพ่</p>
     <div class="deck-grid-wrap">
       <div class="deck-grid" id="deck-grid"></div>
       <button class="btn-play" id="btn-play" onclick="startGame()" disabled>
-        <i class="fi fi-sr-play"></i> เริ่มเล่น
+        <i class="fi fi-sr-play"></i> เลือกไพ่แล้วกดเริ่ม
       </button>
     </div>
   </section>
 </div>
 
-<!-- ============ GAME SCREEN ============ -->
-<div id="game-screen">
+<!-- GAME -->
+<div id="game-screen" style="display:none">
   <div class="game-hdr">
     <div style="display:flex;align-items:center;gap:14px;">
       <button class="btn-ghost" onclick="goHome()"><i class="fi fi-sr-angle-left"></i> กลับ</button>
@@ -78,16 +90,11 @@
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;">
-      <!-- โหมด toggle -->
       <div class="layout-toggle">
-        <button class="lt-btn act" id="lt-scatter" onclick="setLayout('scatter')" title="กระจายเละ">
-          <i class="fi fi-sr-shuffle"></i>
-        </button>
-        <button class="lt-btn" id="lt-stack" onclick="setLayout('stack')" title="เรียงตับ">
-          <i class="fi fi-sr-layers"></i>
-        </button>
+        <button class="lt-btn act" id="lt-scatter" onclick="setLayout('scatter')" title="กระจายเละ"><i class="fi fi-sr-shuffle"></i></button>
+        <button class="lt-btn" id="lt-stack" onclick="setLayout('stack')" title="เรียงตับ"><i class="fi fi-sr-layers"></i></button>
       </div>
-      <div class="g-credit"><i class="fi fi-sr-coins"></i> <span id="g-cr">0</span> เครดิต</div>
+      <div class="g-layout-label" id="g-layout-label">แบบกระจาย</div>
     </div>
   </div>
   <div class="table-area">
@@ -99,8 +106,8 @@
   </div>
 </div>
 
-<!-- ============ ADMIN SCREEN ============ -->
-<div id="admin-screen">
+<!-- ADMIN -->
+<div id="admin-screen" style="display:none">
   <div class="adm-hdr">
     <div>
       <div class="adm-ttl"><i class="fi fi-sr-settings-sliders" style="color:var(--red);"></i> <span class="r">ADMIN</span> PANEL</div>
@@ -108,25 +115,38 @@
     </div>
     <button class="btn-ghost" onclick="goHome()"><i class="fi fi-sr-home"></i> หน้าหลัก</button>
   </div>
+
+  <div class="stats-bar">
+    <div class="stat-card"><div class="stat-label">ผู้ใช้ทั้งหมด</div><div class="stat-val gold">0</div><div class="stat-sub">+12 สัปดาห์นี้</div></div>
+    <div class="stat-card"><div class="stat-label">ยอดเติมเงิน</div><div class="stat-val green">฿0</div><div class="stat-sub">เดือนนี้</div></div>
+    <div class="stat-card"><div class="stat-label">กองไพ่</div><div class="stat-val red" id="stat-decks">0</div><div class="stat-sub">ชุดใช้งานอยู่</div></div>
+    <div class="stat-card"><div class="stat-label">ไพ่ที่เปิดแล้ว</div><div class="stat-val white" id="stat-cards">0</div><div class="stat-sub">รวมทั้งหมด</div></div>
+  </div>
+
   <div class="tabs">
     <button class="tab act" onclick="switchTab('decks',0)"><i class="fi fi-sr-layers"></i> กองไพ่</button>
     <button class="tab" onclick="switchTab('cards',1)"><i class="fi fi-sr-pencil"></i> แก้ไขไพ่</button>
-    <button class="tab" onclick="switchTab('settings',2)"><i class="fi fi-sr-settings"></i> ตั้งค่า</button>
-    <button class="tab" onclick="switchTab('sheet',3)"><i class="fi fi-sr-table"></i> Spreadsheet</button>
+    <button class="tab" onclick="switchTab('users',2)"><i class="fi fi-sr-users"></i> ผู้ใช้</button>
+    <button class="tab" onclick="switchTab('stats',3)"><i class="fi fi-sr-chart-histogram"></i> สถิติ</button>
+    <button class="tab" onclick="switchTab('history',4)"><i class="fi fi-sr-coins"></i> ประวัติเครดิต</button>
+    <button class="tab" onclick="switchTab('announce',5)"><i class="fi fi-sr-bell"></i> ประกาศ</button>
+    <button class="tab" onclick="switchTab('settings',6)"><i class="fi fi-sr-settings"></i> ตั้งค่า</button>
+    <button class="tab" onclick="switchTab('sheet',7)"><i class="fi fi-sr-table"></i> Spreadsheet</button>
   </div>
 
-  <!-- Tab: Decks -->
   <div class="tab-content act" id="tc-decks">
     <div class="deck-list-adm" id="adm-deck-list"></div>
     <button class="btn-add" onclick="openDeckForm()"><i class="fi fi-sr-plus"></i> เพิ่มกองไพ่ใหม่</button>
   </div>
+  <div class="tab-content" id="tc-cards"></div>
+  <div class="tab-content" id="tc-users"></div>
+  <div class="tab-content" id="tc-stats"></div>
+  <div class="tab-content" id="tc-history"></div>
+  <div class="tab-content" id="tc-announce"></div>
 
-  <!-- Tab: Cards -->
-  <div class="tab-content" id="tc-cards">
+  <div class="tab-content" id="tc-settings">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
-      <label style="color:var(--text2);font-size:.85rem;display:flex;align-items:center;gap:6px;">
-        <i class="fi fi-sr-layers"></i> กองไพ่:
-      </label>
+      <label style="color:var(--text2);font-size:.85rem;display:flex;align-items:center;gap:6px;"><i class="fi fi-sr-layers"></i> กองไพ่:</label>
       <select class="fc" id="adm-deck-sel" style="width:200px" onchange="loadCE()"></select>
     </div>
     <div class="card-editor-box">
@@ -139,22 +159,28 @@
     </div>
   </div>
 
-  <!-- Tab: Settings -->
-  <div class="tab-content" id="tc-settings">
+  <div class="tab-content" id="tc-credit">
     <div class="sheet-sec">
-      <h3><i class="fi fi-sr-settings" style="color:var(--red);"></i> ตั้งค่าระบบ</h3>
-      <p>กำหนดเครดิตเริ่มต้นและชื่อเว็บ</p>
-      <div class="fg"><label><i class="fi fi-sr-coins"></i> เครดิตเริ่มต้น (ทดสอบ)</label><input type="number" class="fc" id="st-cr" value="10"></div>
-      <div class="fg"><label><i class="fi fi-sr-tag"></i> ชื่อเว็บ</label><input type="text" class="fc" id="st-nm" value="DEALSHOT"></div>
+      <h3><i class="fi fi-sr-coins" style="color:var(--red);"></i> ตั้งค่าเครดิต</h3>
+      <p>กำหนดค่าเริ่มต้นและระบบเติมเครดิต</p>
+      <div class="fg"><label><i class="fi fi-sr-coins"></i> เครดิต/ใบ (default ทุกกอง)</label><input type="number" class="fc" id="st-cost" value="1" min="0"></div>
       <div class="fg">
-        <label><i class="fi fi-sr-flask"></i> โหมดทดสอบ</label>
-        <select class="fc" id="st-test"><option value="1">เปิด</option><option value="0">ปิด</option></select>
+        <label><i class="fi fi-sr-shopping-cart"></i> ระบบเติมเครดิต</label>
+        <select class="fc" id="st-topup"><option value="1">เปิด</option><option value="0">ปิด</option></select>
       </div>
       <button class="btn-save" onclick="saveSettings()"><i class="fi fi-sr-disk"></i> บันทึก</button>
     </div>
+    <div class="sheet-sec">
+      <h3><i class="fi fi-sr-user" style="color:var(--red);"></i> จัดการเครดิตผู้ใช้</h3>
+      <p>แก้ไขหรือรีเซ็ตเครดิตของผู้ใช้</p>
+      <div class="fg"><label><i class="fi fi-sr-coins"></i> ตั้งเครดิตเป็น</label><input type="number" class="fc" id="st-set-cr" placeholder="เช่น 50" min="0"></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+        <button class="btn-conn" onclick="adminSetCredit()"><i class="fi fi-sr-disk"></i> บันทึกเครดิต</button>
+        <button class="btn-conn ghost" onclick="adminResetCredit()"><i class="fi fi-sr-rotate-left"></i> รีเซ็ตเป็น 0</button>
+      </div>
+    </div>
   </div>
 
-  <!-- Tab: Spreadsheet -->
   <div class="tab-content" id="tc-sheet">
     <div class="sheet-sec">
       <h3><i class="fi fi-brands-google" style="color:var(--red);"></i> เชื่อม Google Spreadsheet</h3>
@@ -164,9 +190,7 @@
         <button class="btn-conn" onclick="connectSheet()"><i class="fi fi-sr-link"></i> เชื่อมต่อ</button>
       </div>
       <div style="margin-top:16px;padding:14px;background:#1a1a1a;border-radius:8px;font-size:.8rem;color:var(--text2);line-height:2;">
-        <strong style="color:#fff;display:flex;align-items:center;gap:6px;margin-bottom:4px;">
-          <i class="fi fi-sr-info" style="color:var(--red);"></i> รูปแบบ Sheet ที่รองรับ:
-        </strong>
+        <strong style="color:#fff;display:flex;align-items:center;gap:6px;margin-bottom:4px;"><i class="fi fi-sr-info" style="color:var(--red);"></i> รูปแบบ Sheet ที่รองรับ:</strong>
         Sheet 1: <code style="color:var(--gold);">decks</code> — id | name | icon | theme | cost_per_card | description<br>
         Sheet 2: <code style="color:var(--gold);">cards</code> — deck_id | category | text
       </div>
@@ -184,7 +208,7 @@
   </div>
 </div>
 
-<!-- ============ RESULT MODAL ============ -->
+<!-- RESULT MODAL -->
 <div class="overlay" id="res-overlay">
   <div class="res-card">
     <div class="res-deck-lbl" id="res-dlbl"></div>
@@ -198,47 +222,60 @@
   </div>
 </div>
 
-<!-- ============ TOP-UP MODAL ============ -->
+<!-- TOP-UP MODAL -->
 <div class="overlay" id="topup-overlay">
-  <div class="modal-box">
+  <div class="modal-box topup-box">
     <button class="modal-x" onclick="closeTopup()"><i class="fi fi-sr-cross"></i></button>
     <div class="modal-ttl"><i class="fi fi-sr-coins" style="color:var(--gold);"></i> เติม<span class="r">เครดิต</span></div>
     <div class="modal-sub">เลือกแพ็กเกจที่ต้องการ</div>
     <div class="topup-grid">
-      <div class="topup-opt" onclick="selPkg(this,10)">
-        <div class="coins"><i class="fi fi-sr-coins"></i> 10</div><div class="price">฿29</div>
+      <div class="topup-row-small">
+        <div class="topup-opt" onclick="selPkg(this,30)">
+          <div class="pkg-coins"><i class="fi fi-sr-coins"></i> 50</div>
+          <div class="pkg-price">฿49 บาท</div>
+          <div class="pkg-bonus"><i class="fi fi-sr-plus"></i> เริ่มต้น</div>
+        </div>
+        <div class="topup-opt" onclick="selPkg(this,75)">
+          <div class="pkg-coins"><i class="fi fi-sr-coins"></i> 200</div>
+          <div class="pkg-price">฿149 บาท</div>
+          <div class="pkg-bonus"><i class="fi fi-sr-plus"></i> 51 โบนัส</div>
+        </div>
+        <div class="topup-opt" onclick="selPkg(this,165)">
+          <div class="pkg-coins"><i class="fi fi-sr-coins"></i> 350</div>
+          <div class="pkg-price">฿249 บาท</div>
+          <div class="pkg-bonus"><i class="fi fi-sr-plus"></i> 101 โบนัส</div>
+        </div>
       </div>
-      <div class="topup-opt" onclick="selPkg(this,30)">
-        <div class="coins"><i class="fi fi-sr-coins"></i> 30</div><div class="price">฿79</div>
-        <div class="bonus"><i class="fi fi-sr-plus"></i> +5 โบนัส</div>
-      </div>
-      <div class="topup-opt" onclick="selPkg(this,60)">
-        <div class="coins"><i class="fi fi-sr-coins"></i> 60</div><div class="price">฿149</div>
-        <div class="bonus"><i class="fi fi-sr-plus"></i> +15 โบนัส</div>
-      </div>
-      <div class="topup-opt" onclick="selPkg(this,150)">
-        <div class="coins"><i class="fi fi-sr-coins"></i> 150</div><div class="price">฿349</div>
-        <div class="bonus"><i class="fi fi-sr-star"></i> +50 โบนัส</div>
+      <div class="topup-opt topup-featured topup-big" onclick="selPkg(this,300)">
+        <div class="featured-badge"><i class="fi fi-sr-star"></i> โปรโมชั่นแนะนำ</div>
+        <div class="pkg-big-wrap">
+          <div class="pkg-coins pkg-coins-big"><i class="fi fi-sr-coins"></i> 120</div>
+          <div class="pkg-big-right">
+            <div class="pkg-price-big">฿99 บาท</div>
+            <div class="pkg-bonus"><i class="fi fi-sr-plus"></i> 21 โบนัส</div>
+            <div class="pkg-per">คนเติมเยอะที่สุด</div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="coming-banner">
-      <strong><i class="fi fi-sr-triangle-warning"></i> ระบบชำระเงินกำลังพัฒนา</strong>
-      <span style="font-size:.75rem;">กด "รับฟรี" ด้านล่างเพื่อทดสอบ</span>
+      <i class="fi fi-sr-triangle-warning"></i>
+      <div>
+        <strong>ระบบชำระเงินกำลังพัฒนา</strong>
+        <span>กด "รับฟรี" ด้านล่างเพื่อทดสอบ</span>
+      </div>
     </div>
     <button class="btn-free" onclick="freeCredit()"><i class="fi fi-sr-gift"></i> รับฟรี 10 เครดิต (ทดสอบ)</button>
   </div>
 </div>
 
-<!-- ============ DECK FORM MODAL ============ -->
+<!-- DECK FORM MODAL -->
 <div class="form-overlay" id="deck-form-ov">
   <div class="form-box">
     <button class="form-x" onclick="closeDeckForm()"><i class="fi fi-sr-cross"></i></button>
     <h3 id="df-title"><i class="fi fi-sr-layers" style="color:var(--red);"></i> เพิ่มกองไพ่ใหม่</h3>
     <div class="fg"><label><i class="fi fi-sr-tag"></i> ชื่อกองไพ่</label><input class="fc" id="df-name" placeholder="เช่น ความกล้า"></div>
-    <div class="fg">
-      <label><i class="fi fi-sr-apps"></i> Flaticon Uicons (เช่น fi-sr-flame)</label>
-      <input class="fc" id="df-icon" placeholder="fi-sr-flame">
-    </div>
+    <div class="fg"><label><i class="fi fi-sr-apps"></i> Flaticon Uicons (เช่น fi-sr-flame)</label><input class="fc" id="df-icon" placeholder="fi-sr-flame"></div>
     <div class="fg">
       <label><i class="fi fi-sr-palette"></i> ธีมสี</label>
       <select class="fc" id="df-theme">
@@ -252,6 +289,7 @@
       </select>
     </div>
     <div class="fg"><label><i class="fi fi-sr-align-left"></i> คำอธิบาย</label><input class="fc" id="df-desc" placeholder="คำอธิบายสั้นๆ"></div>
+    <div class="fg"><label><i class="fi fi-sr-apps-sort"></i> หมวดหมู่</label><input class="fc" id="df-category" placeholder="เช่น เกมดื่ม, คู่รัก, ท้าทาย"></div>
     <div class="fg"><label><i class="fi fi-sr-coins"></i> ค่าเครดิต/ใบ</label><input class="fc" type="number" id="df-cost" value="1" min="0"></div>
     <div class="form-acts">
       <button class="btn-cancel" onclick="closeDeckForm()"><i class="fi fi-sr-cross"></i> ยกเลิก</button>
@@ -260,26 +298,52 @@
   </div>
 </div>
 
-<!-- ============ TOAST ============ -->
+<!-- LOGIN / REGISTER MODAL -->
+<div class="overlay" id="login-overlay">
+  <div class="modal-box login-box">
+    <div class="auth-logo">
+      <span class="logo-main">DRINKORDOOM</span>
+      <span class="logo-sub">ยกหรือยับ</span>
+    </div>
+    <div class="login-tabs">
+      <button class="login-tab act" id="lt-login" onclick="switchLoginTab('login')">เข้าสู่ระบบ</button>
+      <button class="login-tab" id="lt-register" onclick="switchLoginTab('register')">สมัครสมาชิก</button>
+    </div>
+    <div id="lf-login">
+      <div class="auth-ttl"><i class="fi fi-sr-user" style="color:var(--red);"></i> เข้า<span class="r">สู่ระบบ</span></div>
+      <div class="fg"><label><i class="fi fi-sr-user"></i> Username</label><input class="fc" type="text" id="login-username" placeholder="กรอก username" autocomplete="username"></div>
+      <div class="fg"><label><i class="fi fi-sr-lock"></i> Password</label><input class="fc" type="password" id="login-password" placeholder="กรอกรหัสผ่าน" autocomplete="current-password"></div>
+      <div class="login-err" id="login-err"></div>
+      <button class="btn-auth" id="btn-do-login" onclick="doLogin()"><i class="fi fi-sr-sign-in-alt"></i> เข้าสู่ระบบ</button>
+    </div>
+    <div id="lf-register" style="display:none">
+      <div class="auth-ttl"><i class="fi fi-sr-user-add" style="color:var(--red);"></i> สมัคร<span class="r">สมาชิก</span></div>
+      <div class="fg"><label><i class="fi fi-sr-user"></i> Username</label><input class="fc" type="text" id="reg-username" placeholder="ตั้ง username (อย่างน้อย 3 ตัว)" autocomplete="username"></div>
+      <div class="fg"><label><i class="fi fi-sr-lock"></i> Password</label><input class="fc" type="password" id="reg-password" placeholder="ตั้งรหัสผ่าน (อย่างน้อย 6 ตัว)" autocomplete="new-password"></div>
+      <div class="fg"><label><i class="fi fi-sr-lock"></i> ยืนยัน Password</label><input class="fc" type="password" id="reg-confirm" placeholder="พิมพ์รหัสผ่านอีกครั้ง" autocomplete="new-password"></div>
+      <div class="login-err" id="reg-err"></div>
+      <button class="btn-auth" id="btn-do-register" onclick="doRegister()"><i class="fi fi-sr-user-add"></i> สมัครสมาชิก</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
 <div class="toast" id="toast">
   <i id="toast-ico" class="fi fi-sr-check-circle" style="color:#4caf50;"></i>
   <span id="toast-msg"></span>
 </div>
 
-<!-- ============ SCRIPTS ============ -->
-<!-- โหลด db.js ก่อน เพราะไฟล์อื่นใช้ DB -->
+<!-- SCRIPTS -->
+<!-- SCRIPTS -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/auth.js"></script>
 <script src="js/db.js"></script>
-<script src="js/admin-keys.js"></script>
-<script src="js/payment.js"></script>
 <script src="js/api.js"></script>
-<script src="js/components.js"></script>
-<script src="js/admin.js"></script>
 <script src="js/app.js"></script>
+<script src="js/admin-keys.js"></script>
+<script src="js/components.js"></script>
+<script src="js/payment.js"></script>
+<script src="js/admin.js"></script>
 </body>
 </html>
-
-<div class="coming-banner" id="test-banner">
-  <strong><i class="fi fi-sr-triangle-warning"></i> ระบบชำระเงินกำลังพัฒนา</strong>
-  <span style="font-size:.75rem;">กด "รับฟรี" ด้านล่างเพื่อทดสอบ</span>
-</div>
-<button class="btn-free" id="test-btn" onclick="freeCredit()"><i class="fi fi-sr-gift"></i> รับฟรี 10 เครดิต (ทดสอบ)</button>
