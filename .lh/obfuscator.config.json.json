@@ -1,0 +1,18 @@
+{
+    "sourceFile": "obfuscator.config.json",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1775624524676,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1775624524676,
+            "name": "Commit-0",
+            "content": "{\r\n  \"compact\": true,\r\n  \"controlFlowFlattening\": true,\r\n  \"controlFlowFlatteningThreshold\": 0.75,\r\n  \"deadCodeInjection\": true,\r\n  \"deadCodeInjectionThreshold\": 0.4,\r\n  \"debugProtection\": true,\r\n  \"debugProtectionInterval\": 4000,\r\n  \"disableConsoleOutput\": true,\r\n  \"identifierNamesGenerator\": \"hexadecimal\",\r\n  \"selfDefending\": true,\r\n  \"stringArray\": true,\r\n  \"stringArrayEncoding\": [\"base64\"],\r\n  \"stringArrayThreshold\": 0.75,\r\n  \"unicodeEscapeSequence\": true\r\n}"
+        }
+    ]
+}

@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 14,
+            "activePatchIndex": 15,
             "patches": [
                 {
                     "date": 1774366319960,
@@ -64,6 +64,10 @@
                 {
                     "date": 1774652753913,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -450,8 +450,9 @@\n   padding: 4px 8px;\r\n   font-size: .9rem;\r\n   font-family: 'Kanit', sans-serif; /* เพิ่มบรรทัดนี้ */\r\n }\r\n+\r\n .uc-cr-input:focus { border-color: var(--gold); outline: none; }\r\n  \r\n .uc-actions {\r\n   display: flex;\r\n"
+                },
+                {
+                    "date": 1775289810461,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -978,5 +978,45 @@\n .ann-row-acts {\r\n   display: flex;\r\n   gap: 6px;\r\n   flex-shrink: 0;\r\n-}\n\\ No newline at end of file\n+}\r\n+/* ---- PACKAGE LIST ---- */\r\n+#pkg-list { display: flex; flex-direction: column; gap: 8px; }\r\n+\r\n+.pkg-row {\r\n+  display: flex; align-items: center; gap: 14px;\r\n+  padding: 14px 16px;\r\n+  background: #111; border: 1px solid #1e1e1e; border-radius: 12px;\r\n+  transition: border-color .2s;\r\n+}\r\n+.pkg-row:hover { border-color: #2a2a2a; }\r\n+.pkg-row.pkg-inactive { opacity: .55; }\r\n+\r\n+.pkg-row-ico {\r\n+  width: 38px; height: 38px; border-radius: 10px;\r\n+  display: flex; align-items: center; justify-content: center;\r\n+  background: rgba(245,197,24,.1); border: 1px solid rgba(245,197,24,.25);\r\n+  color: var(--gold); font-size: .9rem; flex-shrink: 0;\r\n+}\r\n+.pkg-ico-featured {\r\n+  background: rgba(229,9,20,.12); border-color: rgba(229,9,20,.3); color: var(--red);\r\n+}\r\n+\r\n+.pkg-row-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }\r\n+.pkg-row-top  { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }\r\n+.pkg-row-name { font-weight: 700; font-size: .92rem; color: var(--text); }\r\n+\r\n+.pkg-row-detail {\r\n+  display: flex; align-items: center; gap: 6px;\r\n+  color: var(--text3); font-size: .75rem; flex-wrap: wrap;\r\n+}\r\n+.pkg-sep { color: #2a2a2a; }\r\n+\r\n+.pkg-badge {\r\n+  font-size: .65rem; font-weight: 700; padding: 2px 8px;\r\n+  border-radius: 20px; white-space: nowrap;\r\n+}\r\n+.pkg-badge-featured { background: rgba(229,9,20,.12); border: 1px solid rgba(229,9,20,.3); color: var(--red); }\r\n+.pkg-badge-off      { background: rgba(255,255,255,.05); border: 1px solid #2a2a2a; color: var(--text3); }\r\n+\r\n+.pkg-row-acts { display: flex; gap: 6px; flex-shrink: 0; }\n\\ No newline at end of file\n"
                 }
             ],
             "date": 1774366319960,

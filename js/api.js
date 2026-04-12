@@ -37,24 +37,35 @@ const API = {
     const decksRaw = await this.fetchSheet(url, 'decks');
     const cardsRaw = await this.fetchSheet(url, 'cards');
 
-    DB.decks = decksRaw.map(r => ({
-      id:   r.id   || ('d' + Date.now()),
-      name: r.name || 'ไม่มีชื่อ',
-      icon: r.icon || 'fi-sr-flame',
-      theme:r.theme || 'default',
-      cost: parseInt(r.cost_per_card) || 1,
-      desc: r.description || ''
+    // [UPDATED] upsert เข้า Supabase แทน localStorage
+    const deckRows = decksRaw.map(r => ({
+      id:          r.id   || ('d' + Date.now()),
+      name:        r.name || 'ไม่มีชื่อ',
+      icon:        r.icon || 'fi-sr-flame',
+      theme:       r.theme || 'default',
+      cost:        parseInt(r.cost_per_card) || 1,
+      description: r.description || '',
+      category:    r.category || 'ทั่วไป'
     }));
 
-    DB.cards = {};
-    DB.decks.forEach(d => { DB.cards[d.id] = []; });
-    cardsRaw.forEach(r => {
-      const did = r.deck_id;
-      if (DB.cards[did]) DB.cards[did].push({ cat: r.category || 'ทั่วไป', text: r.text || '' });
-    });
+    const { error: deckErr } = await _sb
+      .from('decks')
+      .upsert(deckRows, { onConflict: 'id' });
+    if (deckErr) throw new Error('upsert decks: ' + deckErr.message);
 
-    saveDB();
-    return { decks: DB.decks.length, cards: cardsRaw.length };
+    const deckIds = deckRows.map(d => d.id);
+    await _sb.from('cards').delete().in('deck_id', deckIds);
+
+    if (cardsRaw.length) {
+      const cardRows = cardsRaw
+        .filter(r => deckIds.includes(r.deck_id))
+        .map(r => ({ deck_id: r.deck_id, category: r.category || 'ทั่วไป', text: r.text || '' }));
+      const { error: cardErr } = await _sb.from('cards').insert(cardRows);
+      if (cardErr) throw new Error('insert cards: ' + cardErr.message);
+    }
+
+    await initDB();
+    return { decks: deckRows.length, cards: cardsRaw.length };
   },
 
   /* =========================================
@@ -152,6 +163,25 @@ const API = {
   }
 // <<<<<<< HEAD
 };
+
+async function _logAdminAction({ action, targetType, targetId, beforeVal, afterVal, note }) {
+  try {
+    const { data: { session } } = await _sb.auth.getSession()
+    if (!session) return  // ถ้าไม่มี session ก็ไม่ต้อง log
+
+    await fetch('https://xxxx.supabase.co/functions/v1/admin-action', {
+      method: 'POST',
+      headers: {
+        'Content-Type':  'application/json',
+        'Authorization': 'Bearer ' + session.access_token
+      },
+      body: JSON.stringify({ action, targetType, targetId, beforeVal, afterVal, note })
+    })
+  } catch (e) {
+    console.warn('audit log failed (non-critical):', e)
+    // ล้มเหลวได้โดยไม่ block main action
+  }
+}
 // =======
 // };
 // >>>>>>> 35c8474b63db1f7722e0f8c3738916b5f76e4a23

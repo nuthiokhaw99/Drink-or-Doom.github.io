@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 17,
+            "activePatchIndex": 20,
             "patches": [
                 {
                     "date": 1774366446050,
@@ -76,6 +76,18 @@
                 {
                     "date": 1775236347906,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -49,7 +49,6 @@\n   setVal('st-cost',  DB.settings?.defaultCost  ?? 1);\r\n   setVal('st-topup', DB.settings?.topupEnabled ?? 1);\r\n <<<<<<< HEAD\r\n }\r\n-=======\r\n+\r\n }\r\n->>>>>>> 35c8474b63db1f7722e0f8c3738916b5f76e4a23\r\n"
+                },
+                {
+                    "date": 1775510628917,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -47,8 +47,7 @@\n   setVal('st-test',  DB.settings?.testMode     ?? 1);\r\n   setVal('st-modal', DB.settings?.showModal    ?? 1);\r\n   setVal('st-cost',  DB.settings?.defaultCost  ?? 1);\r\n   setVal('st-topup', DB.settings?.topupEnabled ?? 1);\r\n-<<<<<<< HEAD\r\n+  setVal('st-layout', DB.settings?.deckLayout ?? 'auto');\r\n }\r\n \r\n-}\r\n"
+                },
+                {
+                    "date": 1775595990427,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -33,8 +33,11 @@\n     .forEach(el => el.style.display = 'none');\r\n   document.getElementById('admin-screen').style.display = 'block';\r\n   history.pushState({}, '', '#admin');\r\n \r\n+  // ✅ รอให้ DB โหลดเสร็จก่อนเสมอ\r\n+  await initDB();\r\n+\r\n   if (typeof renderAdmDecks === 'function') renderAdmDecks();\r\n   if (typeof renderAdmSel   === 'function') renderAdmSel();\r\n   if (typeof loadAdminUserList === 'function') loadAdminUserList();\r\n \r\n@@ -47,7 +50,7 @@\n   setVal('st-test',  DB.settings?.testMode     ?? 1);\r\n   setVal('st-modal', DB.settings?.showModal    ?? 1);\r\n   setVal('st-cost',  DB.settings?.defaultCost  ?? 1);\r\n   setVal('st-topup', DB.settings?.topupEnabled ?? 1);\r\n-  setVal('st-layout', DB.settings?.deckLayout ?? 'auto');\r\n+  setVal('st-layout', DB.settings?.deckLayout  ?? 'auto');\r\n }\r\n \r\n"
+                },
+                {
+                    "date": 1775622856016,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -31,26 +31,40 @@\n \r\n   document.querySelectorAll('#home-screen, #game-screen, #admin-screen')\r\n     .forEach(el => el.style.display = 'none');\r\n   document.getElementById('admin-screen').style.display = 'block';\r\n-  history.pushState({}, '', '#admin');\r\n \r\n+  // อ่าน tab จาก URL ถ้ามี เช่น #admin/users → restore tab นั้น\r\n+  const hash    = window.location.hash;           // เช่น #admin/users\r\n+  const tabName = hash.startsWith('#admin/')\r\n+    ? hash.replace('#admin/', '')\r\n+    : 'decks';\r\n+\r\n+  const TAB_ORDER = ['decks','cards','users','stats','history','announce','settings','search'];\r\n+  const tabIdx    = TAB_ORDER.indexOf(tabName);\r\n+  const safeTab   = tabIdx >= 0 ? tabName : 'decks';\r\n+  const safeIdx   = tabIdx >= 0 ? tabIdx  : 0;\r\n+\r\n+  history.pushState({}, '', '#admin/' + safeTab);\r\n+\r\n   // ✅ รอให้ DB โหลดเสร็จก่อนเสมอ\r\n   await initDB();\r\n \r\n-  if (typeof renderAdmDecks === 'function') renderAdmDecks();\r\n-  if (typeof renderAdmSel   === 'function') renderAdmSel();\r\n-  if (typeof loadAdminUserList === 'function') loadAdminUserList();\r\n+  if (typeof switchTab === 'function') switchTab(safeTab, safeIdx);\r\n+  else {\r\n+    if (typeof renderAdmDecks    === 'function') renderAdmDecks();\r\n+    if (typeof renderAdmSel      === 'function') renderAdmSel();\r\n+    if (typeof loadAdminUserList === 'function') loadAdminUserList();\r\n+  }\r\n \r\n   const setVal = (id, val) => {\r\n     const el = document.getElementById(id);\r\n     if (el) el.value = val;\r\n   };\r\n-  setVal('st-cr',    DB.settings?.startCredit  ?? 10);\r\n-  setVal('st-nm',    DB.settings?.siteName     ?? 'DRINKORDOOM');\r\n-  setVal('st-test',  DB.settings?.testMode     ?? 1);\r\n-  setVal('st-modal', DB.settings?.showModal    ?? 1);\r\n-  setVal('st-cost',  DB.settings?.defaultCost  ?? 1);\r\n-  setVal('st-topup', DB.settings?.topupEnabled ?? 1);\r\n-  setVal('st-layout', DB.settings?.deckLayout  ?? 'auto');\r\n-}\r\n-\r\n+  setVal('st-cr',     DB.settings?.startCredit  ?? 10);\r\n+  setVal('st-nm',     DB.settings?.siteName     ?? 'DRINKORDOOM');\r\n+  setVal('st-test',   DB.settings?.testMode     ?? 1);\r\n+  setVal('st-modal',  DB.settings?.showModal    ?? 1);\r\n+  setVal('st-cost',   DB.settings?.defaultCost  ?? 1);\r\n+  setVal('st-topup',  DB.settings?.topupEnabled ?? 1);\r\n+  setVal('st-layout', DB.settings?.deckLayout   ?? 'auto');\r\n+}\n\\ No newline at end of file\n"
                 }
             ],
             "date": 1774366446050,

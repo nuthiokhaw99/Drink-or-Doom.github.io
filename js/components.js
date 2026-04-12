@@ -13,6 +13,8 @@ let showModal   = true;
 let renderOffset = 0;
 let displayCards = [];
 let usedIndices  = new Set();
+let cardHistory  = []; // ประวัติไพ่ที่เปิดแล้วในเกมนี้
+let _activeDeckIds = [];
 const DISPLAY_BATCH    = 80;
 const RELOAD_THRESHOLD = 10;
 
@@ -98,8 +100,11 @@ async function startGame() {
   document.getElementById('res-ico').className = 'fi fi-sr-message-question';
 
   document.body.classList.add('in-game');
-  document.getElementById('btn-admin').style.display = 'none';
-  history.pushState({ deck: selDeck[0] }, '', '#play/' + selDeck[0]);
+  
+  history.pushState({ decks: selDeck }, '', '#play/' + selDeck.join('+'));
+  
+  _activeDeckIds = [...selDeck];
+  selDeck = [];
 
   updRem();
   updateCr();
@@ -117,18 +122,21 @@ function renderScatter() {
   wrap.innerHTML = '';
 
   const mobile    = isMobile();
-  const isMulti   = selDeck.length > 1;
-  const deck      = DB.decks.find(d => d.id === selDeck[0]) || DB.decks[0];
+  const isMulti   = _activeDeckIds.length > 1;
+  const deck      = DB.decks.find(d => d.id === _activeDeckIds[0]) || DB.decks[0];
   const deckTheme = isMulti ? 'th-fire' : getTh(deck);
   const cardIcon  = isMulti ? 'fi-sr-message-question' : (deck?.icon || 'fi-sr-layers');
 
-  const W  = wrap.getBoundingClientRect().width || window.innerWidth - 32;
+  const W  = wrap.offsetWidth || document.getElementById('game-screen').offsetWidth || window.innerWidth - 32;
   const CW = mobile ? 72 : 96;
   const CH = mobile ? 104 : 138;
-  const hdr  = document.querySelector('.game-hdr')?.getBoundingClientRect().height || 80;
-  const hint = document.querySelector('.cost-hint')?.getBoundingClientRect().height || 48;
-  const H    = window.innerHeight - hdr - hint - 48;
-
+  const hdr  = document.querySelector('.game-hdr')?.offsetHeight || 80;
+  const hint = document.querySelector('.cost-hint')?.offsetHeight || 48;
+  const hdrH = hdr > 0 ? hdr : 80;
+  const hntH = hint > 0 ? hint : 48;
+  const H    = window.innerHeight - hdrH - hntH - 48;
+  console.log('W:', W, 'H:', H, 'hdr:', hdr, 'hint:', hint, 'innerHeight:', window.innerHeight);
+  
   wrap.style.cssText = `width:100%;height:${H}px;position:relative;overflow:hidden;`;
 
   const ZX = mobile ? 6 : 7;
@@ -198,10 +206,10 @@ function buildStackPile() {
   const countEl  = document.getElementById('stack-count');
   if (!pileWrap) return;
 
-  const isMulti   = selDeck.length > 1;
-  const deck      = DB.decks.find(d => d.id === selDeck[0]) || DB.decks[0];
+  const isMulti   = _activeDeckIds.length > 1;
+  const deck      = DB.decks.find(d => d.id === _activeDeckIds[0]) || DB.decks[0];
   const deckIcon  = isMulti ? 'fi-sr-message-question' : (deck?.icon || 'fi-sr-layers');
-  const deckTheme = isMulti ? 'th-fire' : getTh(deck);
+  const deckTheme = 'th-fire' ;
 
   pileWrap.innerHTML = '';
   const remaining = deckCards.length - stackIndex;
@@ -363,6 +371,7 @@ async function flipCard(el, idx, ang) {
 }
 
 function showRes(card, deck) {
+  _addToHistory(card, deck);
   const th = getTh(deck);
   document.getElementById('res-dlbl').innerHTML    = `<i class="fi ${esc(deck.icon || 'fi-sr-layers')}" style="color:var(--red);"></i> ${esc(deck.name)}`;
   document.getElementById('res-ico-wrap').className = `res-ico-wrap ${th}`;
@@ -378,19 +387,36 @@ function closeRes() {
 
 window.addEventListener('popstate', e => {
   const hash = window.location.hash;
-  if (hash === '#admin') {
+  if (hash === '#admin' || hash.startsWith('#admin/')) {
     showAdmin();
-  } else if (!e.state?.deck) {
+  } else if (hash.startsWith('#play/')) {
+    const ids = hash.replace('#play/', '').split('+').filter(Boolean);
+    _restoreGame(ids);
+  } else {
     document.getElementById('game-screen').style.display  = 'none';
     document.getElementById('home-screen').style.display  = '';
     document.getElementById('admin-screen').style.display = 'none';
     document.body.classList.remove('in-game');
-    document.getElementById('btn-admin').style.display    = '';
-    // [FIX] reset selDeck เพื่อไม่ให้ค้างจาก session ก่อน
     selDeck = [];
     renderDecks();
   }
 });
+
+/* restore game จาก URL เช่น refresh หรือ back/forward */
+async function _restoreGame(deckIds) {
+  if (!deckIds?.length) { goHome(); return; }
+
+  // ถ้า DB ยังไม่โหลด รอก่อน
+  if (!DB.decks.length) await initDB();
+
+  // กรองเฉพาะ deck ที่มีจริงและไม่ถูกซ่อน
+  const validIds = deckIds.filter(id => DB.decks.find(d => d.id === id && !d.hidden));
+  if (!validIds.length) { goHome(); toast('ไม่พบกองไพ่นี้แล้ว', 'warning'); return; }
+
+  selDeck = validIds;
+  renderDecks(); // sync ไฮไลต์ deck ที่ home
+  await startGame();
+}
 
 function loadNextBatch() {
   const available = deckCards.map((_, i) => i).filter(i => !usedIndices.has(i));
@@ -402,3 +428,410 @@ function loadNextBatch() {
 // =======
 // }
 // >>>>>>> 35c8474b63db1f7722e0f8c3738916b5f76e4a23
+
+/* ============================================
+   CARD HISTORY — ประวัติไพ่ที่เปิดไปแล้ว
+   ============================================ */
+function _addToHistory(card, deck) {
+  cardHistory.unshift({ card, deck, time: Date.now() });
+  _updateHistBadge();
+  // ถ้า drawer เปิดอยู่ให้ re-render ทันที
+  if (document.getElementById('hist-drawer')?.classList.contains('show')) {
+    _renderHistDrawer();
+  }
+}
+
+function _updateHistBadge() {
+  const badge = document.getElementById('hist-badge');
+  const btn   = document.getElementById('btn-history');
+  if (!badge || !btn) return;
+  const n = cardHistory.length;
+  badge.textContent = n > 99 ? '99+' : n;
+  badge.style.display = n > 0 ? 'flex' : 'none';
+}
+
+function _renderHistDrawer() {
+  const body    = document.getElementById('hist-drawer-body');
+  const countEl = document.getElementById('hist-drawer-count');
+  if (!body) return;
+  if (countEl) countEl.textContent = cardHistory.length;
+
+  if (!cardHistory.length) {
+    body.innerHTML = `<div class="hist-empty">
+      <i class="fi fi-sr-layers"></i>
+      ยังไม่ได้เปิดไพ่ใบไหน
+    </div>`;
+    return;
+  }
+
+  body.innerHTML = cardHistory.map((h, i) => {
+    const th = getTh(h.deck);
+    return `
+    <div class="hist-item">
+      <span class="hist-item-num">${cardHistory.length - i}</span>
+      <div class="hist-item-ico ${th}">
+        <i class="fi ${esc(h.deck.icon || 'fi-sr-layers')}"></i>
+      </div>
+      <div class="hist-item-info">
+        <div class="hist-item-cat">${esc(h.card.cat)}</div>
+        <div class="hist-item-txt">${esc(h.card.text)}</div>
+        <div class="hist-item-deck">${esc(h.deck.name)}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openHistDrawer() {
+  _renderHistDrawer();
+  document.getElementById('hist-drawer-overlay')?.classList.add('show');
+  document.getElementById('hist-drawer')?.classList.add('show');
+}
+
+function closeHistDrawer() {
+  document.getElementById('hist-drawer-overlay')?.classList.remove('show');
+  document.getElementById('hist-drawer')?.classList.remove('show');
+}
+
+/* ============================================
+   TOUCH PICKER — สุ่มผู้เล่น
+   ============================================ */
+
+let _touchDots    = {};
+let _cdTimer      = null;
+let _cdValue      = 0;
+let _pickDone     = false;
+
+function openTouchPicker() {
+  window._savedSelDeck = [...selDeck]; // snapshot ไว้ก่อน
+  document.documentElement.style.touchAction = 'none';
+  document.body.style.touchAction = 'none';
+  document.body.style.overflow    = 'hidden';
+
+  const ov = document.getElementById('touch-picker-ov');
+  ov.style.cssText = 'display:block !important; position:fixed; inset:0; background:#000; z-index:800;';
+
+  _touchDots = {};
+  _pickDone  = false;
+  _clearTouchCountdown();
+
+  document.getElementById('touch-dots-wrap').innerHTML = '';
+  document.getElementById('touch-countdown').style.display = 'none';
+  document.getElementById('touch-instruction').classList.remove('hide');
+  document.getElementById('touch-msg').textContent = 'วางนิ้ว 2-6 คนพร้อมกันบนหน้าจอ';
+
+  const area = document.getElementById('touch-area');
+  area.style.cssText = 'width:100%;height:100vh;position:relative;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;';
+
+  const closeBtn = document.getElementById('touch-close-btn');
+  closeBtn.ontouchend = (e) => { e.stopPropagation(); e.preventDefault(); closeTouchPicker(); };
+  closeBtn.onclick    = (e) => { e.stopPropagation(); closeTouchPicker(); }; // ← เพิ่ม
+
+  area.removeEventListener('touchstart',  _onTouchStart);
+  area.removeEventListener('touchend',    _onTouchEnd);
+  area.removeEventListener('touchcancel', _onTouchEnd);
+  area.removeEventListener('touchmove',   _onTouchMove);
+  area.removeEventListener('mousedown',   _onMouseDown); // ← เพิ่ม
+  area.removeEventListener('mouseup',     _onMouseUp);   // ← เพิ่ม
+  area.removeEventListener('mousemove', _onMouseMove);
+area.addEventListener('mousemove', _onMouseMove);
+
+  area.addEventListener('touchstart',  _onTouchStart,  { passive: false });
+  area.addEventListener('touchend',    _onTouchEnd,    { passive: false });
+  area.addEventListener('touchcancel', _onTouchEnd,    { passive: false });
+  area.addEventListener('touchmove',   _onTouchMove,   { passive: false });
+  area.addEventListener('mousedown',   _onMouseDown);  // ← เพิ่ม
+  area.addEventListener('mouseup',     _onMouseUp);    // ← เพิ่ม
+  area.removeEventListener('mousemove', _onMouseMove);
+area.addEventListener('mousemove', _onMouseMove);
+
+  console.log('savedSelDeck:', window._savedSelDeck)
+}
+
+function closeTouchPicker() {
+  document.documentElement.style.touchAction = '';
+  document.body.style.touchAction = '';
+  document.body.style.overflow    = '';
+
+  const ov   = document.getElementById('touch-picker-ov');
+  const area = document.getElementById('touch-area');
+  ov.classList.remove('show', 'picking');
+  ov.style.display = 'none';
+  _clearTouchCountdown();
+  _touchDots = {};
+  _pickDone  = false;
+
+  area.removeEventListener('touchstart',  _onTouchStart);
+  area.removeEventListener('touchend',    _onTouchEnd);
+  area.removeEventListener('touchcancel', _onTouchEnd);
+  area.removeEventListener('touchmove',   _onTouchMove);
+  area.removeEventListener('mousedown',   _onMouseDown); // ← เพิ่ม
+  area.removeEventListener('mouseup',     _onMouseUp);   // ← เพิ่ม
+  area.removeEventListener('mousemove', _onMouseMove);
+}
+
+function _onMouseUp(e) {
+  if (_pickDone) return;
+
+  const id  = 'mouse_' + e.button;
+  const dot = _touchDots[id];
+  if (dot) {
+    dot.el.classList.remove('show');
+    setTimeout(() => dot.el.remove(), 200);
+    delete _touchDots[id];
+  }
+
+  if (Object.keys(_touchDots).length === 0) _clearTouchCountdown();
+  _updateAfterTouch();
+}
+
+// ← ฟังก์ชันใหม่ทั้งสองตัว
+function _onMouseDown(e) {
+  if (e.target.closest('#touch-close-btn')) return;
+  if (_pickDone) return;
+
+  const id = 'mouse_' + e.button; // ใช้ button number เป็น identifier
+  if (_touchDots[id] !== undefined) return;
+  if (Object.keys(_touchDots).length >= 6) return;
+
+  const idx = Object.keys(_touchDots).length;
+  const el  = document.createElement('div');
+  el.className   = `touch-dot touch-dot-${idx}`;
+  el.style.left  = e.clientX + 'px';
+  el.style.top   = e.clientY + 'px';
+  el.textContent = idx + 1;
+  document.getElementById('touch-dots-wrap').appendChild(el);
+  requestAnimationFrame(() => el.classList.add('show'));
+  _touchDots[id] = { x: e.clientX, y: e.clientY, el, idx };
+
+  _updateAfterTouch();
+}
+
+
+function _onTouchStart(e) {
+  if (e.target.closest('#touch-close-btn')) return;
+  e.preventDefault();
+  if (_pickDone) return;
+
+  for (const t of e.touches) {
+    if (Object.keys(_touchDots).length >= 6) break;
+    if (_touchDots[t.identifier] !== undefined) continue;
+
+    const idx = Object.keys(_touchDots).length;
+    const el  = document.createElement('div');
+    el.className   = `touch-dot touch-dot-${idx}`;
+    el.style.left  = t.clientX + 'px';
+    el.style.top   = t.clientY + 'px';
+    el.textContent = idx + 1;
+    document.getElementById('touch-dots-wrap').appendChild(el);
+    requestAnimationFrame(() => el.classList.add('show'));
+    _touchDots[t.identifier] = { x: t.clientX, y: t.clientY, el, idx };
+  }
+
+  _updateAfterTouch();
+}
+
+function _onTouchEnd(e) {
+  e.preventDefault();
+  if (_pickDone) return;
+
+  for (const t of e.changedTouches) {
+    const dot = _touchDots[t.identifier];
+    if (dot) {
+      dot.el.classList.remove('show');
+      setTimeout(() => dot.el.remove(), 200);
+      delete _touchDots[t.identifier];
+    }
+  }
+
+  // clear countdown เฉพาะเมื่อไม่มีนิ้วเหลือ
+  if (Object.keys(_touchDots).length === 0) _clearTouchCountdown();
+  _updateAfterTouch();
+}
+
+function _onTouchMove(e) {
+  if (e.cancelable) e.preventDefault();
+  if (_pickDone) return;
+
+  for (const t of e.changedTouches) {
+    const dot = _touchDots[t.identifier];
+    if (dot) {
+      dot.el.style.left = t.clientX + 'px';
+      dot.el.style.top  = t.clientY + 'px';
+      dot.x = t.clientX;
+      dot.y = t.clientY;
+    }
+  }
+}
+
+function _onMouseMove(e) {
+  if (_pickDone) return;
+  const dot = _touchDots['mouse_0'];
+  if (dot) {
+    dot.el.style.left = e.clientX + 'px';
+    dot.el.style.top  = e.clientY + 'px';
+    dot.x = e.clientX;
+    dot.y = e.clientY;
+  }
+}
+
+function _updateAfterTouch() {
+  const count = Object.keys(_touchDots).length;
+  const msg   = document.getElementById('touch-msg');
+  const inst  = document.getElementById('touch-instruction');
+  const warn  = document.getElementById('touch-warning');
+
+  if (warn) warn.remove();
+
+  if (count === 0) {
+    inst?.classList.remove('hide');
+    if (msg) msg.textContent = 'วางนิ้ว 2-6 คนพร้อมกันบนหน้าจอ';
+    _clearTouchCountdown();
+    return;
+  }
+
+  if (count < 1) { // ← เปลี่ยนกลับเป็น 2 เมื่อเทสเสร็จ
+    inst?.classList.remove('hide');
+    if (msg) msg.textContent = 'ต้องการอย่างน้อย 2 คน!';
+    _clearTouchCountdown();
+    const w = document.createElement('div');
+    w.id = 'touch-warning';
+    w.innerHTML = '<i class="fi fi-sr-exclamation"></i> ต้องการอย่างน้อย 2 นิ้ว';
+    document.getElementById('touch-area').appendChild(w);
+    setTimeout(() => w?.remove(), 1800);
+    return;
+  }
+
+  inst?.classList.add('hide');
+  if (!_cdTimer) _startTouchCountdown(count);
+}
+
+function _startTouchCountdown(playerCount) {
+  _cdValue = 3;
+  const cdEl = document.getElementById('touch-countdown');
+  if (!cdEl) return;
+  cdEl.style.display = 'flex';
+  cdEl.textContent   = _cdValue;
+
+  _cdTimer = setInterval(() => {
+    _cdValue--;
+    if (_cdValue <= 0) {
+      _clearTouchCountdown();
+      _doPick();
+    } else {
+      cdEl.textContent = _cdValue;
+    }
+  }, 1000);
+}
+
+function _clearTouchCountdown() {
+  clearInterval(_cdTimer);
+  _cdTimer = null;
+  const cdEl = document.getElementById('touch-countdown');
+  if (cdEl) cdEl.style.display = 'none';
+}
+
+async function _doPick() {
+  if (_pickDone) return;
+  _pickDone = true;
+
+  const keys = Object.keys(_touchDots);
+  if (keys.length < 1) { // ← เปลี่ยนกลับเป็น 2 เมื่อเทสเสร็จ
+    _pickDone = false;
+    _updateAfterTouch();
+    console.log('_doPick selDeck:', window._savedSelDeck)
+console.log('DB.cards keys:', Object.keys(DB.cards))
+    return;
+  }
+
+  const deck = DB.decks.find(d => d.id === _activeDeckIds[0]);
+  const cost = deck?.cost || 1;
+  const { success, newBalance } = await API.deductCredits(cost);
+
+  if (!success) {
+    toast(`เครดิตไม่พอ! ต้องใช้ ${cost} เครดิต`, 'error');
+    openTopup();
+    _pickDone = false;
+    return;
+  }
+
+  credits = newBalance;
+  updateCr();
+
+  // flash animation
+  let flashCount = 0;
+  const maxFlash = 12;
+  const dotList  = keys.map(k => _touchDots[k]);
+  let   flashIdx = 0;
+
+  const flashTimer = setInterval(() => {
+    dotList.forEach(d => {
+      d.el.style.boxShadow = '';
+      d.el.style.transform = 'translate(-50%, -50%) scale(1)';
+    });
+
+    const curr = dotList[flashIdx % dotList.length];
+    curr.el.style.boxShadow = '0 0 40px #fff, 0 0 80px var(--glow)';
+    curr.el.style.transform = 'translate(-50%, -50%) scale(1.2)';
+    setTimeout(() => {
+      if (curr.el) curr.el.style.transform = 'translate(-50%, -50%) scale(1)';
+    }, 80);
+
+    flashIdx++;
+    flashCount++;
+
+    if (flashCount >= maxFlash) {
+      clearInterval(flashTimer);
+
+      // ← overlay มืดลง
+      document.getElementById('touch-picker-ov').classList.add('picking');
+
+      const pickedKey = keys[Math.floor(Math.random() * keys.length)];
+      const picked    = _touchDots[pickedKey];
+
+      // reset glow จาก flash
+      dotList.forEach(d => {
+        d.el.style.boxShadow = '';
+        d.el.style.transform = '';
+      });
+
+      // หน่วงให้ overlay มืดก่อน แล้วค่อย highlight
+      setTimeout(() => {
+        dotList.forEach(d => {
+          if (d === picked) {
+            d.el.classList.add('picked');
+            const lbl = document.createElement('div');
+            lbl.className   = 'touch-dot-result';
+            lbl.textContent = 'คนนี้แหละ!';
+            d.el.appendChild(lbl);
+          } else {
+            d.el.classList.add('not-picked');
+          }
+        });
+      }, 300);
+
+      // ดึงไพ่มาแสดง
+      setTimeout(() => {
+        const allCards = _activeDeckIds.flatMap(id => (DB.cards[id] || []).map(c => ({ ...c, _deckId: id })));
+        if (allCards.length) {
+          const card = allCards[Math.floor(Math.random() * allCards.length)];
+          const d    = DB.decks.find(x => x.id === card._deckId) || deck;
+
+          revCount++;
+          updRem();
+          closeTouchPicker();
+          showRes(card, d);
+              const origCloseRes = window.closeRes;
+
+          window.closeRes = function() {
+            origCloseRes();
+            window.closeRes = origCloseRes; // restore กลับ
+            setTimeout(() => openTouchPicker(), 300);
+          };
+        } else {
+          toast('ไม่มีไพ่ในกองที่เลือก', 'warning');
+          closeTouchPicker();
+        }
+      }, 1800);
+    }
+  }, 120);
+}

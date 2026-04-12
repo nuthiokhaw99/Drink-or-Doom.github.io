@@ -1,0 +1,18 @@
+{
+    "sourceFile": "css/admin-login.css",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1775584718375,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1775584718375,
+            "name": "Commit-0",
+            "content": ".login-wrap {\r\n  min-height: 100vh;\r\n  display: flex; align-items: center; justify-content: center;\r\n  padding: 20px;\r\n  background:\r\n    radial-gradient(ellipse 60% 50% at 50% 50%, rgba(229,9,20,.06) 0%, transparent 70%);\r\n}\r\n\r\n.login-box {\r\n  background: linear-gradient(145deg, #181818, #111);\r\n  border: 1px solid #252525;\r\n  border-radius: 20px;\r\n  padding: 44px 44px 36px;\r\n  max-width: 400px; width: 100%;\r\n  position: relative;\r\n}\r\n.login-box::before {\r\n  content: \"\";\r\n  position: absolute; top: 0; left: 0; right: 0; height: 2px;\r\n  background: linear-gradient(90deg, transparent, var(--red), transparent);\r\n  border-radius: 20px 20px 0 0;\r\n}\r\n\r\n.login-logo {\r\n  display: flex; align-items: center;\r\n  margin-bottom: 32px; justify-content: center;\r\n}\r\n.login-logo .logo-wordmark { display: flex; flex-direction: column; align-items: center; gap: 2px; }\r\n.login-logo .logo-main {\r\n  font-family: \"Kanit\", sans-serif; font-weight: 900;\r\n  font-size: 2.4rem; color: var(--red);\r\n  letter-spacing: -0.5px;\r\n  text-shadow: 0 0 20px rgba(229,9,20,.6), 0 2px 4px rgba(0,0,0,.8);\r\n  -webkit-text-stroke: 0.5px rgba(255,60,60,.3);\r\n}\r\n.login-logo .logo-sub {\r\n  font-family: \"Kanit\", sans-serif; font-weight: 300;\r\n  font-size: .6rem; color: var(--text2);\r\n  letter-spacing: 3.5px; text-transform: uppercase;\r\n}\r\n\r\n.login-title { font-family: \"Kanit\", sans-serif; font-weight: 800; font-size: 1.4rem; letter-spacing: 3px; text-align: center; margin-bottom: 6px; }\r\n.login-sub   { color: var(--text2); font-size: .82rem; text-align: center; margin-bottom: 28px; }\r\n\r\n.login-form { display: flex; flex-direction: column; gap: 16px; }\r\n\r\n.login-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }\r\n\r\n.btn-login {\r\n  background: var(--red); color: #fff; border: none;\r\n  padding: 13px; border-radius: 8px;\r\n  font-family: \"Kanit\", sans-serif; font-weight: 700; font-size: 1rem;\r\n  cursor: pointer; transition: .2s;\r\n  display: flex; align-items: center; justify-content: center; gap: 8px;\r\n  width: 100%;\r\n}\r\n.btn-login:hover { background: var(--red3); box-shadow: 0 4px 20px var(--glow); }\r\n\r\n.login-back {\r\n  text-align: center; font-size: .82rem; color: var(--text2);\r\n  display: flex; align-items: center; justify-content: center; gap: 6px;\r\n  cursor: pointer; transition: .2s;\r\n}\r\n.login-back:hover { color: #fff; }\r\n\r\n.login-error {\r\n  background: rgba(229,9,20,.08);\r\n  border: 1px solid rgba(229,9,20,.3);\r\n  border-radius: 8px; padding: 10px 14px;\r\n  font-size: .82rem; color: var(--red);\r\n  display: none; align-items: center; gap: 8px;\r\n}\r\n.login-error.show { display: flex; }"
+        }
+    ]
+}

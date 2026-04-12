@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 110,
+            "activePatchIndex": 111,
             "patches": [
                 {
                     "date": 1774487665190,
@@ -448,6 +448,10 @@
                 {
                     "date": 1775236382890,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -368,9 +368,9 @@\n   const ov = document.getElementById('announce-popup-ov');\r\n   if (ov) ov.remove();\r\n }\r\n \r\n-<<<<<<< HEAD\r\n-// [FIX #18] ลบ updateLastSeen ซ้ำออก — ถูก call ใน onAuthStateChange แล้ว\r\n-=======\r\n-// [FIX #18] ลบ updateLastSeen ซ้ำออก — ถูก call ใน onAuthStateChange แล้ว\r\n->>>>>>> 35c8474b63db1f7722e0f8c3738916b5f76e4a23\r\n+// <<<<<<< HEAD\r\n+// // [FIX #18] ลบ updateLastSeen ซ้ำออก — ถูก call ใน onAuthStateChange แล้ว\r\n+// =======\r\n+// // [FIX #18] ลบ updateLastSeen ซ้ำออก — ถูก call ใน onAuthStateChange แล้ว\r\n+// >>>>>>> 35c8474b63db1f7722e0f8c3738916b5f76e4a23\r\n"
+                },
+                {
+                    "date": 1775252102796,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -48,8 +48,12 @@\n       if (deck && typeof startGame === 'function') { selDeck = [deckId]; startGame(); }\r\n     } else if (!currentUser) {\r\n       openLogin();\r\n     }\r\n+\r\n+    if (currentUser && typeof showAnnouncePopup === 'function') {\r\n+      showAnnouncePopup();\r\n+    }\r\n     return;\r\n   }\r\n \r\n   if (event === 'SIGNED_OUT') {\r\n@@ -372,5 +376,5 @@\n // <<<<<<< HEAD\r\n // // [FIX #18] ลบ updateLastSeen ซ้ำออก — ถูก call ใน onAuthStateChange แล้ว\r\n // =======\r\n // // [FIX #18] ลบ updateLastSeen ซ้ำออก — ถูก call ใน onAuthStateChange แล้ว\r\n-// >>>>>>> 35c8474b63db1f7722e0f8c3738916b5f76e4a23\r\n+// >>>>>>> 35c8474b63db1f7722e0f8c3738916b5f76e4a23\n\\ No newline at end of file\n"
                 }
             ],
             "date": 1774487665190,
