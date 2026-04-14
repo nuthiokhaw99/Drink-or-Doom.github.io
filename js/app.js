@@ -360,13 +360,22 @@ document.addEventListener('visibilitychange', () => {
       if (session) {
         currentUser = session.user;
         await loadCredits();
-        _updateAuthUI();
       } else {
         currentUser = null;
-        _updateAuthUI();
+        credits = 0;
+        updateCr();
       }
     } catch (e) {
       console.warn('visibilitychange session check failed:', e);
+    } finally {
+      _updateAuthUI();
+
+      // [FIX] อย่า re-render ถ้ากำลังเล่นเกมอยู่
+      const inGame = document.body.classList.contains('in-game');
+      if (!inGame) {
+        await initDB();
+        renderDecks();
+      }
     }
   }, 800);
 });

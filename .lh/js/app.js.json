@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 119,
+            "activePatchIndex": 121,
             "patches": [
                 {
                     "date": 1774366390638,
@@ -484,6 +484,14 @@
                 {
                     "date": 1776194092964,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -355,9 +355,8 @@\n \r\n   clearTimeout(_visibilityTimer);\r\n   _visibilityTimer = setTimeout(async () => {\r\n     try {\r\n-      // ใช้ getSession แทน refreshSession — ไม่แย่ง lock\r\n       const { data: { session } } = await _sb.auth.getSession();\r\n       if (session) {\r\n         currentUser = session.user;\r\n         await loadCredits();\r\n"
+                },
+                {
+                    "date": 1776203125689,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -359,14 +359,19 @@\n       const { data: { session } } = await _sb.auth.getSession();\r\n       if (session) {\r\n         currentUser = session.user;\r\n         await loadCredits();\r\n-        _updateAuthUI();\r\n       } else {\r\n         currentUser = null;\r\n-        _updateAuthUI();\r\n+        credits = 0;\r\n+        updateCr();\r\n       }\r\n     } catch (e) {\r\n       console.warn('visibilitychange session check failed:', e);\r\n+    } finally {\r\n+      // ✅ ทำทุกกรณี — login, logout, หรือ error\r\n+      _updateAuthUI();\r\n+      await initDB();   // reload ไพ่ใหม่\r\n+      renderDecks();    // วาด UI ใหม่\r\n     }\r\n   }, 800);\r\n });\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1776203642559,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -367,11 +367,15 @@\n       }\r\n     } catch (e) {\r\n       console.warn('visibilitychange session check failed:', e);\r\n     } finally {\r\n-      // ✅ ทำทุกกรณี — login, logout, หรือ error\r\n       _updateAuthUI();\r\n-      await initDB();   // reload ไพ่ใหม่\r\n-      renderDecks();    // วาด UI ใหม่\r\n+\r\n+      // [FIX] อย่า re-render ถ้ากำลังเล่นเกมอยู่\r\n+      const inGame = document.body.classList.contains('in-game');\r\n+      if (!inGame) {\r\n+        await initDB();\r\n+        renderDecks();\r\n+      }\r\n     }\r\n   }, 800);\r\n });\n\\ No newline at end of file\n"
                 }
             ],
             "date": 1774366390638,
