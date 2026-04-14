@@ -142,13 +142,23 @@
   display: flex; align-items: center; gap: 7px;
 }
 .btn-next:hover { background: var(--red3); transform: translateY(-2px); }
-
-/* ---- RESPONSIVE ---- */
+/* 
+---- RESPONSIVE ----
 @media (max-width: 580px) {
   .game-hdr { padding: 80px 16px 18px; }
   .res-card { padding: 32px 24px 28px; }
   .res-txt { font-size: 2.5rem !important; }
-  /* .res-txt     { font-size: 800rem; margin-bottom: 800px; } */
+  .res-txt     { font-size: 800rem; margin-bottom: 800px; }
+} */
+
+@media (max-width: 580px) {
+  .game-hdr { padding: 80px 16px 18px; }
+  .res-card { padding: 32px 24px 28px; }
+  .res-txt { font-size: 2.5rem  !important; }
+}
+
+@media (max-width: 1024px) and (min-width: 581px) {
+  .res-txt { font-size: clamp(1.8rem, 4vw, 2.6rem) !important; }
 }
 
 /* ============================================
@@ -329,20 +339,22 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 14px;
+  min-height: calc(80vh - 220px);
 }
 
 .stack-section { width: 100%; }
 
 .stack-pile-wrap {
   position: relative;
-  width: 230px;
-  height: 310px;
-}
+  width: min(320px, 80vw);
+  height: min(450px, 115vw);
+} 
 
 .stack-crd {
-  width: 210px !important;
-  height: 290px !important;
+  width: min(400px, 75vw) !important;
+  height: min(510px, 103vw) !important;
 }
 
 .stack-count {
@@ -623,6 +635,26 @@
   .featured-badge  { font-size: 11px; padding: 4px 10px; }
 }
 
+@media (max-width: 580px) {
+  .game-hdr {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 70px 16px 14px;
+    gap: 10px;
+  }
+  .game-hdr > div {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .g-deck-info { flex: 1; min-width: 0; }
+  .g-nm {
+    font-size: .9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 160px;
+  }
+}
 /* ============================================
    HISTORY DRAWER — ประวัติไพ่ที่เปิดไปแล้ว
    ============================================ */

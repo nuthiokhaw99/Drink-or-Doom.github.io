@@ -376,12 +376,14 @@ function _updateAuthUI() {
         if (btnAdminDD) btnAdminDD.style.display = isAdmin ? '' : 'none';
       });
     } else {
-      if (btnAdmin) btnAdmin.style.display = 'none';
-    }
-  } else {
-    if (btnLogin)  btnLogin.style.display = 'flex';
-    if (userChip)  userChip.style.display = 'none';
-    if (btnAdmin)  btnAdmin.style.display = 'none';
+        const btnAdmin = document.getElementById('btn-admin-dropdown');
+        if (btnAdmin) btnAdmin.style.display = 'none';
+      }
+    } else {
+      if (btnLogin)  btnLogin.style.display = 'flex';
+      if (userChip)  userChip.style.display = 'none';
+      const btnAdmin = document.getElementById('btn-admin-dropdown');
+      if (btnAdmin)  btnAdmin.style.display = 'none';
     document.getElementById('user-chip')?.classList.remove('open');
   }
 }

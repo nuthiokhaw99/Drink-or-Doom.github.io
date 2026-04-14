@@ -143,7 +143,6 @@ function renderScatter() {
   const hdrH = hdr > 0 ? hdr : 80;
   const hntH = hint > 0 ? hint : 48;
   const H    = window.innerHeight - hdrH - hntH - 48;
-  console.log('W:', W, 'H:', H, 'hdr:', hdr, 'hint:', hint, 'innerHeight:', window.innerHeight);
   
   wrap.style.cssText = `width:100%;height:${H}px;position:relative;overflow:hidden;`;
 
@@ -168,7 +167,7 @@ function renderScatter() {
     const [zx, zy] = zones[i % zones.length];
     const x   = zx * zW + Math.random() * Math.max(4, zW - CW);
     const y   = zy * zH + Math.random() * Math.max(4, zH - CH);
-    const ang = (Math.random() - .5) * 72;
+    const ang = (Math.random() - .5) * 100;
     const z   = Math.floor(Math.random() * displayCards.length) + 1;
 
     const el = document.createElement('div');
@@ -208,7 +207,6 @@ function renderStack() {
     </div>`;
   buildStackPile();
 }
-
 function buildStackPile() {
   const pileWrap = document.getElementById('stack-pile-wrap');
   const countEl  = document.getElementById('stack-count');
@@ -217,11 +215,18 @@ function buildStackPile() {
   const isMulti   = _activeDeckIds.length > 1;
   const deck      = DB.decks.find(d => d.id === _activeDeckIds[0]) || DB.decks[0];
   const deckIcon  = isMulti ? 'fi-sr-message-question' : (deck?.icon || 'fi-sr-layers');
-  const deckTheme = 'th-fire' ;
+  const deckTheme = 'th-fire';
+
+  const CW = Math.min(220, window.innerWidth * 0.58);
+  const CH = Math.round(CW * 1.37);
+  pileWrap.style.width   = (CW + 30) + 'px';
+  pileWrap.style.height  = (CH + 30) + 'px';
+  pileWrap.style.margin  = '0 auto';
 
   pileWrap.innerHTML = '';
   const remaining = deckCards.length - stackIndex;
-  if (countEl) countEl.textContent = remaining + ' ใบ';
+  const left = Math.max(0, deckCards.length - revCount);
+  if (countEl) countEl.textContent = left + ' ใบ';
 
   if (remaining <= 0) {
     pileWrap.innerHTML = `<div style="color:var(--text3);font-size:.85rem;text-align:center;padding:40px 16px;line-height:2;">
@@ -232,12 +237,12 @@ function buildStackPile() {
   const showCount = Math.min(remaining, 6);
   for (let i = showCount - 1; i >= 0; i--) {
     const el  = document.createElement('div');
-    el.className = 'crd stack-crd';
-    const off = i * 2.5;
+    el.className = 'crd';
+    const off = i * 3;
     const ang = (i - showCount / 2) * 1.8;
-    el.style.cssText = `position:absolute;left:${off}px;top:${off}px;transform:rotate(${ang}deg);z-index:${showCount - i};`
-      + (i === 0 ? 'cursor:pointer;box-shadow:0 0 22px var(--glow),3px 6px 18px rgba(0,0,0,.8);animation:pulse-card 2s ease-in-out infinite;' : 'cursor:default;');
-    el.innerHTML = `<div class="crd-back ${deckTheme}"><i class="fi ${deckIcon}"></i></div>`;
+    el.style.cssText = `position:absolute;left:${off}px;top:${off}px;width:${CW}px;height:${CH}px;border-radius:14px;transform:rotate(${ang}deg);z-index:${showCount - i};`
+      + (i === 0 ? 'cursor:pointer;box-shadow:0 0 28px var(--glow),3px 6px 18px rgba(0,0,0,.8);animation:pulse-card 2s ease-in-out infinite;' : 'cursor:default;');
+    el.innerHTML = `<div class="crd-back ${deckTheme}" style="width:83%;height:86%;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:${Math.round(CW * 0.30)}px;color:var(--red);background:linear-gradient(135deg,rgba(26,5,5,0.6),rgba(45,8,8,0.6));border:1px solid rgba(229,9,20,.35);"><i class="fi ${deckIcon}"></i></div>`;
     if (i === 0) el.onclick = () => flipTopCard(el);
     pileWrap.appendChild(el);
   }
@@ -555,7 +560,7 @@ function openTouchPicker() {
   area.removeEventListener('mousedown',   _onMouseDown); // ← เพิ่ม
   area.removeEventListener('mouseup',     _onMouseUp);   // ← เพิ่ม
   area.removeEventListener('mousemove', _onMouseMove);
-area.addEventListener('mousemove', _onMouseMove);
+  area.addEventListener('mousemove', _onMouseMove);
 
   area.addEventListener('touchstart',  _onTouchStart,  { passive: false });
   area.addEventListener('touchend',    _onTouchEnd,    { passive: false });
@@ -564,9 +569,7 @@ area.addEventListener('mousemove', _onMouseMove);
   area.addEventListener('mousedown',   _onMouseDown);  // ← เพิ่ม
   area.addEventListener('mouseup',     _onMouseUp);    // ← เพิ่ม
   area.removeEventListener('mousemove', _onMouseMove);
-area.addEventListener('mousemove', _onMouseMove);
-
-  console.log('savedSelDeck:', window._savedSelDeck)
+  area.addEventListener('mousemove', _onMouseMove);
 }
 
 function closeTouchPicker() {
@@ -760,8 +763,6 @@ async function _doPick() {
   if (keys.length < 1) { // ← เปลี่ยนกลับเป็น 2 เมื่อเทสเสร็จ
     _pickDone = false;
     _updateAfterTouch();
-    console.log('_doPick selDeck:', window._savedSelDeck)
-console.log('DB.cards keys:', Object.keys(DB.cards))
     return;
   }
 

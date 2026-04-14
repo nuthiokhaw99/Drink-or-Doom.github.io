@@ -76,38 +76,39 @@ async function loadAdminUserList() {
     container.innerHTML = '<p style="color:var(--text3);">ไม่พบผู้ใช้</p>';
     return;
   }
-
-  container.innerHTML = users.map(u => `
-    <div class="ucr-row ${u.is_banned ? 'ucr-banned' : ''}">
-      <div class="ucr-avatar ${u.is_admin ? 'ucr-av-admin' : ''}">
-        <i class="fi ${u.is_admin ? 'fi-sr-shield-check' : 'fi-sr-user'}"></i>
+container.innerHTML = users.map(u => `
+  <div class="ucr-row ${u.is_banned ? 'ucr-banned' : ''}">
+    <div class="ucr-avatar ${u.is_admin ? 'ucr-av-admin' : ''}">
+      <i class="fi ${u.is_admin ? 'fi-sr-shield-check' : 'fi-sr-user'}"></i>
+    </div>
+    <div class="ucr-info">
+      <div class="ucr-top">
+        <span class="ucr-name">${u.username}</span>
+        ${u.is_admin  ? '<span class="ucr-badge ucr-badge-admin"><i class="fi fi-sr-shield-check"></i> admin</span>' : ''}
+        ${u.is_banned ? '<span class="ucr-badge ucr-badge-ban"><i class="fi fi-sr-ban"></i> banned</span>' : ''}
       </div>
-      <div class="ucr-info">
-        <div class="ucr-top">
-          <span class="ucr-name">${u.username}</span>
-          ${u.is_admin  ? '<span class="ucr-badge ucr-badge-admin"><i class="fi fi-sr-shield-check"></i> admin</span>' : ''}
-          ${u.is_banned ? '<span class="ucr-badge ucr-badge-ban"><i class="fi fi-sr-ban"></i> banned</span>' : ''}
-        </div>
-        <div class="ucr-sub">
-          <i class="fi fi-sr-clock"></i>
-          ${u.last_seen ? new Date(u.last_seen).toLocaleDateString('th-TH', { day:'2-digit', month:'short', year:'numeric' }) : 'ไม่มีข้อมูล'}
-        </div>
+      <div class="ucr-sub">
+        <i class="fi fi-sr-clock"></i>
+        ${u.last_seen ? new Date(u.last_seen).toLocaleDateString('th-TH', { day:'2-digit', month:'short', year:'numeric' }) : 'ไม่มีข้อมูล'}
       </div>
-      <div class="ucr-ctrl">
-        <div class="ucr-credit-wrap">
-          <i class="fi fi-sr-coins" style="color:var(--gold);font-size:.8rem;"></i>
-          <input class="ucr-input" type="number" value="${u.credits}" min="0" id="ucr-${u.id}">
-        </div>
+    </div>
+    <div class="ucr-ctrl">
+      <div class="ucr-credit-wrap">
+        <i class="fi fi-sr-coins" style="color:var(--gold);font-size:.8rem;"></i>
+        <input class="ucr-input" type="number" value="${u.credits}" min="0" id="ucr-${u.id}">
+      </div>
+      <div class="ucr-btn-row">
         <button class="btn-sm btn-edit" onclick="saveUserCredit('${u.id}')">
           <i class="fi fi-sr-disk"></i> บันทึก
         </button>
-        <button class="${u.is_banned ? 'btn-unban' : 'btn-ban'}" onclick="toggleBanUser('${u.id}', ${!u.is_banned})">
+        <button class="btn-sm ${u.is_banned ? 'btn-unban' : 'btn-ban'}" onclick="toggleBanUser('${u.id}', ${!u.is_banned})">
           <i class="fi fi-sr-${u.is_banned ? 'check' : 'ban'}"></i>
           ${u.is_banned ? 'ปลดแบน' : 'แบน'}
         </button>
       </div>
     </div>
-  `).join('');
+  </div>
+`).join('');
 }
 
 async function saveUserCredit(userId) {
@@ -266,9 +267,25 @@ function toast(msg, type = 'success') {
   ico.className   = `fi ${T_ICO[type] || 'fi-sr-check-circle'}`;
   ico.style.color = T_CLR[type] || '#4caf50';
   document.getElementById('toast-msg').textContent = msg;
+
+  // ล้าง timeout เดิมก่อนเสมอ
+  if (t._t) { clearTimeout(t._t); t._t = null; }
+
+  // force reflow เพื่อ reset ดimation บน mobile
+  t.classList.remove('show');
+  void t.offsetWidth;
   t.classList.add('show');
-  clearTimeout(t._t);
-  t._t = setTimeout(() => t.classList.remove('show'), 2600);
+
+  t._t = setTimeout(() => {
+    t.classList.remove('show');
+    t._t = null;
+  }, 2600);
+
+  // กด toast เพื่อปิดได้เลย (mobile UX)
+  t.onclick = () => {
+    if (t._t) { clearTimeout(t._t); t._t = null; }
+    t.classList.remove('show');
+  };
 }
 
 /* ---- TOPUP MODAL ---- */
@@ -327,7 +344,7 @@ window.addEventListener('load', async function () {
   }
 
   /* ---- OVERLAY CLOSE ON BACKDROP — ย้ายมาไว้หลัง DOM โหลดเสร็จ ---- */
-  ['topup-overlay', 'res-overlay', 'deck-form-ov', 'pkg-form-ov'].forEach(id => {
+  ['topup-overlay', 'deck-form-ov', 'pkg-form-ov'].forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
     el.addEventListener('click', function (e) {

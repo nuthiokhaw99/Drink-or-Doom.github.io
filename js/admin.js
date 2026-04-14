@@ -540,16 +540,16 @@ function renderAdmDecks() {
     </div>
     <div class="drow-acts">
 <div style="display:flex;flex-direction:column;gap:2px;margin-right:2px;">
-<button class="btn-sm" style="padding:4px 10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#888;" onclick="moveDeck('${d.id}',-1)" title="เลื่อนขึ้น"><i class="fi fi-sr-angle-up"></i></button>
-<button class="btn-sm" style="padding:4px 10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#888;" onclick="moveDeck('${d.id}',1)" title="เลื่อนลง"><i class="fi fi-sr-angle-down"></i></button>
+<button class="btn-sm" style="padding:4px 10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#888;" onclick="moveDeck('${d.id}',-1)" title="<span>เลื่อนขึ้น</span>"><i class="fi fi-sr-angle-up"></i></button>
+<button class="btn-sm" style="padding:4px 10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#888;" onclick="moveDeck('${d.id}',1)" title="<span>เลื่อนลง</span>"><i class="fi fi-sr-angle-down"></i></button>
 </div>
       <button class="btn-sm ${d.hidden ? 'btn-hidden' : 'btn-visible'}" onclick="toggleDeck('${d.id}')">
-        <i class="fi ${d.hidden ? 'fi-sr-eye-crossed' : 'fi-sr-eye'}"></i>
-        ${d.hidden ? 'ซ่อนอยู่' : 'แสดงอยู่'}
+        <i class="fi ${d.hidden ? 'fi-sr-eye-crossed' : 'fi-sr-eye'}"></i><span>
+        ${d.hidden ? 'ซ่อนอยู่' : 'แสดงอยู่'}</span>
       </button>
-      <button class="btn-sm btn-edit" onclick="editDeck('${d.id}')"><i class="fi fi-sr-edit"></i> แก้ไข</button>
-      <button class="btn-sm" style="background:rgba(245,197,24,.08);border:1px solid rgba(245,197,24,.2);color:var(--gold);" onclick="duplicateDeck('${d.id}')"><i class="fi fi-sr-copy-alt"></i> ก็อปปี้</button>
-      <button class="btn-sm btn-del"  onclick="delDeck('${d.id}')"><i class="fi fi-sr-trash"></i> ลบ</button>
+      <button class="btn-sm btn-edit" onclick="editDeck('${d.id}')"><i class="fi fi-sr-edit"></i> <span>แก้ไข</span></button>
+      <button class="btn-sm" style="background:rgba(245,197,24,.08);border:1px solid rgba(245,197,24,.2);color:var(--gold);" onclick="duplicateDeck('${d.id}')"><i class="fi fi-sr-copy-alt"></i> <span>ก็อปปี้</span></button>
+      <button class="btn-sm btn-del"  onclick="delDeck('${d.id}')"><i class="fi fi-sr-trash"></i> <span>ลบ</span></button>
     </div>`;
     l.appendChild(r);
   });

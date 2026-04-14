@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 118,
+            "activePatchIndex": 120,
             "patches": [
                 {
                     "date": 1774366341293,
@@ -480,6 +480,14 @@
                 {
                     "date": 1775988286774,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -743,5 +743,8 @@\n   .hdr          { padding: 14px 24px; }\r\n   .hero         { padding: 80px 24px 120px; }\r\n   .deck-grid-wrap { padding: 0 16px; }\r\n   .btn-play     { max-width: 480px; }\r\n+}\r\n+#df-theme-swatches::-webkit-scrollbar {\r\n+  display: none;\r\n }\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1776140957951,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -513,12 +513,18 @@\n   position: fixed; bottom: 28px; left: 50%;\r\n   transform: translateX(-50%) translateY(80px);\r\n   background: #1e1e1e; border: 1px solid #333; border-radius: 30px;\r\n   padding: 11px 22px; font-size: .88rem; z-index: 1000;\r\n-  transition: transform .3s; pointer-events: none;\r\n+  transition: transform .3s, opacity .3s;\r\n+  pointer-events: auto;\r\n+  opacity: 0;\r\n   display: flex; align-items: center; gap: 9px;\r\n+  cursor: pointer;\r\n }\r\n-.toast.show { transform: translateX(-50%) translateY(0); }\r\n+.toast.show {\r\n+  transform: translateX(-50%) translateY(0);\r\n+  opacity: 1;\r\n+}\r\n \r\n /* ---- SPARKLE ---- */\r\n .spk {\r\n   position: fixed; pointer-events: none; z-index: 9000;\r\n"
+                },
+                {
+                    "date": 1776141012250,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -550,16 +550,16 @@\n \r\n .deck-grid-wrap {\r\n   display: flex;\r\n   flex-direction: column;\r\n-  align-items: stretch;    /* ให้ child ยืดเต็ม width */\r\n+  align-items: stretch;\r\n   gap: 14px;\r\n   max-width: 960px;\r\n   width: 100%;\r\n   position: relative;\r\n   z-index: 1;\r\n-  padding: 0 20px 0 80px;   /* เพิ่มเลขสุดท้าย */\r\n-  margin: 0 auto;          /* กึ่งกลางหน้า */\r\n+  padding: 0 20px;\r\n+  margin: 0 auto;\r\n }\r\n \r\n body.in-game {\r\n   overflow: hidden;\r\n"
                 }
             ],
             "date": 1774366341293,
