@@ -91,6 +91,7 @@ _sb.auth.onAuthStateChange(async (event, session) => {
   if (event === 'TOKEN_REFRESHED') {
     await loadCredits();
     _updateAuthUI();
+    if (typeof _flipLock !== 'undefined') _flipLock = false;  // ← แก้
     return;
   }
 

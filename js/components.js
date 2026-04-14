@@ -55,6 +55,14 @@ function spawnSparks(rect) {
 async function startGame() {
   if (!selDeck.length) return;
 
+  // เช็ค session ก่อนเสมอ — ป้องกันกรณีเปิดทิ้งไว้นานแล้ว token หมด
+  const { data: { session } } = await _sb.auth.getSession();
+  if (!session) {
+    toast('กรุณาเข้าสู่ระบบก่อน', 'warning');
+    openLogin();
+    return;
+  }
+
   const allCards = selDeck.flatMap(id =>
     (DB.cards[id] || []).map(c => ({ ...c, _deckId: id }))
   );
@@ -250,6 +258,13 @@ async function flipTopCard(el) {
 
   const { success, newBalance } = await API.deductCredits(cost);
   if (!success) {
+    const { data: { session } } = await _sb.auth.getSession();
+    if (!session) {
+      toast('session หมดอายุ กรุณา login ใหม่', 'warning');
+      openLogin();
+      _flipLock = false;
+      return;
+    }
     toast(`เครดิตไม่พอ! ต้องใช้ ${cost} เครดิต`, 'error');
     openTopup();
     el.style.pointerEvents = '';
@@ -314,6 +329,13 @@ async function flipCard(el, idx, ang) {
 
   const { success, newBalance } = await API.deductCredits(cost);
   if (!success) {
+    const { data: { session } } = await _sb.auth.getSession();
+    if (!session) {
+      toast('session หมดอายุ กรุณา login ใหม่', 'warning');
+      openLogin();
+      _flipLock = false;
+      return;
+    }
     toast(`เครดิตไม่พอ! ต้องใช้ ${cost} เครดิต`, 'error');
     openTopup();
     el.style.pointerEvents = '';
