@@ -530,7 +530,8 @@ function _showNextAnnounce() {
   `;
 
   ov.querySelector('#_ann-title').textContent = a.title   ?? '';
-  ov.querySelector('#_ann-msg').textContent   = a.message ?? '';
+  ov.querySelector('#_ann-msg').style.whiteSpace = 'pre-wrap';
+  ov.querySelector('#_ann-msg').textContent = a.message ?? '';
   ov.addEventListener('click', function(e) {
     if (e.target === this) closeAnnouncePopup();
   });

@@ -1,5 +1,5 @@
 /* =========================================
-   admin.js — Admin Panel Logic
+   admin.js - Admin Panel Logic
    ========================================= */
 
 let editDeckId = null;
@@ -202,7 +202,7 @@ async function loadStatsTab() {
 
     <!-- ROW 4: Top Decks -->
     <div class="sheet-sec">
-      <h3><i class="fi fi-sr-ranking-star" style="color:var(--gold);"></i> กองไพ่ — จัดอันดับตามจำนวนไพ่</h3>
+      <h3><i class="fi fi-sr-ranking-star" style="color:var(--gold);"></i> กองไพ่ - จัดอันดับตามจำนวนไพ่</h3>
       <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px;">
         ${decksSorted.slice(0, 6).map((d, i) => {
           const cnt    = (DB.cards[d.id] || []).length;
@@ -389,7 +389,7 @@ async function loadAnnounceTab() {
           </span>
           ${a.show_popup ? '<span class="ann-badge ann-badge-info"><i class="fi fi-sr-window-popup"></i> popup</span>' : ''}
         </div>
-        <div class="ann-row-msg">${a.message || ''}</div>
+        <div class="ann-row-msg" style="white-space:pre-wrap;">${a.message || ''}</div>
         <div class="ann-row-sub">
           <span><i class="fi fi-sr-calendar"></i> ${created}</span>
           ${expires ? `<span class="sep">·</span><span><i class="fi fi-sr-hourglass-end"></i> หมดอายุ ${expires}</span>` : ''}
@@ -435,6 +435,63 @@ async function createAnnounce() {
   document.getElementById('ann-message').value = '';
   document.getElementById('ann-expires').value = '';
   loadAnnounceTab();
+}
+
+async function editAnnounce(id) {
+  const { data, error } = await _sb
+    .from('announcements')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error || !data) { toast('โหลดประกาศไม่สำเร็จ', 'error'); return; }
+
+  // เติมค่าลงฟอร์ม
+  document.getElementById('ann-title').value   = data.title   || '';
+  document.getElementById('ann-message').value = data.message || '';
+  document.getElementById('ann-type').value    = data.type    || 'info';
+  document.getElementById('ann-popup').value   = data.show_popup ? '1' : '0';
+  document.getElementById('ann-active').value  = data.active  ? '1' : '0';
+  document.getElementById('ann-expires').value = data.expires_at
+    ? new Date(data.expires_at).toISOString().slice(0, 16)
+    : '';
+
+  // เปลี่ยนปุ่มเป็น "อัปเดต"
+  const btn = document.querySelector('[onclick="createAnnounce()"]');
+  if (btn) {
+    btn.innerHTML = '<i class="fi fi-sr-disk"></i> อัปเดตประกาศ';
+    btn.onclick = async () => {
+      const title   = document.getElementById('ann-title').value.trim();
+      const message = document.getElementById('ann-message').value.trim();
+      if (!title || !message) { toast('กรุณากรอกให้ครบ', 'warning'); return; }
+
+      const { error } = await _sb.from('announcements').update({
+        title,
+        message,
+        type:       document.getElementById('ann-type').value,
+        show_popup: document.getElementById('ann-popup').value === '1',
+        active:     document.getElementById('ann-active').value === '1',
+        expires_at: document.getElementById('ann-expires').value
+          ? new Date(document.getElementById('ann-expires').value).toISOString()
+          : null,
+      }).eq('id', id);
+
+      if (error) { toast('เกิดข้อผิดพลาด', 'error'); return; }
+      toast('อัปเดตประกาศแล้ว', 'success');
+
+      // reset ปุ่มกลับ
+      btn.innerHTML = '<i class="fi fi-sr-plus"></i> เพิ่มประกาศ';
+      btn.onclick = createAnnounce;
+      document.getElementById('ann-title').value   = '';
+      document.getElementById('ann-message').value = '';
+      document.getElementById('ann-expires').value = '';
+      loadAnnounceTab();
+    };
+  }
+
+  // scroll ขึ้นไปที่ฟอร์ม
+  document.getElementById('ann-title').scrollIntoView({ behavior: 'smooth' });
+  toast('โหลดข้อมูลประกาศแล้ว - แก้ไขแล้วกด "อัปเดต"', 'info');
 }
 
 async function deleteAnnounce(id) {
@@ -864,7 +921,7 @@ function loadCE() {
     return;
   }
   const d = DB.decks.find(x => x.id === id);
-  document.getElementById('ce-title').innerHTML = `<i class="fi ${d.icon || 'fi-sr-layers'}" style="color:var(--red);"></i> ${d.name} — แก้ไขไพ่`;
+  document.getElementById('ce-title').innerHTML = `<i class="fi ${d.icon || 'fi-sr-layers'}" style="color:var(--red);"></i> ${d.name} - แก้ไขไพ่`;
   ed.innerHTML = '';
   (DB.cards[id] || []).forEach(c => addCRow(c.text, c.cat));
 }
@@ -917,7 +974,7 @@ function saveSettings() {
   toast('บันทึกการตั้งค่าแล้ว', 'success');
 }
 
-// [FIX] connectSheet นิยามครั้งเดียวที่นี่ — ลบออกจาก api.js แล้ว
+// [FIX] connectSheet นิยามครั้งเดียวที่นี่ - ลบออกจาก api.js แล้ว
 function connectSheet() {
   const url = document.getElementById('sheet-url')?.value?.trim();
   if (!url) { toast('กรุณาใส่ URL', 'warning'); return; }
@@ -932,7 +989,7 @@ function connectSheet() {
       renderAdmSel();
       renderDecks();
     })
-    .catch(() => toast('เชื่อมต่อไม่ได้ — ตรวจสอบ URL และ Share settings', 'error'));
+    .catch(() => toast('เชื่อมต่อไม่ได้ - ตรวจสอบ URL และ Share settings', 'error'));
 }
 
 /* ---- EXPORT / IMPORT ---- */
@@ -1577,6 +1634,6 @@ function applyBulkPaste() {
     }
   });
   closeBulkPaste();
-  toast(`เพิ่ม ${lines.length} ใบแล้ว — กด "บันทึก" เพื่อบันทึก`, 'success');
+  toast(`เพิ่ม ${lines.length} ใบแล้ว - กด "บันทึก" เพื่อบันทึก`, 'success');
 }
 

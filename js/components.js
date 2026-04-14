@@ -116,7 +116,7 @@ async function startGame() {
 
   updRem();
   updateCr();
-  renderCards();
+  setTimeout(() => renderCards(), 0);
 }
 
 function updRem() {
@@ -135,7 +135,7 @@ function renderScatter() {
   const deckTheme = isMulti ? 'th-fire' : getTh(deck);
   const cardIcon  = isMulti ? 'fi-sr-message-question' : (deck?.icon || 'fi-sr-layers');
 
-  const W  = wrap.offsetWidth || document.getElementById('game-screen').offsetWidth || window.innerWidth - 32;
+  const W = wrap.getBoundingClientRect().width || document.getElementById('game-screen').getBoundingClientRect().width || window.innerWidth - 32;
   const CW = mobile ? 72 : 96;
   const CH = mobile ? 104 : 138;
   const hdr  = document.querySelector('.game-hdr')?.offsetHeight || 80;
