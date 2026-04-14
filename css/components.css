@@ -157,8 +157,17 @@
   .res-txt { font-size: 2.5rem  !important; }
 }
 
-@media (max-width: 1024px) and (min-width: 581px) {
-  .res-txt { font-size: clamp(1.8rem, 4vw, 2.6rem) !important; }
+@media (min-width: 581px) and (max-width: 1024px) {
+  .res-card     { padding: 56px 48px 48px; width: 88%; max-width: 680px; }
+  .res-txt      { font-size: 3.8rem !important; line-height: 1.35; }
+  .res-cat      { font-size: 1.9rem; letter-spacing: 4px; margin-bottom: 20px; }
+  .res-ico-wrap { width: 160px; height: 160px; font-size: 4.8rem; margin-bottom: 24px; }
+  .res-deck-lbl { font-size: 1rem; margin-bottom: 18px; }
+  .res-acts     { gap: 16px; margin-top: 12px; }
+  .btn-next, .btn-close-r {
+    padding: 16px 32px;
+    font-size: 1.15rem;
+  }
 }
 
 /* ============================================

@@ -369,3 +369,27 @@ function injectCustomThemes() {
   if (!el) { el = document.createElement('style'); el.id = '_custom-themes'; document.head.appendChild(el); }
   el.textContent = css;
 }
+
+let _visibilityTimer = null;
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState !== 'visible') return;
+
+  clearTimeout(_visibilityTimer);
+  _visibilityTimer = setTimeout(async () => {
+    try {
+      // ใช้ getSession แทน refreshSession — ไม่แย่ง lock
+      const { data: { session } } = await _sb.auth.getSession();
+      if (session) {
+        currentUser = session.user;
+        await loadCredits();
+        _updateAuthUI();
+      } else {
+        currentUser = null;
+        _updateAuthUI();
+      }
+    } catch (e) {
+      console.warn('visibilitychange session check failed:', e);
+    }
+  }, 500); // รอ 800ms ก่อน — ให้ Supabase internal refresh เสร็จก่อน
+});

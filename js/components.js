@@ -55,13 +55,18 @@ function spawnSparks(rect) {
 async function startGame() {
   if (!selDeck.length) return;
 
-  // เช็ค session ก่อนเสมอ — ป้องกันกรณีเปิดทิ้งไว้นานแล้ว token หมด
-  const { data: { session } } = await _sb.auth.getSession();
+  let { data: { session } } = await _sb.auth.getSession();
+  if (!session) {
+    // ลอง refresh ก่อน
+    const { data: refreshed } = await _sb.auth.refreshSession();
+    session = refreshed?.session;
+  }
   if (!session) {
     toast('กรุณาเข้าสู่ระบบก่อน', 'warning');
     openLogin();
     return;
   }
+  currentUser = session.user;
 
   const allCards = selDeck.flatMap(id =>
     (DB.cards[id] || []).map(c => ({ ...c, _deckId: id }))

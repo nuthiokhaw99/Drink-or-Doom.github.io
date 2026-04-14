@@ -24,7 +24,39 @@ async function isAdminLoggedIn() {
   _adminCacheTime = now;
   return _cachedIsAdmin;
 }
+// async function isAdminLoggedIn() {
+//   if (!currentUser) return false;
 
+//   const now = Date.now();
+//   if (_cachedIsAdmin !== null && now - _adminCacheTime < ADMIN_CACHE_TTL_MS) {
+//     return _cachedIsAdmin;
+//   }
+
+//   try {
+//     // ✅ ดึง token จริงจาก Supabase session
+//     const { data: { session } } = await _sb.auth.getSession();
+//     if (!session) return false;
+
+//     // ✅ ส่งไป verify ฝั่ง server — client แก้ไม่ได้
+//     const res = await fetch(
+//       'https://wslevsdsbcqjndskwyhz.supabase.co/functions/v1/check-admin',
+//       {
+//         headers: {
+//           'Authorization': 'Bearer ' + session.access_token
+//         }
+//       }
+//     );
+
+//     const json = await res.json();
+//     _cachedIsAdmin = json.is_admin === true;
+//     _adminCacheTime = now;
+//     return _cachedIsAdmin;
+
+//   } catch (e) {
+//     console.error('isAdminLoggedIn error:', e);
+//     return false;  // ถ้า error = ไม่ให้ผ่านเด็ดขาด
+//   }
+// }
 async function showAdmin() {
   if (!currentUser) { toast('กรุณาเข้าสู่ระบบก่อน', 'warning'); openLogin(); return; }
   if (!(await isAdminLoggedIn())) { toast('คุณไม่มีสิทธิ์เข้าหน้านี้', 'error'); return; }

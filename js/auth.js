@@ -85,7 +85,9 @@ _sb.auth.onAuthStateChange(async (event, session) => {
 
   if (event === 'SIGNED_IN') {
     _startBanWatcher();
+    if (typeof loadCredits === 'function') await loadCredits();  // ✅ โหลดเครดิตก่อน
     if (typeof closeLogin === 'function') closeLogin();
+    // ไม่มี return — ให้ไหลลงไปเรียก _updateAuthUI() ที่ท้ายตามปกติ
   }
 
   if (event === 'TOKEN_REFRESHED') {
