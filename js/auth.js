@@ -91,7 +91,12 @@ _sb.auth.onAuthStateChange(async (event, session) => {
   if (event === 'TOKEN_REFRESHED') {
     await loadCredits();
     _updateAuthUI();
-    if (typeof _flipLock !== 'undefined') _flipLock = false;  // ← แก้
+    if (typeof _flipLock !== 'undefined') _flipLock = false;
+    // sync btn-play state หลัง token refresh
+    const btnPlay = document.getElementById('btn-play');
+    if (btnPlay && typeof selDeck !== 'undefined') {
+      btnPlay.disabled = selDeck.length < 1;
+    }
     return;
   }
 

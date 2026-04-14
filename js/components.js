@@ -284,6 +284,7 @@ async function flipTopCard(el) {
   el.style.animation = '';
   el.classList.add('flipping');
   spawnSparks(el.getBoundingClientRect());
+  if (navigator.vibrate) navigator.vibrate([30, 50, 80]);
 
   stackIndex++;
   revCount++;
@@ -354,6 +355,7 @@ async function flipCard(el, idx, ang) {
 
   el.classList.add('flipping');
   spawnSparks(el.getBoundingClientRect());
+  if (navigator.vibrate) navigator.vibrate([30, 50, 80]);
 
   setTimeout(() => {
     el.classList.remove('flipping');
