@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 121,
+            "activePatchIndex": 122,
             "patches": [
                 {
                     "date": 1774366390638,
@@ -492,6 +492,10 @@
                 {
                     "date": 1776203642559,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -367,11 +367,15 @@\n       }\r\n     } catch (e) {\r\n       console.warn('visibilitychange session check failed:', e);\r\n     } finally {\r\n-      // ✅ ทำทุกกรณี — login, logout, หรือ error\r\n       _updateAuthUI();\r\n-      await initDB();   // reload ไพ่ใหม่\r\n-      renderDecks();    // วาด UI ใหม่\r\n+\r\n+      // [FIX] อย่า re-render ถ้ากำลังเล่นเกมอยู่\r\n+      const inGame = document.body.classList.contains('in-game');\r\n+      if (!inGame) {\r\n+        await initDB();\r\n+        renderDecks();\r\n+      }\r\n     }\r\n   }, 800);\r\n });\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1776204598077,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -347,35 +347,35 @@\n   if (!el) { el = document.createElement('style'); el.id = '_custom-themes'; document.head.appendChild(el); }\r\n   el.textContent = css;\r\n }\r\n \r\n-let _visibilityTimer = null;\r\n+// let _visibilityTimer = null;\r\n \r\n-document.addEventListener('visibilitychange', () => {\r\n-  if (document.visibilityState !== 'visible') return;\r\n+// document.addEventListener('visibilitychange', () => {\r\n+//   if (document.visibilityState !== 'visible') return;\r\n \r\n-  clearTimeout(_visibilityTimer);\r\n-  _visibilityTimer = setTimeout(async () => {\r\n-    try {\r\n-      const { data: { session } } = await _sb.auth.getSession();\r\n-      if (session) {\r\n-        currentUser = session.user;\r\n-        await loadCredits();\r\n-      } else {\r\n-        currentUser = null;\r\n-        credits = 0;\r\n-        updateCr();\r\n-      }\r\n-    } catch (e) {\r\n-      console.warn('visibilitychange session check failed:', e);\r\n-    } finally {\r\n-      _updateAuthUI();\r\n+//   clearTimeout(_visibilityTimer);\r\n+//   _visibilityTimer = setTimeout(async () => {\r\n+//     try {\r\n+//       const { data: { session } } = await _sb.auth.getSession();\r\n+//       if (session) {\r\n+//         currentUser = session.user;\r\n+//         await loadCredits();\r\n\\ No newline at end of file\n+//       } else {\r\n+//         currentUser = null;\r\n+//         credits = 0;\r\n+//         updateCr();\r\n+//       }\r\n+//     } catch (e) {\r\n+//       console.warn('visibilitychange session check failed:', e);\r\n+//     } finally {\r\n+//       _updateAuthUI();\r\n \r\n-      // [FIX] อย่า re-render ถ้ากำลังเล่นเกมอยู่\r\n-      const inGame = document.body.classList.contains('in-game');\r\n-      if (!inGame) {\r\n-        await initDB();\r\n-        renderDecks();\r\n-      }\r\n-    }\r\n-  }, 800);\r\n-});\n+//       // [FIX] อย่า re-render ถ้ากำลังเล่นเกมอยู่\r\n+//       const inGame = document.body.classList.contains('in-game');\r\n+//       if (!inGame) {\r\n+//         await initDB();\r\n+//         renderDecks();\r\n+//       }\r\n+//     }\r\n+//   }, 800);\r\n+// });\n\\ No newline at end of file\n"
                 }
             ],
             "date": 1774366390638,

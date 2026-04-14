@@ -348,34 +348,34 @@ function injectCustomThemes() {
   el.textContent = css;
 }
 
-let _visibilityTimer = null;
+// let _visibilityTimer = null;
 
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState !== 'visible') return;
+// document.addEventListener('visibilitychange', () => {
+//   if (document.visibilityState !== 'visible') return;
 
-  clearTimeout(_visibilityTimer);
-  _visibilityTimer = setTimeout(async () => {
-    try {
-      const { data: { session } } = await _sb.auth.getSession();
-      if (session) {
-        currentUser = session.user;
-        await loadCredits();
-      } else {
-        currentUser = null;
-        credits = 0;
-        updateCr();
-      }
-    } catch (e) {
-      console.warn('visibilitychange session check failed:', e);
-    } finally {
-      _updateAuthUI();
+//   clearTimeout(_visibilityTimer);
+//   _visibilityTimer = setTimeout(async () => {
+//     try {
+//       const { data: { session } } = await _sb.auth.getSession();
+//       if (session) {
+//         currentUser = session.user;
+//         await loadCredits();
+//       } else {
+//         currentUser = null;
+//         credits = 0;
+//         updateCr();
+//       }
+//     } catch (e) {
+//       console.warn('visibilitychange session check failed:', e);
+//     } finally {
+//       _updateAuthUI();
 
-      // [FIX] อย่า re-render ถ้ากำลังเล่นเกมอยู่
-      const inGame = document.body.classList.contains('in-game');
-      if (!inGame) {
-        await initDB();
-        renderDecks();
-      }
-    }
-  }, 800);
-});
+//       // [FIX] อย่า re-render ถ้ากำลังเล่นเกมอยู่
+//       const inGame = document.body.classList.contains('in-game');
+//       if (!inGame) {
+//         await initDB();
+//         renderDecks();
+//       }
+//     }
+//   }, 800);
+// });

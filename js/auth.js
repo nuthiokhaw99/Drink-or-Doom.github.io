@@ -86,15 +86,19 @@ _sb.auth.onAuthStateChange(async (event, session) => {
   }
 
   if (event === 'TOKEN_REFRESHED') {
-    await loadCredits();
-    _updateAuthUI();
-    if (typeof _flipLock !== 'undefined') _flipLock = false;
-    // sync btn-play state หลัง token refresh
-    const btnPlay = document.getElementById('btn-play');
-    if (btnPlay && typeof selDeck !== 'undefined') {
-      btnPlay.disabled = selDeck.length < 1;
-    }
-    return;
+      await loadCredits();
+      _updateAuthUI();
+      if (typeof _flipLock !== 'undefined') _flipLock = false;
+      
+      // [FIX] reinit ถ้า connection หลุด
+      _stopBanWatcher();
+      _startBanWatcher();
+      
+      const btnPlay = document.getElementById('btn-play');
+      if (btnPlay && typeof selDeck !== 'undefined') {
+        btnPlay.disabled = selDeck.length < 1;
+      }
+      return;
   }
 
   _updateAuthUI();
@@ -133,6 +137,17 @@ function _stopBanWatcher() {
     _banChannel = null;
   }
 }
+document.addEventListener('visibilitychange', async () => {
+  if (document.visibilityState !== 'visible') return;
+  
+  // [FIX] force reconnect Supabase auth เมื่อกลับมาที่แท็บ
+  try {
+    await _sb.auth.startAutoRefresh();
+  } catch(e) {}
+  
+  _stopBanWatcher();
+  if (currentUser) _startBanWatcher();
+});
 
 async function _showBanPopup() {
   document.getElementById('ban-popup-ov')?.remove();

@@ -55,27 +55,17 @@ function spawnSparks(rect) {
 async function startGame() {
   if (!selDeck.length) return;
 
-  // [FIX] เพิ่ม timeout ป้องกัน session check ค้าง
   let session;
   try {
-    const result = await Promise.race([
-      _sb.auth.getSession(),
-      new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 5000))
-    ]);
-    session = result.data?.session;
+    const { data } = await _sb.auth.getSession();
+    session = data?.session;
 
     if (!session) {
-      const refreshed = await Promise.race([
-        _sb.auth.refreshSession(),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 5000))
-      ]);
-      session = refreshed.data?.session;
+      const { data: refreshed } = await _sb.auth.refreshSession();
+      session = refreshed?.session;
     }
   } catch (e) {
     console.warn('session check failed:', e);
-    toast('เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่', 'warning');
-    openLogin();
-    return;
   }
 
   if (!session) {
@@ -83,6 +73,8 @@ async function startGame() {
     openLogin();
     return;
   }
+
+  // โค้ดที่เหลือเหมือนเดิม...
 
   currentUser = session.user;
   // ... โค้ดที่เหลือเหมือนเดิม
