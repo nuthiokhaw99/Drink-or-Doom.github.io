@@ -1,4 +1,3 @@
-// ── อ่านจาก config.js ที่ไม่ได้ commit ขึ้น Git ──
 if (typeof CONFIG === 'undefined') {
   throw new Error('[auth] ไม่พบ config.js — คัดลอกจาก config.example.js แล้วใส่ key จริง');
 }
@@ -28,7 +27,6 @@ const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
 
 let currentUser = null;
 
-// [FIX #14] announce popup cancellation token
 let _announceAbortController = null;
 
 _sb.auth.onAuthStateChange(async (event, session) => {
@@ -37,7 +35,6 @@ _sb.auth.onAuthStateChange(async (event, session) => {
   if (event === 'INITIAL_SESSION') {
     currentUser = session?.user ?? null;
 
-    // [BAN CHECK] ตรวจสถานะ ban สำหรับ session ที่ค้างอยู่
     if (currentUser) {
       const { data: banCheck } = await _sb
         .from('profiles')
@@ -72,7 +69,6 @@ _sb.auth.onAuthStateChange(async (event, session) => {
   }
 
   if (event === 'SIGNED_OUT') {
-    // [FIX #8] cancel pending announce popup
     if (_announceAbortController) { _announceAbortController.abort(); _announceAbortController = null; }
     _cachedIsAdmin = null;
     credits = 0;
@@ -85,9 +81,8 @@ _sb.auth.onAuthStateChange(async (event, session) => {
 
   if (event === 'SIGNED_IN') {
     _startBanWatcher();
-    if (typeof loadCredits === 'function') await loadCredits();  // ✅ โหลดเครดิตก่อน
+    if (typeof loadCredits === 'function') await loadCredits();  
     if (typeof closeLogin === 'function') closeLogin();
-    // ไม่มี return — ให้ไหลลงไปเรียก _updateAuthUI() ที่ท้ายตามปกติ
   }
 
   if (event === 'TOKEN_REFRESHED') {
@@ -106,14 +101,10 @@ _sb.auth.onAuthStateChange(async (event, session) => {
 
 });
 
-
-/* =========================================
-   BAN WATCHER — Realtime ตรวจ is_banned
-   ========================================= */
 let _banChannel = null;
 
 function _startBanWatcher() {
-  _stopBanWatcher(); // ล้างอันเก่าก่อนเสมอ
+  _stopBanWatcher();
   if (!currentUser) return;
 
   _banChannel = _sb
@@ -144,7 +135,6 @@ function _stopBanWatcher() {
 }
 
 async function _showBanPopup() {
-  // ลบ popup เก่าถ้ามี
   document.getElementById('ban-popup-ov')?.remove();
 
   const ov = document.createElement('div');
@@ -200,7 +190,6 @@ async function _showBanPopup() {
 
   document.body.appendChild(ov);
 
-  // ปุ่ม confirm → sign out
   document.getElementById('ban-confirm-btn').addEventListener('click', async () => {
     const btn = document.getElementById('ban-confirm-btn');
     if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fi fi-sr-spinner fi-spin"></i> กำลังออกจากระบบ...'; }
@@ -230,9 +219,6 @@ function switchLoginTab(tab) {
   document.getElementById('reg-err').textContent   = '';
 }
 
-/* =========================================
-   LOGIN
-   ========================================= */
 async function doLogin() {
   const username = document.getElementById('login-username').value.trim();
   const password = document.getElementById('login-password').value;
@@ -245,15 +231,12 @@ async function doLogin() {
   btn.disabled = true;
   btn.innerHTML = '<i class="fi fi-sr-spinner fi-spin"></i> กำลังเข้าสู่ระบบ...';
 
-  // [FIX #4] ไม่บอกว่า username ไม่มีอยู่จริง — ป้องกัน username enumeration
   const { data: profile } = await _sb
     .from('profiles')
     .select('email')
     .ilike('username', username.toLowerCase())
     .maybeSingle();
 
-  // ถ้าไม่เจอ profile ให้ทำ signIn ต่อไปเลย — Supabase จะ error เอง
-  // วิธีนี้ทำให้ response time เท่ากันทั้งสองกรณี ป้องกัน timing attack
   const emailToTry = profile?.email ?? (username.toLowerCase() + '@invalid.drinkordoom.com');
 
   const { error } = await _sb.auth.signInWithPassword({ email: emailToTry, password });
@@ -261,13 +244,11 @@ async function doLogin() {
   btn.disabled = false;
   btn.innerHTML = '<i class="fi fi-sr-sign-in-alt"></i> เข้าสู่ระบบ';
 
-  // [FIX #4] error message เดียวกันทุกกรณี
   if (error || !profile) {
     errEl.textContent = 'Username หรือ Password ไม่ถูกต้อง';
     return;
   }
 
-  // [BAN CHECK] ตรวจสถานะ ban ก่อนเข้าสู่ระบบ
   const { data: banCheck } = await _sb
     .from('profiles')
     .select('is_banned')
@@ -285,9 +266,6 @@ async function doLogin() {
   closeLogin();
 }
 
-/* =========================================
-   REGISTER
-   ========================================= */
 async function doRegister() {
   const username = document.getElementById('reg-username').value.trim()
   const password = document.getElementById('reg-password').value
@@ -295,7 +273,6 @@ async function doRegister() {
   const errEl    = document.getElementById('reg-err')
   errEl.textContent = ''
 
-  // validation เหมือนเดิม
   if (!username || !password || !confirm) { errEl.textContent = 'กรุณากรอกข้อมูลให้ครบ'; return }
   if (username.length < 3)  { errEl.textContent = 'Username ต้องมีอย่างน้อย 3 ตัวอักษร'; return }
   if (password.length < 6)  { errEl.textContent = 'Password ต้องมีอย่างน้อย 6 ตัวอักษร'; return }
@@ -309,8 +286,6 @@ async function doRegister() {
   btn.disabled = true
   btn.innerHTML = '<i class="fi fi-sr-spinner fi-spin"></i> กำลังสมัคร...'
 
-  // ❌ ลบ SELECT ตรวจ username ออก — ไม่จำเป็นแล้ว และเป็นต้นเหตุ race condition
-
   const uniqueId = crypto.randomUUID?.().split('-')[0] ?? Date.now().toString(36)
   const email = `u_${username.toLowerCase()}_${uniqueId}@drinkordoom.app`
 
@@ -323,7 +298,6 @@ async function doRegister() {
     return
   }
 
-  // INSERT profiles — ถ้า username ซ้ำ DB จะ throw error จาก UNIQUE constraint
   const { error: insertError } = await _sb.from('profiles').insert({
     id:       data.user.id,
     username: username.toLowerCase(),
@@ -332,13 +306,11 @@ async function doRegister() {
   })
 
   if (insertError) {
-    // ✅ cleanup: ลบ auth user ที่เพิ่งสร้างออก ไม่ให้ค้างใน auth.users
     await _sb.auth.admin.deleteUser(data.user.id).catch(() => {})
 
     btn.disabled = false
     btn.innerHTML = '<i class="fi fi-sr-user-add"></i> สมัครสมาชิก'
 
-    // จับ error code จาก Postgres UNIQUE violation
     if (insertError.code === '23505') {
       errEl.textContent = 'Username นี้ถูกใช้งานแล้ว'
     } else {
@@ -350,11 +322,8 @@ async function doRegister() {
   toast('สมัครสมาชิกสำเร็จ! ยินดีต้อนรับ', 'success')
   closeLogin()
 }
-/* =========================================
-   LOGOUT
-   ========================================= */
+
 async function logout() {
-  // [FIX #8] cancel announce popup ก่อน logout
   if (_announceAbortController) { _announceAbortController.abort(); _announceAbortController = null; }
   _cachedIsAdmin = null;
   _stopBanWatcher();
@@ -395,19 +364,12 @@ function _updateAuthUI() {
   }
 }
 
-/* =========================================
-   CLOSE ON BACKDROP CLICK
-   ========================================= */
 document.getElementById('login-overlay')?.addEventListener('click', function(e) {
   if (e.target === this) closeLogin();
 });
 
-/* =========================================
-   ENTER KEY SUPPORT
-   ========================================= */
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
-    // ปิด popup ทั้งหมดด้วย Escape
     if (typeof closeAnnouncePopup === 'function') {
       const annOv = document.getElementById('announce-popup-ov');
       if (annOv) { closeAnnouncePopup(); return; }
@@ -433,20 +395,12 @@ document.addEventListener('click', function(e) {
   }
 });
 
-
-/* =========================================
-   ANNOUNCE POPUP
-   [FIX #14] รองรับการ abort เมื่อ logout ระหว่าง delay
-   ========================================= */
-// คิวประกาศที่รอแสดง
 let _announceQueue = [];
 
 async function showAnnouncePopup() {
-  // สร้าง abort controller ใหม่ทุกครั้ง
   _announceAbortController = new AbortController();
   const signal = _announceAbortController.signal;
 
-  // delay 1 วินาที พร้อม abort support
   try {
     await new Promise((resolve, reject) => {
       const timer = setTimeout(resolve, 1000);
@@ -469,14 +423,13 @@ async function showAnnouncePopup() {
 
   if (!data?.length || signal.aborted) return;
 
-  // เก็บทุกอันเข้าคิว แล้วแสดงอันแรก
   _announceQueue = [...data];
   _showNextAnnounce();
 }
 
 function _showNextAnnounce() {
   if (!_announceQueue.length) return;
-  const a = _announceQueue.shift(); // เอาอันแรกออกจากคิว
+  const a = _announceQueue.shift(); 
 
   const esc = (str) => {
     const d = document.createElement('div');
@@ -489,12 +442,10 @@ function _showNextAnnounce() {
   const typeIcon  = { info: 'fi-sr-info', promo: 'fi-sr-star', warning: 'fi-sr-triangle-warning', success: 'fi-sr-check-circle' };
   const typeLabel = { info: 'ข้อมูล', promo: 'โปรโมชั่น', warning: 'แจ้งเตือน', success: 'ข่าวดี' };
 
-  // แสดงตัวนับถ้ามีหลายอัน เช่น (1/3)
-  const total     = _announceQueue.length + 1; // รวมอันที่กำลังแสดง (ก่อน shift แล้ว +1)
+  const total     = _announceQueue.length + 1; 
   const current   = total - _announceQueue.length;
   const showCount = total > 1 ? `<span class="ann-count">${current}/${total}</span>` : '';
 
-  // ปุ่ม: ถ้ายังมีอันถัดไปให้แสดง "ถัดไป" แทน "รับทราบ"
   const hasNext   = _announceQueue.length > 0;
   const btnLabel  = hasNext
     ? `<i class="fi fi-sr-arrow-right"></i> ถัดไป (${_announceQueue.length} อันที่เหลือ)`
@@ -545,13 +496,11 @@ function _showNextAnnounce() {
     if (e.target === this) closeAnnouncePopup();
   });
 
-  // ลบอันเก่าก่อน (ป้องกัน popup ซ้อนกัน)
   const old = document.getElementById('announce-popup-ov');
   if (old) old.remove();
 
   document.body.appendChild(ov);
 
-  // safety: ถ้ากด backdrop ก็ปิดได้
   ov.addEventListener('click', function(e) {
     if (e.target === this) closeAnnouncePopup();
   }, { once: true });
@@ -562,8 +511,7 @@ function closeAnnouncePopup() {
   if (ov) {
     ov.style.animation = 'fadeOut .2s ease forwards';
     setTimeout(() => {
-      ov.remove();
-      // ถ้ายังมีในคิว → เปิดอันถัดไปเลย
+      ov.remove();  
       if (_announceQueue.length > 0) {
         _showNextAnnounce();
       }

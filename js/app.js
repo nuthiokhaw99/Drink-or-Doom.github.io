@@ -39,7 +39,6 @@ const getTh = (d) => {
   return THEMES[d?.theme || 'default'] || 'th-default';
 };
 
-/* ---- CREDIT DISPLAY ---- */
 function updateCr() {
   document.getElementById('cr-disp').textContent = credits;
   const gcr = document.getElementById('g-cr');
@@ -52,7 +51,6 @@ async function loadCredits() {
   updateCr();
 }
 
-/* ---- NAVIGATION ---- */
 function goHome() {
   selDeck = [];
   document.getElementById('home-screen').style.display  = '';
@@ -61,10 +59,9 @@ function goHome() {
   document.body.classList.remove('in-game');
   history.pushState({}, '', '#');
   _updateAuthUI();
-  renderDecks(); // ← เพิ่มบรรทัดนี้
+  renderDecks();
 }
 
-/* ---- ADMIN: USER CREDIT LIST ---- */
 async function loadAdminUserList() {
   const container = document.getElementById('admin-user-list');
   if (!container) return;
@@ -121,7 +118,6 @@ async function saveUserCredit(userId) {
 }
 function customConfirm(message) {
   return new Promise(resolve => {
-    // ลบอันเก่าถ้ามี
     document.getElementById('custom-confirm-ov')?.remove();
 
     const ov = document.createElement('div');
@@ -176,21 +172,17 @@ async function toggleBanUser(userId, ban) {
   if (typeof loadAdminUserList === 'function') loadAdminUserList();
 }
 
-/* ---- DECK SELECTION (HOME) ---- */
 function renderDecks() {
   const g = document.getElementById('deck-grid');
   g.innerHTML = '';
 
-  // [FIX #9] ตรวจ selDeck ก่อน render — ถ้า deck ที่เลือกถูกซ่อนไปแล้ว ล้างออก
   selDeck = selDeck.filter(id => {
     const d = DB.decks.find(d => d.id === id);
     return d && !d.hidden;
   });
 
-  // ตรงนี้มีอยู่แล้ว ไม่ต้องแก้ — แค่ตรวจให้แน่ใจว่ามี
 const visibleDecks = DB.decks.filter(d => !d.hidden);
 
-  // จัดกลุ่มตาม category
   const groups = {};
   const ORDER  = [];
   visibleDecks.forEach(d => {
@@ -200,13 +192,11 @@ const visibleDecks = DB.decks.filter(d => !d.hidden);
   });
 
   ORDER.forEach(cat => {
-    // Section header
     const header = document.createElement('div');
     header.className = 'deck-section-header';
     header.innerHTML = `<span>${cat}</span>`;
     g.appendChild(header);
 
-    // Row ของไพ่ในหมวดนี้
     const row = document.createElement('div');
     row.className = 'deck-section-row layout-' + (DB.settings.deckLayout || 'auto');
 
@@ -215,12 +205,6 @@ const visibleDecks = DB.decks.filter(d => !d.hidden);
       const th  = getTh(d);
       const el  = document.createElement('div');
       el.className = 'deck-card' + (selDeck.includes(d.id) ? ' sel' : '');
-      // el.innerHTML = `
-      //   <div class="d-ico-wrap ${th}"><i class="fi ${d.icon || 'fi-sr-layers'}"></i></div>
-      //   <div class="d-name">${d.name}</div>
-      //   <div class="d-cnt"><i class="fi fi-rr-copy" style="font-size:.7rem;opacity:.5;"></i> ${cnt} ใบ</div>
-      //   ${d.desc ? `<div class="d-desc">${d.desc}</div>` : ''}
-      //   <div class="d-cost"><i class="fi fi-sr-coins" style="font-size:.7rem;"></i> ${d.cost || 1} เครดิต/ใบ</div>`;
       el.innerHTML = `
           <div class="d-sel-badge"><i class="fi fi-sr-check"></i></div>
           <div class="d-ico-wrap ${th}"><i class="fi ${d.icon || 'fi-sr-layers'}"></i></div>
@@ -268,10 +252,8 @@ function toast(msg, type = 'success') {
   ico.style.color = T_CLR[type] || '#4caf50';
   document.getElementById('toast-msg').textContent = msg;
 
-  // ล้าง timeout เดิมก่อนเสมอ
   if (t._t) { clearTimeout(t._t); t._t = null; }
 
-  // force reflow เพื่อ reset ดimation บน mobile
   t.classList.remove('show');
   void t.offsetWidth;
   t.classList.add('show');
@@ -281,14 +263,12 @@ function toast(msg, type = 'success') {
     t._t = null;
   }, 2600);
 
-  // กด toast เพื่อปิดได้เลย (mobile UX)
   t.onclick = () => {
     if (t._t) { clearTimeout(t._t); t._t = null; }
     t.classList.remove('show');
   };
 }
 
-/* ---- TOPUP MODAL ---- */
 function openTopup() {
   const overlay = document.getElementById('topup-overlay');
   if (!overlay) { console.error('topup-overlay not found'); return; }
@@ -302,7 +282,6 @@ function closeTopup() {
   document.querySelectorAll('.topup-opt').forEach(o => o.classList.remove('sel'));
 }
 
-// [FIX #15] selPkg นิยามครั้งเดียวที่นี่ — ลบออกจาก payment.js แล้ว
 function selPkg(el, amount, pkgId = null) {
   document.querySelectorAll('.topup-opt').forEach(o => o.classList.remove('sel'));
   el.classList.add('sel');
@@ -311,7 +290,6 @@ function selPkg(el, amount, pkgId = null) {
   }
 }
 
-/* ---- INIT ---- */
 function applyTestMode() {
   const isTest = DB.settings.testMode === 1;
   const banner = document.getElementById('test-banner');
@@ -378,7 +356,6 @@ document.addEventListener('visibilitychange', () => {
   clearTimeout(_visibilityTimer);
   _visibilityTimer = setTimeout(async () => {
     try {
-      // ใช้ getSession แทน refreshSession — ไม่แย่ง lock
       const { data: { session } } = await _sb.auth.getSession();
       if (session) {
         currentUser = session.user;
@@ -391,5 +368,5 @@ document.addEventListener('visibilitychange', () => {
     } catch (e) {
       console.warn('visibilitychange session check failed:', e);
     }
-  }, 500); // รอ 800ms ก่อน — ให้ Supabase internal refresh เสร็จก่อน
+  }, 800);
 });
