@@ -297,22 +297,25 @@ function applyTestMode() {
   if (banner) banner.style.display = isTest ? '' : 'none';
   if (btn)    btn.style.display    = isTest ? '' : 'none';
 }
-
 window.addEventListener('load', async function () {
-  // แสดง skeleton ก่อนเลย
   document.getElementById('deck-grid').innerHTML = `
     <div style="color:var(--text3);font-size:.85rem;text-align:center;padding:40px;">
       <i class="fi fi-sr-spinner fi-spin" style="font-size:1.5rem;color:var(--red);"></i>
       <div style="margin-top:8px;">กำลังโหลด...</div>
     </div>`;
 
-  // โหลดพร้อมกัน
+  // ✅ รอให้ INITIAL_SESSION ยิงก่อน (Supabase พร้อมแน่นอน)
+  await new Promise(resolve => {
+    _sb.auth.onAuthStateChange((event) => {
+      if (event === 'INITIAL_SESSION') resolve();
+    });
+  });
+
   await Promise.all([initDB(), loadCredits()]);
   applyTestMode();
   renderDecks();
   injectCustomThemes();
 
-  /* ---- DEEP LINK: restore หน้าจาก URL เมื่อ refresh หรือเปิด link ---- */
   const hash = window.location.hash;
   if (hash === '#admin' || hash.startsWith('#admin/')) {
     showAdmin();
@@ -321,14 +324,12 @@ window.addEventListener('load', async function () {
     if (typeof _restoreGame === 'function') await _restoreGame(ids);
   }
 
-  /* ---- OVERLAY CLOSE ON BACKDROP — ย้ายมาไว้หลัง DOM โหลดเสร็จ ---- */
   ['topup-overlay', 'deck-form-ov', 'pkg-form-ov'].forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
     el.addEventListener('click', function (e) {
       if (e.target !== this) return;
       if (id === 'topup-overlay')    closeTopup();
-      else if (id === 'res-overlay') closeRes();
       else if (id === 'pkg-form-ov') closePkgForm();
       else                           closeDeckForm();
     });
