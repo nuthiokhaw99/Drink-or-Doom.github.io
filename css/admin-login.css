@@ -25,6 +25,7 @@
   display: flex; align-items: center;
   margin-bottom: 32px; justify-content: center;
 }
+
 .login-logo .logo-wordmark { display: flex; flex-direction: column; align-items: center; gap: 2px; }
 .login-logo .logo-main {
   font-family: "Kanit", sans-serif; font-weight: 900;

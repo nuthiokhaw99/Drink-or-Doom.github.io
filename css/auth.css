@@ -97,7 +97,7 @@
   display: flex; align-items: center; gap: 6px;
 }
 .login-err:not(:empty)::before {
-  content: "\f071"; /* fa warning icon — ใช้ text แทน */
+  content: ""; /* fa warning icon — ใช้ text แทน */
   font-family: inherit;
 }
 

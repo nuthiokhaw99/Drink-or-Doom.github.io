@@ -50,13 +50,27 @@
             <div class="dh-sub"><span class="dh-dot"></span> ออนไลน์</div>
           </div>
         </div>
-        <button class="dropdown-item" onclick="event.stopPropagation(); goHome()"><i class="fi fi-sr-home"></i> หน้าหลัก</button>
-          <button class="dropdown-item topup" onclick="event.stopPropagation(); openTopup()"><i class="fi fi-sr-coins"></i> เติมเครดิต</button>
-            <button class="dropdown-item" id="btn-admin-dropdown" style="display:none" onclick="event.stopPropagation(); showAdmin()">
-              <i class="fi fi-sr-settings"></i> จัดการระบบ
-            </button>
-        <div class="dropdown-divider"></div>
-        <button class="dropdown-item danger" onclick="event.stopPropagation(); logout()"><i class="fi fi-sr-sign-out-alt"></i> ออกจากระบบ</button>
+          <button class="dropdown-item" onclick="event.stopPropagation(); goHome()">
+            <i class="fi fi-sr-home"></i> หน้าหลัก
+          </button>
+          
+          <button class="dropdown-item topup" onclick="event.stopPropagation(); openTopup()">
+            <i class="fi fi-sr-coins"></i> เติมเครดิต
+          </button>
+          
+          <button class="dropdown-item" onclick="event.stopPropagation(); openProfile(); toggleUserDropdown();">
+            <i class="fi fi-sr-user"></i> ประวัติเติมเงิน
+          </button>
+
+          <button class="dropdown-item" id="btn-admin-dropdown" style="display:none" onclick="event.stopPropagation(); showAdmin()">
+            <i class="fi fi-sr-settings"></i> จัดการระบบ
+          </button>
+
+          <div class="dropdown-divider"></div>
+
+          <button class="dropdown-item danger" onclick="event.stopPropagation(); logout()">
+            <i class="fi fi-sr-sign-out-alt"></i> ออกจากระบบ
+          </button>
       </div>
     </div>
     <button id="btn-login" onclick="openLogin()"><i class="fi fi-sr-user"></i><span class="lbl-txt">เข้าสู่ระบบ</span></button>
@@ -427,6 +441,50 @@
 <div class="toast" id="toast">
   <i id="toast-ico" class="fi fi-sr-check-circle" style="color:#4caf50;"></i>
   <span id="toast-msg"></span>
+</div>
+<div id="profile-overlay">
+  <div class="pf-box">
+    <div class="pf-top-bar"></div>
+    <button class="pf-close" onclick="closeProfile()">✕</button>
+
+    <div class="pf-header">
+      <div class="pf-identity">
+        <div class="pf-avatar">
+          <i class="fi fi-sr-user"></i>
+        </div>
+        <div>
+          <div id="pf-username" class="pf-name"></div>
+          <div class="pf-status">
+            <div class="pf-status-dot"></div>
+            <span class="pf-status-label">ออนไลน์</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pf-credit-box">
+        <div>
+          <div class="pf-credit-label">เครดิตคงเหลือ</div>
+          <div id="pf-credits" class="pf-credit-amount"></div>
+        </div>
+        <button class="pf-topup-btn" onclick="closeProfile(); openTopup();">+ เติมเครดิต</button>
+      </div>
+    </div>
+
+    <div class="pf-history-wrap">
+      <div class="pf-section-title">
+        <div class="pf-section-bar"></div>
+        <span class="pf-section-label">ประวัติเครดิต</span>
+      </div>
+      <div id="pf-history" class="pf-history-list"></div>
+    </div>
+
+    <div class="pf-footer">
+      <div class="pf-uid-box">
+        <span class="pf-uid-label">รหัสสมาชิก</span>
+        <span id="pf-uid" class="pf-uid-value"></span>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script src="js/config.js"></script>

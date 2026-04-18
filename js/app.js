@@ -306,10 +306,25 @@ window.addEventListener('load', async function () {
 
   // ✅ รอให้ INITIAL_SESSION ยิงก่อน (Supabase พร้อมแน่นอน)
   await new Promise(resolve => {
-    _sb.auth.onAuthStateChange((event) => {
-      if (event === 'INITIAL_SESSION') resolve();
+    // วางไว้ใน window load หลัง onAuthStateChange
+    _sb.auth.onAuthStateChange((event, session) => {
+      if (event === 'TOKEN_REFRESHED' || event === 'SIGNED_IN') {
+        currentUser = session?.user ?? null;
+        loadCredits();
+        _updateAuthUI();
+        // reset admin cache ด้วย
+        _cachedIsAdmin = null;
+        _adminCacheTime = 0;
+      }
+      if (event === 'SIGNED_OUT') {
+        currentUser = null;
+        credits = 0;
+        updateCr();
+        _updateAuthUI();
+      }
     });
   });
+
 
   await Promise.all([initDB(), loadCredits()]);
   applyTestMode();

@@ -4,59 +4,44 @@
 
 let _cachedIsAdmin = null;
 let _adminCacheTime = 0;
-const ADMIN_CACHE_TTL_MS = 5 * 60 * 1000; // re-check ทุก 5 นาที
+const ADMIN_CACHE_TTL_MS = 1 * 60 * 1000; // re-check ทุก 5 นาที
 
-async function isAdminLoggedIn() {
-  if (!currentUser) return false;
-  const now = Date.now();
-  // [FIX] ใช้ cache แค่ภายใน TTL — หลังจากนั้น re-check จาก server
-  if (_cachedIsAdmin !== null && now - _adminCacheTime < ADMIN_CACHE_TTL_MS) {
-    return _cachedIsAdmin;
-  }
-
-  const { data } = await _sb
-    .from('profiles')
-    .select('is_admin')
-    .eq('id', currentUser.id)
-    .single();
-
-  _cachedIsAdmin = data?.is_admin === true;
-  _adminCacheTime = now;
-  return _cachedIsAdmin;
-}
 // async function isAdminLoggedIn() {
 //   if (!currentUser) return false;
-
 //   const now = Date.now();
+//   // [FIX] ใช้ cache แค่ภายใน TTL — หลังจากนั้น re-check จาก server
 //   if (_cachedIsAdmin !== null && now - _adminCacheTime < ADMIN_CACHE_TTL_MS) {
 //     return _cachedIsAdmin;
 //   }
 
-//   try {
-//     // ✅ ดึง token จริงจาก Supabase session
-//     const { data: { session } } = await _sb.auth.getSession();
-//     if (!session) return false;
+async function isAdminLoggedIn() {
+  if (!currentUser) return false;
 
-//     // ✅ ส่งไป verify ฝั่ง server — client แก้ไม่ได้
-//     const res = await fetch(
-//       'https://wslevsdsbcqjndskwyhz.supabase.co/functions/v1/check-admin',
-//       {
-//         headers: {
-//           'Authorization': 'Bearer ' + session.access_token
-//         }
-//       }
-//     );
+  const now = Date.now();
+  if (_cachedIsAdmin !== null && now - _adminCacheTime < ADMIN_CACHE_TTL_MS) {
+    return _cachedIsAdmin;
+  }
 
-//     const json = await res.json();
-//     _cachedIsAdmin = json.is_admin === true;
-//     _adminCacheTime = now;
-//     return _cachedIsAdmin;
+  try {
+    const { data: { session } } = await _sb.auth.getSession();
+    if (!session) return false;
 
-//   } catch (e) {
-//     console.error('isAdminLoggedIn error:', e);
-//     return false;  // ถ้า error = ไม่ให้ผ่านเด็ดขาด
-//   }
-// }
+    const res = await fetch(
+      'https://wslevsdsbcqjndskwyhz.supabase.co/functions/v1/check-admin',
+      { headers: { 'Authorization': 'Bearer ' + session.access_token } }
+    );
+
+    const json = await res.json();
+    _cachedIsAdmin = json.is_admin === true;
+    _adminCacheTime = now;
+    return _cachedIsAdmin;
+
+  } catch (e) {
+    console.error('isAdminLoggedIn error:', e);
+    return false;
+  }
+}
+
 async function showAdmin() {
   if (!currentUser) { toast('กรุณาเข้าสู่ระบบก่อน', 'warning'); openLogin(); return; }
   if (!(await isAdminLoggedIn())) { toast('คุณไม่มีสิทธิ์เข้าหน้านี้', 'error'); return; }

@@ -247,7 +247,7 @@ async function doLogin() {
   btn.innerHTML = '<i class="fi fi-sr-sign-in-alt"></i> เข้าสู่ระบบ';
 
   if (error || !profile) {
-    errEl.textContent = 'Username หรือ Password ไม่ถูกต้อง';
+    errEl.innerHTML = '<i class="fi fi-sr-triangle-warning"></i> Username หรือ Password ไม่ถูกต้อง';
     return;
   }
 
@@ -291,7 +291,13 @@ async function doRegister() {
   const uniqueId = crypto.randomUUID?.().split('-')[0] ?? Date.now().toString(36)
   const email = `u_${username.toLowerCase()}_${uniqueId}@drinkordoom.app`
 
-  const { data, error: signUpError } = await _sb.auth.signUp({ email, password })
+  const { data, error: signUpError } = await _sb.auth.signUp({
+    email,
+    password,
+    options: {
+      data: { username: username.toLowerCase() } // ✅ ส่ง username ให้ trigger
+    }
+  })
 
   if (signUpError) {
     btn.disabled = false
@@ -300,26 +306,9 @@ async function doRegister() {
     return
   }
 
-  const { error: insertError } = await _sb.from('profiles').insert({
-    id:       data.user.id,
-    username: username.toLowerCase(),
-    email,
-    credits:  DB.settings.startCredit ?? 10,
-  })
-
-  if (insertError) {
-    await _sb.auth.admin.deleteUser(data.user.id).catch(() => {})
-
-    btn.disabled = false
-    btn.innerHTML = '<i class="fi fi-sr-user-add"></i> สมัครสมาชิก'
-
-    if (insertError.code === '23505') {
-      errEl.textContent = 'Username นี้ถูกใช้งานแล้ว'
-    } else {
-      errEl.textContent = 'เกิดข้อผิดพลาด กรุณาลองใหม่'
-    }
-    return
-  }
+  // ✅ ลบ insert profiles ออกทั้งหมด — trigger จัดการแล้ว
+  // ✅ รอ trigger ทำงาน 800ms
+  await new Promise(r => setTimeout(r, 800))
 
   toast('สมัครสมาชิกสำเร็จ! ยินดีต้อนรับ', 'success')
   closeLogin()
@@ -342,26 +331,31 @@ function _updateAuthUI() {
     const name = currentUser.user_metadata?.username
       || currentUser.email?.split('@')[0]?.replace(/^u_/, '').replace(/_[a-f0-9]{6,}$/, '')
       || 'user';
+
     if (btnLogin)  btnLogin.style.display = 'none';
     if (userChip)  userChip.style.display = 'flex';
     if (userLabel) userLabel.textContent  = name;
+
     const dropdownName = document.getElementById('dropdown-username');
     if (dropdownName) dropdownName.textContent = name;
 
+    // ✅ เช็ค admin — วงเล็บถูกต้อง
     if (typeof isAdminLoggedIn === 'function') {
       isAdminLoggedIn().then(isAdmin => {
         const btnAdminDD = document.getElementById('btn-admin-dropdown');
         if (btnAdminDD) btnAdminDD.style.display = isAdmin ? '' : 'none';
       });
     } else {
-        const btnAdmin = document.getElementById('btn-admin-dropdown');
-        if (btnAdmin) btnAdmin.style.display = 'none';
-      }
-    } else {
-      if (btnLogin)  btnLogin.style.display = 'flex';
-      if (userChip)  userChip.style.display = 'none';
-      const btnAdmin = document.getElementById('btn-admin-dropdown');
-      if (btnAdmin)  btnAdmin.style.display = 'none';
+      const btnAdminDD = document.getElementById('btn-admin-dropdown');
+      if (btnAdminDD) btnAdminDD.style.display = 'none';
+    }
+
+  } else {
+    // ✅ ไม่ได้ login
+    if (btnLogin)  btnLogin.style.display = 'flex';
+    if (userChip)  userChip.style.display = 'none';
+    const btnAdminDD = document.getElementById('btn-admin-dropdown');
+    if (btnAdminDD) btnAdminDD.style.display = 'none';
     document.getElementById('user-chip')?.classList.remove('open');
   }
 }
@@ -520,3 +514,63 @@ function closeAnnouncePopup() {
     }, 200);
   }
 }
+
+async function openProfile() {
+  const overlay = document.getElementById('profile-overlay');
+  overlay.style.display = 'flex';
+
+  const name = currentUser?.user_metadata?.username
+    || currentUser?.email?.split('@')[0]?.replace(/^u_/, '').replace(/_[a-f0-9]{6,}$/, '')
+    || 'user';
+  // แก้บรรทัด pf-username
+  document.getElementById('pf-username').style.cssText = 
+    'color:#fff; font-weight:800; font-size:1.2rem; letter-spacing:0.5px; font-family:Kanit,sans-serif;';
+  document.getElementById('pf-username').textContent = name;
+
+  const uid = currentUser?.id?.slice(0,8) ?? '-';
+  document.getElementById('pf-uid').textContent = uid;
+
+  const cr = await API.getCredits();
+  document.getElementById('pf-credits').innerHTML =
+    cr + ' <span style="font-size:.9rem;font-weight:400;color:#a88a00;">เครดิต</span>';
+
+  const histEl = document.getElementById('pf-history');
+  histEl.innerHTML = '<div style="color:#444;font-size:.85rem;text-align:center;padding:20px;">กำลังโหลด...</div>';
+
+  const { data } = await _sb
+    .from('credit_history')
+    .select('amount, type, note, created_at')
+    .eq('user_id', currentUser.id)
+    .order('created_at', { ascending: false })
+    .limit(30);
+
+  if (!data?.length) {
+    histEl.innerHTML = '<div style="color:#444;font-size:.85rem;text-align:center;padding:20px;">ยังไม่มีประวัติ</div>';
+    return;
+  }
+
+  histEl.innerHTML = data.map(row => {
+    const isAdd = row.amount > 0;
+    const sign  = isAdd ? '+' : '';
+    const date  = new Date(row.created_at).toLocaleDateString('th-TH', {
+      day:'2-digit', month:'short', year:'numeric',
+      hour:'2-digit', minute:'2-digit'
+    });
+    return `
+      <div class="pf-history-item">
+        <div>
+          <div class="pf-history-note">${row.note || row.type || '-'}</div>
+          <div class="pf-history-date">${date}</div>
+        </div>
+        <div class="pf-history-amount ${isAdd ? 'plus' : 'minus'}">${sign}${row.amount}</div>
+      </div>`;
+  }).join('') + '<div class="pf-history-end">— ไม่มีรายการเพิ่มเติม —</div>';
+}
+
+function closeProfile() {
+  document.getElementById('profile-overlay').style.display = 'none';
+}
+
+document.getElementById('profile-overlay')?.addEventListener('click', function(e) {
+  if (e.target === this) closeProfile();
+});

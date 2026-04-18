@@ -808,6 +808,36 @@
   display: flex; flex-direction: column; align-items: center; gap: 10px;
 }
 .hist-empty i { font-size: 2rem; opacity: .3; }
+@media (max-width: 1024px) {
+  #hist-drawer {
+    max-height: 80vh;
+  }
+
+  .hist-drawer-title {
+    font-size: 1.4rem;   /* เดิม 1.15rem */
+  }
+
+  .hist-item {
+    padding: 18px 20px;  /* เดิม 14px 16px */
+  }
+
+  .hist-item-ico {
+    width: 52px; height: 52px;  /* เดิม 42x42 */
+    font-size: 1.3rem;           /* เดิม 1rem */
+  }
+
+  .hist-item-cat {
+    font-size: .92rem;   /* เดิม .78rem */
+  }
+
+  .hist-item-txt {
+    font-size: 1.2rem;   /* เดิม 1rem */
+  }
+
+  .hist-item-deck {
+    font-size: .88rem;   /* เดิม .78rem */
+  }
+}
 /* ============================================
    TOUCH PICKER — สุ่มผู้เล่น
    ============================================ */
@@ -993,4 +1023,40 @@
   white-space: nowrap;
   animation: fadeInUp .2s ease;
   pointer-events: none;
+}
+
+@media (max-width: 480px) {
+  .modal-box {
+    width: 96%;
+    padding: 22px 14px 20px;
+  }
+
+  .modal-ttl {
+    font-size: 1.3rem;
+  }
+
+  .topup-opt {
+    padding: 12px 8px;
+  }
+
+  .pkg-coins {
+    font-size: 1.2rem;
+  }
+
+  .pkg-price {
+    font-size: .75rem;
+  }
+
+  .pkg-coins-big {
+    font-size: 2rem !important;
+  }
+
+  .pkg-price-big {
+    font-size: 1.1rem;
+  }
+
+  .featured-badge {
+    font-size: 11px;
+    padding: 4px 10px;
+  }
 }

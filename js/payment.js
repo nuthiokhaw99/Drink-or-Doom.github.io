@@ -169,82 +169,59 @@ async function loadPackages() {
    PAYNOI — สร้าง QR และรอจ่าย
    ========================================= */
 async function initiatePayment() {
-  // ฟังก์ชันหลักเริ่มชำระเงิน: ตรวจสอบ → สร้าง QR → รอรับเงิน
+  if (_paynoiTransId) {
+    toast('มี QR ค้างอยู่ กรุณารอหมดเวลา (~15 นาที) หรือสแกนจ่ายก่อน', 'warning')
+    return
+  }
 
   if (!selectedPackage) { toast('กรุณาเลือกแพ็กเกจก่อน', 'warning'); return; }
-  // ตรวจว่าผู้ใช้เลือกแพ็กเกจแล้วหรือยัง ถ้ายังให้แจ้งเตือนและหยุด
-
   if (!currentUser)     { toast('กรุณาเข้าสู่ระบบก่อน', 'warning'); openLogin(); return; }
-  // ตรวจว่า login อยู่หรือไม่ ถ้ายังให้เปิด login modal และหยุด
 
   const { data: { session } } = await _sb.auth.getSession();
   if (!session) { toast('Session หมดอายุ กรุณา login ใหม่', 'warning'); openLogin(); return; }
-  // ตรวจ session อีกครั้ง (session อาจหมดอายุระหว่างที่เปิดหน้าค้างไว้)
 
   const cfg = CONFIG?.PAYNOI;
-  // อ่าน config ของ paynoi จาก CONFIG object (นิยามใน config.js)
-  // ?. = optional chaining: ถ้า CONFIG เป็น undefined จะไม่ crash (คืน undefined แทน)
-
   if (!cfg) { toast('ยังไม่ได้ตั้งค่าระบบชำระเงิน', 'error'); return; }
-  // ถ้าไม่มี PAYNOI config ให้แจ้ง error และหยุด (admin ยังไม่ได้ตั้งค่า)
 
   _stopPolling();
-  // หยุด polling เก่าก่อน (กรณีกดชำระเงินซ้ำ ป้องกัน polling ซ้อนกัน)
 
   const btnPay = document.getElementById('btn-confirm-pay');
   if (btnPay) { btnPay.disabled = true; btnPay.innerHTML = '<i class="fi fi-sr-spinner fi-spin"></i> กำลังสร้าง QR...'; }
-  // disable ปุ่มชำระเงิน + เปลี่ยนเป็น loading state ป้องกันกดซ้ำ
 
   try {
-    // try-catch: ถ้าเกิด error ตรงไหนก็ตามใน try block จะ catch ได้
-
     const ref1 = `uid_${currentUser.id}_${Date.now()}`;
-    // สร้าง reference ID unique: ใช้ user ID + timestamp milliseconds
-    // Date.now() คืนค่า unix timestamp (ms) ทำให้ unique แม้ user เดียวกันกดหลายครั้ง
 
     const data = await _paynoiCall({
-      // เรียก paynoi proxy ด้วย method 'create' เพื่อสร้าง QR Code ใหม่
       method:  'create',
-      amount:  selectedPackage.price,   // ราคาที่ต้องชำระ (บาท)
-      ref1,                             // reference ID (shorthand: ref1: ref1)
-      key_id:  cfg.KEY_ID,              // paynoi key ID จาก admin config
-      account: cfg.ACCOUNT,             // เลขบัญชี PromptPay
-      type:    cfg.ACCOUNT_TYPE         // ประเภทบัญชี เช่น 'phone', 'national_id'
+      amount:  selectedPackage.price,
+      ref1,
+      key_id:  cfg.KEY_ID,
+      account: cfg.ACCOUNT,
+      type:    cfg.ACCOUNT_TYPE
     });
 
     if (!data || data.status !== 1) {
-      // ถ้า paynoi return status ไม่ใช่ 1 = ไม่สำเร็จ
       throw new Error(data?.msg || 'สร้าง QR ไม่สำเร็จ');
-      // throw error พร้อมข้อความจาก paynoi หรือข้อความ default
     }
 
     _paynoiTransId = data.trans_id;
-    // เก็บ transaction ID ไว้ใช้ตอน polling และ cancel
 
     await _sb.from('credit_history').insert({
-      // บันทึก record ลง table credit_history ก่อนที่จะจ่ายเงิน (สถานะ pending)
-      user_id: currentUser.id,                               // user ที่ทำรายการ
-      amount:  selectedPackage.coins + selectedPackage.bonus, // เครดิตที่จะได้รับ
-      type:    'purchase_pending',                           // สถานะรอชำระ
-      note:    `รอชำระ ${selectedPackage.price} บาท`,       // หมายเหตุ
-      tx_id:   data.trans_id                                 // transaction ID จาก paynoi
+      user_id: currentUser.id,
+      amount:  selectedPackage.coins + selectedPackage.bonus,
+      type:    'purchase_pending',
+      note:    `รอชำระ ${selectedPackage.price} บาท`,
+      tx_id:   data.trans_id
     });
 
     _showQRModal(data);
-    // แสดง modal QR Code (ส่ง data จาก paynoi ไปให้แสดง)
-
     _startPolling(data.trans_id);
-    // เริ่ม polling ตรวจสถานะการชำระเงินทุก 5 วินาที
 
   } catch (e) {
-    // รับ error จากทุก await ใน try block
-    console.error('initiatePayment error:', e); // log เพื่อ debug
+    console.error('initiatePayment error:', e);
     toast(e.message || 'เกิดข้อผิดพลาด กรุณาลองใหม่', 'error');
-    // แสดง toast error: ถ้ามี e.message ใช้อัน นั้น ถ้าไม่มีใช้ข้อความ default
   } finally {
-    // finally ทำงานเสมอ ไม่ว่าจะ success หรือ error
     if (btnPay) { btnPay.disabled = false; btnPay.innerHTML = '<i class="fi fi-sr-credit-card"></i> ชำระเงิน'; }
-    // คืนปุ่มชำระเงินกลับมาใช้งานได้ และ reset text
   }
 }
 
@@ -293,7 +270,7 @@ function _showQRModal(data) {
       border:1px solid #2a2a2a;
       border-radius:24px;
       padding:28px 24px 24px;
-      max-width:320px;width:92%;
+      max-width:min(360px, 92vw);width:92%;
       text-align:center;
       position:relative;
       box-shadow:0 24px 60px rgba(0,0,0,.6);
@@ -333,7 +310,7 @@ function _showQRModal(data) {
       ">
       <!-- กรอบขาวล้อมรอบ QR (QR ต้องมีพื้นขาว จึงอ่านได้) -->
 
-        <img src="${qrSrc}" style="width:200px;height:200px;display:block;border-radius:8px;" />
+        <img src="${qrSrc}" style="width:clamp(180px,55vw,220px);height:clamp(180px,55vw,220px);display:block;border-radius:8px;" />
         <!-- รูป QR Code: src เป็น base64 image จาก paynoi ขนาด 200x200px -->
 
       </div>
@@ -455,7 +432,7 @@ function _startCountdown(expireAt) {
 // webhook เป็นคนเพิ่ม credit ให้ client แค่ refresh balance
 function _startPolling(transId) {
   let attempts = 0;
-  const MAX_ATTEMPTS = 36; // 36 × 5s = 3 นาที แล้ว timeout
+  const MAX_ATTEMPTS = 36;
 
   _pollInterval = setInterval(async () => {
     attempts++;
@@ -467,12 +444,13 @@ function _startPolling(transId) {
 
     try {
       const data = await _paynoiCall({ method: 'check', trans_id: transId });
+      // console.log('poll response:', JSON.stringify(data)); // ดู payment_status จริง
 
       if (!data || data.status !== 1) return;
 
       if (data.payment_status === 'completed') {
         _stopPolling();
-        await _onPaymentSuccess(); // [FIX] ไม่ส่ง creditAmount/transId แล้ว
+        await _onPaymentSuccess();
       } else if (data.payment_status === 'failed' || data.payment_status === 'expired') {
         _stopPolling();
         _setQRStatus('ธุรกรรมหมดอายุหรือล้มเหลว', 'error');
@@ -541,26 +519,20 @@ async function _onPaymentSuccess() {
 // CANCEL / CLOSE QR — ยกเลิกและปิด QR Modal
 // ═══════════════════════════════════════════════════════════════════
 
-/* ---- ปิด / ยกเลิก QR ---- */
 async function _cancelQR() {
-  // เมื่อผู้ใช้กดปุ่ม "ยกเลิก" ใน QR modal
-
   const transId = _paynoiTransId;
-  // เก็บ transId ไว้ก่อน เพราะ _stopPolling() จะ reset _paynoiTransId เป็น null
-
   _stopPolling();
-  // หยุด polling และ countdown ทันที
 
   if (transId) {
-    // ถ้ามี transaction ที่ค้างอยู่
-    try { await _paynoiCall({ method: 'cancel', trans_id: transId }); }
-    // ส่ง request ยกเลิก transaction ไปยัง paynoi (เพื่อ release QR)
-    catch(e) { /* ไม่สำคัญ */ }
-    // ถ้า cancel ไม่สำเร็จก็ไม่เป็นไร QR จะหมดอายุเองตาม expire_at
+    try {
+      const res = await _paynoiCall({ method: 'cancel', trans_id: transId });
+      // console.log('cancel response:', JSON.stringify(res)); // เพิ่มตรงนี้
+    } catch(e) {
+      console.error('cancel error:', e); // เปลี่ยนจาก silent เป็น log
+    }
   }
 
   _closeQRModal();
-  // ปิด QR modal
 }
 
 function _closeQRModal() {
@@ -730,29 +702,20 @@ function _overlayLogoOnQR(qrSrc) {
     ctx.fillStyle = '#000';    // สีดำ
     ctx.beginPath();           // เริ่ม path ใหม่
     ctx.roundRect(cx - bw/2, cy - bh/2, bw, bh, 6);
-    // วาด rounded rectangle กึ่งกลาง: x, y (มุมบนซ้าย), width, height, radius
     ctx.fill();
-    // เติมสีพื้นดำ
 
-    // ข้อความ "Drink or Doom"
     ctx.textAlign    = 'center';   // จัดข้อความกึ่งกลางแนวนอน
     ctx.textBaseline = 'middle';   // จัดข้อความกึ่งกลางแนวตั้ง
     ctx.font         = 'bold 11px Arial'; // font ขนาด 11px bold
     ctx.fillStyle    = '#fff';     // สีขาว
     ctx.fillText('Drink or Doom', cx, cy - 8);
-    // วาดข้อความที่ x=กึ่งกลาง, y=กึ่งกลาง - 8px (เลื่อนขึ้นนิดหน่อย)
 
-    // ข้อความ "ยกหรือยับ"
     ctx.font      = 'bold 12px Arial'; // font ขนาดใหญ่ขึ้นนิดหน่อย
     ctx.fillStyle = '#cc0000';         // สีแดงเข้ม
     ctx.fillText('ยกหรือยับ', cx, cy + 9);
-    // วาดข้อความที่ y=กึ่งกลาง + 9px (เลื่อนลงอยู่ใต้บรรทัดแรก)
 
-    // แทนที่ img ด้วย canvas
     img.replaceWith(canvas);
-    // ลบ img ออกจาก DOM และแทนด้วย canvas ที่มีภาพ QR + logo
   };
 
   qrImg.src = qrSrc;
-  // set src เพื่อเริ่มโหลด image → เมื่อโหลดเสร็จ onload callback จะทำงาน
 }

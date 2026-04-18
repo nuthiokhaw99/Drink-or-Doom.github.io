@@ -3,11 +3,15 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 1,
             "patches": [
                 {
                     "date": 1775584718375,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1776401704921,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -24,8 +24,9 @@\n .login-logo {\r\n   display: flex; align-items: center;\r\n   margin-bottom: 32px; justify-content: center;\r\n }\r\n+\r\n .login-logo .logo-wordmark { display: flex; flex-direction: column; align-items: center; gap: 2px; }\r\n .login-logo .logo-main {\r\n   font-family: \"Kanit\", sans-serif; font-weight: 900;\r\n   font-size: 2.4rem; color: var(--red);\r\n"
                 }
             ],
             "date": 1775584718375,

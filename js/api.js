@@ -78,7 +78,7 @@ const API = {
       .from('profiles')
       .select('credits')
       .eq('id', currentUser.id)
-      .single();
+      .maybeSingle(); // ✅ ไม่ error ถ้าไม่เจอ row
     if (error) { console.error('getCredits error:', error); return 0; }
     return data?.credits ?? 0;
   },
@@ -92,11 +92,22 @@ const API = {
     if (error) console.error('saveCredits error:', error);
   },
 
-  async addCredits(amount) {
-    const current = await this.getCredits();
-    const newVal  = current + amount;
-    await this.saveCredits(newVal);
-    return newVal;
+  async deductCredits(amount) {
+    if (!currentUser) return { success: false, newBalance: 0 };
+
+    const { data, error } = await _sb.rpc('deduct_credits', {
+      user_id: currentUser.id,
+      amount:  amount
+    });
+
+    // ❌ ถ้า RPC error = ไม่ให้ผ่านเด็ดขาด ไม่มี fallback
+    if (error) {
+      console.error('deductCredits error:', error);
+      return { success: false, newBalance: 0 };
+    }
+
+    if (data === -1) return { success: false, newBalance: await this.getCredits() };
+    return { success: true, newBalance: data };
   },
 
   /* =========================================
@@ -169,7 +180,7 @@ async function _logAdminAction({ action, targetType, targetId, beforeVal, afterV
     const { data: { session } } = await _sb.auth.getSession()
     if (!session) return  // ถ้าไม่มี session ก็ไม่ต้อง log
 
-    await fetch('https://xxxx.supabase.co/functions/v1/admin-action', {
+    await fetch('https://wslevsdsbcqjndskwyhz.supabase.co/functions/v1/admin-action', {
       method: 'POST',
       headers: {
         'Content-Type':  'application/json',
