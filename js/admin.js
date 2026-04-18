@@ -962,15 +962,33 @@ async function saveCards() {
 }
 
 /* ---- SETTINGS ---- */
-function saveSettings() {
+async function saveSettings() {
   DB.settings.startCredit  = parseInt(document.getElementById('st-cr').value)    || 10;
   DB.settings.siteName     = document.getElementById('st-nm').value              || 'DRINKORDOOM';
   DB.settings.testMode     = parseInt(document.getElementById('st-test').value);
   DB.settings.showModal    = parseInt(document.getElementById('st-modal').value);
   DB.settings.defaultCost  = parseInt(document.getElementById('st-cost').value)  || 1;
   DB.settings.topupEnabled = parseInt(document.getElementById('st-topup').value);
-  DB.settings.deckLayout   = document.getElementById('st-layout').value || 'auto'; // ← เพิ่ม
-  saveDB(); applyTestMode();
+  DB.settings.deckLayout   = document.getElementById('st-layout').value          || 'auto';
+
+  // ✅ บันทึกขึ้น Supabase
+  const rows = Object.entries(DB.settings).map(([key, value]) => ({
+    key,
+    value: String(value)
+  }));
+
+  const { error } = await _sb
+    .from('app_settings')
+    .upsert(rows, { onConflict: 'key' });
+
+  if (error) {
+    console.error('saveSettings error:', error);
+    toast('บันทึกไม่สำเร็จ: ' + error.message, 'error');
+    return;
+  }
+
+  saveDB(); // ยังเก็บ localStorage ไว้เป็น cache
+  applyTestMode();
   toast('บันทึกการตั้งค่าแล้ว', 'success');
 }
 

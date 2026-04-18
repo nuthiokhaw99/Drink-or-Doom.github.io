@@ -34,6 +34,18 @@ async function initDB() {
   loadSettings();
 
   try {
+    // ✅ โหลด settings จาก Supabase ทับ localStorage cache
+    const { data: settingsData } = await _sb
+      .from('app_settings')
+      .select('key, value');
+
+    if (settingsData?.length) {
+      settingsData.forEach(({ key, value }) => {
+        const num = Number(value);
+        DB.settings[key] = isNaN(num) ? value : num;
+      });
+    }
+
     // โหลด decks
     const { data: decksData, error: decksError } = await _sb
       .from('decks')
@@ -64,7 +76,6 @@ async function initDB() {
       }
     });
 
-    // console.log(`[DB] โหลดสำเร็จ: ${DB.decks.length} decks, ${cardsData.length} cards`);
   } catch (e) {
     console.error('[DB] initDB error:', e);
     if (typeof toast === 'function') toast('ไม่สามารถโหลดข้อมูลได้ กรุณา refresh', 'error');

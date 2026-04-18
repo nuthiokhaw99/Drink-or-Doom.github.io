@@ -297,6 +297,7 @@ function _showQRModal(data) {
       <div style="font-size:.78rem;color:var(--text2);margin-bottom:18px;">
         หมดเวลาใน
         <span id="qr-countdown" style="color:var(--gold);font-weight:700;font-size:.9rem;">15:00</span>
+        นาที
       </div>
       <!-- countdown timer: id="qr-countdown" _startCountdown() จะ update ทุกวินาที -->
 
