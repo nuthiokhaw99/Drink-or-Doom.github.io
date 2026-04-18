@@ -113,7 +113,7 @@ async function loadPackages() {
         <div class="topup-opt" onclick="selPkg(this, ${p.coins}, '${p.id}')">
         <!-- แต่ละแพ็กเกจปกติ: คลิกแล้วเรียก selPkg() ส่ง element นี้, จำนวนเครดิต, และ id -->
 
-          <div class="pkg-coins"><i class="fi fi-sr-coins"></i> ${p.coins + p.bonus}</div>
+          <div class="pkg-coins"><i class="fi fi-sr-coins"></i> ${p.coins}</div>
           <!-- แสดงเครดิตรวม = coins + bonus -->
 
           <div class="pkg-price">฿${p.price} บาท</div>
@@ -206,13 +206,25 @@ async function initiatePayment() {
 
     _paynoiTransId = data.trans_id;
 
-    await _sb.from('credit_history').insert({
+  const pendingRows = [
+    {
       user_id: currentUser.id,
-      amount:  selectedPackage.coins + selectedPackage.bonus,
+      amount:  selectedPackage.coins,
       type:    'purchase_pending',
-      note:    `รอชำระ ${selectedPackage.price} บาท`,
+      note:    `รอชำระ ฿${selectedPackage.price} (coins)`,
+      tx_id:   data.trans_id
+    }
+  ];
+  if (selectedPackage.bonus > 0) {
+    pendingRows.push({
+      user_id: currentUser.id,
+      amount:  selectedPackage.bonus,
+      type:    'bonus_pending',
+      note:    `รอชำระ ฿${selectedPackage.price} (bonus)`,
       tx_id:   data.trans_id
     });
+  }
+  await _sb.from('credit_history').insert(pendingRows)
 
     _showQRModal(data);
     _startPolling(data.trans_id);
@@ -573,17 +585,11 @@ async function applyTopup(amount) {
 
 /* ---- FREE CREDITS (test mode only) ---- */
 const FREE_CREDIT_COOLDOWN_MS = 60 * 1000;
-// cooldown 60 วินาที (60 * 1000 ms) ระหว่างการรับเครดิตฟรีแต่ละครั้ง
-// เก็บเป็น const เพื่อง่ายต่อการเปลี่ยนค่า
-
-// [FIX] ย้าย cooldown จาก localStorage → DB
-// localStorage bypass ได้ง่ายใน devtools: localStorage.removeItem('last_free_cr')
 async function freeCredit() {
   if (!currentUser) { toast('กรุณาเข้าสู่ระบบก่อน', 'warning'); openLogin(); return; }
   if (DB.settings?.testMode !== 1) { toast('โหมดทดสอบปิดอยู่', 'warning'); return; }
 
   try {
-    // ตรวจ cooldown จาก DB แทน localStorage
     const { data: profile } = await _sb
       .from('profiles')
       .select('last_free_credit_at')
@@ -600,20 +606,28 @@ async function freeCredit() {
       return;
     }
 
-    // อัปเดต timestamp ก่อนเพิ่มเครดิต ป้องกัน double-click
-    await _sb.from('profiles')
+    // 1. เพิ่มเครดิตก่อน — ถ้าล้มเหลว จะ throw และไม่ set timestamp
+    await applyTopup(10);
+
+    // 2. อัปเดต timestamp หลังจากได้เครดิตแล้วเท่านั้น
+    const { error: tsErr } = await _sb
+      .from('profiles')
       .update({ last_free_credit_at: new Date().toISOString() })
       .eq('id', currentUser.id);
 
-    await applyTopup(10);
+    if (tsErr) console.warn('freeCredit: timestamp update failed (non-critical):', tsErr);
 
+    // 3. บันทึก history (fire-and-forget)
     _sb.from('credit_history').insert({
-      user_id: currentUser.id, amount: 10, type: 'free', note: 'รับเครดิตฟรี (ทดสอบ)'
+      user_id: currentUser.id,
+      amount:  10,
+      type:    'free',
+      note:    'รับเครดิตฟรี (ทดสอบ)'
     }).then(({ error }) => { if (error) console.warn('history:', error.message); });
 
   } catch (e) {
     console.error('freeCredit error:', e);
-    toast('เกิดข้อผิดพลาด', 'error');
+    toast('เกิดข้อผิดพลาด กรุณาลองใหม่', 'error');
   }
 }
 
@@ -623,20 +637,29 @@ async function freeCredit() {
 
 /* ---- PAYMENT HISTORY ---- */
 async function recordPayment(pkg, txId = null) {
-  // บันทึก record การซื้อเครดิตลง database
-  // pkg = object ข้อมูลแพ็กเกจ
-  // txId = transaction ID (default null ถ้าไม่ได้ส่งมา)
-
   if (!currentUser) return;
-  // ถ้าไม่ได้ login ให้หยุด (ไม่ insert)
 
-  await _sb.from('credit_history').insert({
-    user_id: currentUser.id,
-    amount:  pkg.coins + pkg.bonus,                                         // เครดิตรวม
-    type:    'purchase',
-    note:    `ซื้อ ${pkg.coins + pkg.bonus} เครดิต (${pkg.price} บาท) ผ่าน paynoi`,
-    tx_id:   txId,  // [FIX] แก้จาก data.trans_id → txId
-  });
+  const inserts = [
+    {
+      user_id: currentUser.id,
+      amount:  pkg.coins,
+      type:    'purchase',
+      note:    `ซื้อ ${pkg.coins} เครดิต (฿${pkg.price}) ผ่าน`,
+      tx_id:   txId
+    }
+  ];
+
+  if (pkg.bonus > 0) {
+    inserts.push({
+      user_id: currentUser.id,
+      amount:  pkg.bonus,
+      type:    'bonus',
+      note:    `โบนัส ${pkg.bonus} เครดิต จากแพ็กเกจ ฿${pkg.price}`,
+      tx_id:   txId
+    });
+  }
+
+  await _sb.from('credit_history').insert(inserts);
 }
 
 async function getPaymentHistory() {

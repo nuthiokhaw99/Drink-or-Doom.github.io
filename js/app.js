@@ -66,6 +66,13 @@ async function loadAdminUserList() {
   const container = document.getElementById('admin-user-list');
   if (!container) return;
 
+  // ฟังก์ชัน escape HTML — ป้องกัน XSS
+  const esc = (str) => {
+    const d = document.createElement('div');
+    d.textContent = String(str ?? '');
+    return d.innerHTML;
+  };
+
   container.innerHTML = '<p style="color:var(--text3);font-size:.85rem;">กำลังโหลด...</p>';
   const users = await API.getAllUsers();
 
@@ -73,39 +80,42 @@ async function loadAdminUserList() {
     container.innerHTML = '<p style="color:var(--text3);">ไม่พบผู้ใช้</p>';
     return;
   }
-container.innerHTML = users.map(u => `
-  <div class="ucr-row ${u.is_banned ? 'ucr-banned' : ''}">
-    <div class="ucr-avatar ${u.is_admin ? 'ucr-av-admin' : ''}">
-      <i class="fi ${u.is_admin ? 'fi-sr-shield-check' : 'fi-sr-user'}"></i>
+
+  container.innerHTML = users.map(u => `
+    <div class="ucr-row ${u.is_banned ? 'ucr-banned' : ''}">
+      <div class="ucr-avatar ${u.is_admin ? 'ucr-av-admin' : ''}">
+        <i class="fi ${u.is_admin ? 'fi-sr-shield-check' : 'fi-sr-user'}"></i>
+      </div>
+      <div class="ucr-info">
+        <div class="ucr-top">
+          <span class="ucr-name">${esc(u.username)}</span>
+          ${u.is_admin  ? '<span class="ucr-badge ucr-badge-admin"><i class="fi fi-sr-shield-check"></i> admin</span>' : ''}
+          ${u.is_banned ? '<span class="ucr-badge ucr-badge-ban"><i class="fi fi-sr-ban"></i> banned</span>' : ''}
+        </div>
+        <div class="ucr-sub">
+          <i class="fi fi-sr-clock"></i>
+          ${u.last_seen
+            ? esc(new Date(u.last_seen).toLocaleDateString('th-TH', { day:'2-digit', month:'short', year:'numeric' }))
+            : 'ไม่มีข้อมูล'}
+        </div>
+      </div>
+      <div class="ucr-ctrl">
+        <div class="ucr-credit-wrap">
+          <i class="fi fi-sr-coins" style="color:var(--gold);font-size:.8rem;"></i>
+          <input class="ucr-input" type="number" value="${esc(u.credits)}" min="0" id="ucr-${esc(u.id)}">
+        </div>
+        <div class="ucr-btn-row">
+          <button class="btn-sm btn-edit" onclick="saveUserCredit('${esc(u.id)}')">
+            <i class="fi fi-sr-disk"></i> บันทึก
+          </button>
+          <button class="btn-sm ${u.is_banned ? 'btn-unban' : 'btn-ban'}" onclick="toggleBanUser('${esc(u.id)}', ${!u.is_banned})">
+            <i class="fi fi-sr-${u.is_banned ? 'check' : 'ban'}"></i>
+            ${u.is_banned ? 'ปลดแบน' : 'แบน'}
+          </button>
+        </div>
+      </div>
     </div>
-    <div class="ucr-info">
-      <div class="ucr-top">
-        <span class="ucr-name">${u.username}</span>
-        ${u.is_admin  ? '<span class="ucr-badge ucr-badge-admin"><i class="fi fi-sr-shield-check"></i> admin</span>' : ''}
-        ${u.is_banned ? '<span class="ucr-badge ucr-badge-ban"><i class="fi fi-sr-ban"></i> banned</span>' : ''}
-      </div>
-      <div class="ucr-sub">
-        <i class="fi fi-sr-clock"></i>
-        ${u.last_seen ? new Date(u.last_seen).toLocaleDateString('th-TH', { day:'2-digit', month:'short', year:'numeric' }) : 'ไม่มีข้อมูล'}
-      </div>
-    </div>
-    <div class="ucr-ctrl">
-      <div class="ucr-credit-wrap">
-        <i class="fi fi-sr-coins" style="color:var(--gold);font-size:.8rem;"></i>
-        <input class="ucr-input" type="number" value="${u.credits}" min="0" id="ucr-${u.id}">
-      </div>
-      <div class="ucr-btn-row">
-        <button class="btn-sm btn-edit" onclick="saveUserCredit('${u.id}')">
-          <i class="fi fi-sr-disk"></i> บันทึก
-        </button>
-        <button class="btn-sm ${u.is_banned ? 'btn-unban' : 'btn-ban'}" onclick="toggleBanUser('${u.id}', ${!u.is_banned})">
-          <i class="fi fi-sr-${u.is_banned ? 'check' : 'ban'}"></i>
-          ${u.is_banned ? 'ปลดแบน' : 'แบน'}
-        </button>
-      </div>
-    </div>
-  </div>
-`).join('');
+  `).join('');
 }
 
 async function saveUserCredit(userId) {
@@ -297,6 +307,7 @@ function applyTestMode() {
   if (banner) banner.style.display = isTest ? '' : 'none';
   if (btn)    btn.style.display    = isTest ? '' : 'none';
 }
+
 window.addEventListener('load', async function () {
   document.getElementById('deck-grid').innerHTML = `
     <div style="color:var(--text3);font-size:.85rem;text-align:center;padding:40px;">
@@ -312,7 +323,6 @@ window.addEventListener('load', async function () {
         currentUser = session?.user ?? null;
         loadCredits();
         _updateAuthUI();
-        // reset admin cache ด้วย
         _cachedIsAdmin = null;
         _adminCacheTime = 0;
       }
@@ -363,35 +373,3 @@ function injectCustomThemes() {
   if (!el) { el = document.createElement('style'); el.id = '_custom-themes'; document.head.appendChild(el); }
   el.textContent = css;
 }
-
-// let _visibilityTimer = null;
-
-// document.addEventListener('visibilitychange', () => {
-//   if (document.visibilityState !== 'visible') return;
-
-//   clearTimeout(_visibilityTimer);
-//   _visibilityTimer = setTimeout(async () => {
-//     try {
-//       const { data: { session } } = await _sb.auth.getSession();
-//       if (session) {
-//         currentUser = session.user;
-//         await loadCredits();
-//       } else {
-//         currentUser = null;
-//         credits = 0;
-//         updateCr();
-//       }
-//     } catch (e) {
-//       console.warn('visibilitychange session check failed:', e);
-//     } finally {
-//       _updateAuthUI();
-
-//       // [FIX] อย่า re-render ถ้ากำลังเล่นเกมอยู่
-//       const inGame = document.body.classList.contains('in-game');
-//       if (!inGame) {
-//         await initDB();
-//         renderDecks();
-//       }
-//     }
-//   }, 800);
-// });

@@ -32,40 +32,51 @@ let _announceAbortController = null;
 _sb.auth.onAuthStateChange(async (event, session) => {
   currentUser = session?.user ?? null;
 
-  if (event === 'INITIAL_SESSION') {
-    currentUser = session?.user ?? null;
+if (event === 'INITIAL_SESSION') {
+  currentUser = session?.user ?? null;
 
-    // ban check เหมือนเดิม...
+  // ✅ Ban check จริง — ตรวจก่อนทำอะไรทั้งนั้น
+  if (currentUser) {
+    const { data: profile } = await _sb
+      .from('profiles')
+      .select('is_banned')
+      .eq('id', currentUser.id)
+      .maybeSingle();
 
-    if (typeof loadCredits === 'function') await loadCredits();
-    if (typeof _updateAuthUI === 'function') _updateAuthUI();
-
-    // ✅ เพิ่มตรงนี้
-    if (typeof initDB === 'function') {
-      await initDB();
-      if (typeof renderDecks === 'function') renderDecks();
-      if (typeof applyTestMode === 'function') applyTestMode();
-      if (typeof injectCustomThemes === 'function') injectCustomThemes();
+    if (profile?.is_banned === true) {
+      // แสดง popup และ sign out ทันที
+      await _showBanPopup();
+      return;
     }
-
-    if (currentUser) _startBanWatcher();
-    // ...ที่เหลือเหมือนเดิม
-
-    const hash = window.location.hash;
-    if (hash === '#admin') {
-      if (typeof showAdmin === 'function') await showAdmin();
-      } else if (hash.startsWith('#play/')) {
-        const ids = hash.replace('#play/', '').split('+').filter(Boolean);
-        if (typeof _restoreGame === 'function') await _restoreGame(ids);
-      } else if (!currentUser) {
-      openLogin();
-    }
-
-    if (currentUser && typeof showAnnouncePopup === 'function') {
-      showAnnouncePopup();
-    }
-    return;
   }
+
+  if (typeof loadCredits === 'function') await loadCredits();
+  if (typeof _updateAuthUI === 'function') _updateAuthUI();
+
+  if (typeof initDB === 'function') {
+    await initDB();
+    if (typeof renderDecks === 'function') renderDecks();
+    if (typeof applyTestMode === 'function') applyTestMode();
+    if (typeof injectCustomThemes === 'function') injectCustomThemes();
+  }
+
+  if (currentUser) _startBanWatcher();
+
+  const hash = window.location.hash;
+  if (hash === '#admin' || hash.startsWith('#admin/')) {
+    if (typeof showAdmin === 'function') await showAdmin();
+  } else if (hash.startsWith('#play/')) {
+    const ids = hash.replace('#play/', '').split('+').filter(Boolean);
+    if (typeof _restoreGame === 'function') await _restoreGame(ids);
+  } else if (!currentUser) {
+    openLogin();
+  }
+
+  if (currentUser && typeof showAnnouncePopup === 'function') {
+    showAnnouncePopup();
+  }
+  return;
+}
 
   if (event === 'SIGNED_OUT') {
     if (_announceAbortController) { _announceAbortController.abort(); _announceAbortController = null; }

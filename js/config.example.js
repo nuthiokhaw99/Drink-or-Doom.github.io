@@ -1,4 +1,4 @@
 const CONFIG = {
   SUPABASE_URL:  'https://wslevsdsbcqjndskwyhz.supabase.co',
-  SUPABASE_ANON: 'sb_publishable_KV4dA3OcnSzWMZjdz3sTvA_cigdtjCj',
+  SUPABASE_ANON: 'kuyyyyyyyyyyyyyy',
 };

@@ -92,23 +92,6 @@ const API = {
     if (error) console.error('saveCredits error:', error);
   },
 
-  async deductCredits(amount) {
-    if (!currentUser) return { success: false, newBalance: 0 };
-
-    const { data, error } = await _sb.rpc('deduct_credits', {
-      user_id: currentUser.id,
-      amount:  amount
-    });
-
-    // ❌ ถ้า RPC error = ไม่ให้ผ่านเด็ดขาด ไม่มี fallback
-    if (error) {
-      console.error('deductCredits error:', error);
-      return { success: false, newBalance: 0 };
-    }
-
-    if (data === -1) return { success: false, newBalance: await this.getCredits() };
-    return { success: true, newBalance: data };
-  },
 
   /* =========================================
      [FIX #5] Atomic credit deduction ผ่าน Supabase RPC
@@ -193,5 +176,3 @@ async function _logAdminAction({ action, targetType, targetId, beforeVal, afterV
     // ล้มเหลวได้โดยไม่ block main action
   }
 }
-
-
