@@ -16,7 +16,8 @@ let _paynoiTransId   = null; // transaction ID ที่ได้จาก payno
 let _pollInterval    = null; // reference ของ setInterval สำหรับ polling (ใช้ clearInterval ภายหลัง)
 
 // ── PAYNOI PROXY URL ─────────────────────────────────────────────
-const PAYNOI_PROXY = 'https://wslevsdsbcqjndskwyhz.supabase.co/functions/v1/paynoi-proxy';
+// บรรทัด 19 — เปลี่ยน
+const PAYNOI_PROXY = 'https://wslevsdsbcqjndskwyhz.supabase.co/functions/v1/confix-payment';
 // URL ของ Supabase Edge Function ที่ทำหน้าที่เป็น proxy กลาง
 // เหตุผลที่ต้องมี proxy: ซ่อน secret key ของ paynoi ไม่ให้ client รู้ และ bypass CORS
 
@@ -164,10 +165,6 @@ async function loadPackages() {
 // ═══════════════════════════════════════════════════════════════════
 // INITIATE PAYMENT — เริ่มกระบวนการชำระเงิน สร้าง QR Code
 // ═══════════════════════════════════════════════════════════════════
-
-/* =========================================
-   PAYNOI — สร้าง QR และรอจ่าย
-   ========================================= */
 async function initiatePayment() {
   if (_paynoiTransId) {
     toast('มี QR ค้างอยู่ กรุณารอหมดเวลา (~15 นาที) หรือสแกนจ่ายก่อน', 'warning')
@@ -180,9 +177,6 @@ async function initiatePayment() {
   const { data: { session } } = await _sb.auth.getSession();
   if (!session) { toast('Session หมดอายุ กรุณา login ใหม่', 'warning'); openLogin(); return; }
 
-  const cfg = CONFIG?.PAYNOI;
-  if (!cfg) { toast('ยังไม่ได้ตั้งค่าระบบชำระเงิน', 'error'); return; }
-
   _stopPolling();
 
   const btnPay = document.getElementById('btn-confirm-pay');
@@ -192,12 +186,9 @@ async function initiatePayment() {
     const ref1 = `uid_${currentUser.id}_${Date.now()}`;
 
     const data = await _paynoiCall({
-      method:  'create',
-      amount:  selectedPackage.price,
+      method: 'create',
+      amount: selectedPackage.price,
       ref1,
-      key_id:  cfg.KEY_ID,
-      account: cfg.ACCOUNT,
-      type:    cfg.ACCOUNT_TYPE
     });
 
     if (!data || data.status !== 1) {
@@ -206,25 +197,25 @@ async function initiatePayment() {
 
     _paynoiTransId = data.trans_id;
 
-  const pendingRows = [
-    {
-      user_id: currentUser.id,
-      amount:  selectedPackage.coins,
-      type:    'purchase_pending',
-      note:    `รอชำระ ฿${selectedPackage.price} (coins)`,
-      tx_id:   data.trans_id
+    const pendingRows = [
+      {
+        user_id: currentUser.id,
+        amount:  selectedPackage.coins,
+        type:    'purchase_pending',
+        note:    `รอชำระ ฿${selectedPackage.price} (coins)`,
+        tx_id:   data.trans_id
+      }
+    ];
+    if (selectedPackage.bonus > 0) {
+      pendingRows.push({
+        user_id: currentUser.id,
+        amount:  selectedPackage.bonus,
+        type:    'bonus_pending',
+        note:    `รอชำระ ฿${selectedPackage.price} (bonus)`,
+        tx_id:   data.trans_id
+      });
     }
-  ];
-  if (selectedPackage.bonus > 0) {
-    pendingRows.push({
-      user_id: currentUser.id,
-      amount:  selectedPackage.bonus,
-      type:    'bonus_pending',
-      note:    `รอชำระ ฿${selectedPackage.price} (bonus)`,
-      tx_id:   data.trans_id
-    });
-  }
-  await _sb.from('credit_history').insert(pendingRows)
+    await _sb.from('credit_history').insert(pendingRows);
 
     _showQRModal(data);
     _startPolling(data.trans_id);
@@ -236,7 +227,6 @@ async function initiatePayment() {
     if (btnPay) { btnPay.disabled = false; btnPay.innerHTML = '<i class="fi fi-sr-credit-card"></i> ชำระเงิน'; }
   }
 }
-
 // ═══════════════════════════════════════════════════════════════════
 // SHOW QR MODAL — สร้างและแสดง modal QR Code
 // ═══════════════════════════════════════════════════════════════════
@@ -324,7 +314,7 @@ function _showQRModal(data) {
       <!-- กรอบขาวล้อมรอบ QR (QR ต้องมีพื้นขาว จึงอ่านได้) -->
 
         <img src="${qrSrc}" style="width:clamp(180px,55vw,220px);height:clamp(180px,55vw,220px);display:block;border-radius:8px;" />
-        <!-- รูป QR Code: src เป็น base64 image จาก paynoi ขนาด 200x200px -->
+        <!-- รูป QR Code: src เป็น base64 image  ขนาด 200x200px -->
 
       </div>
 
@@ -334,7 +324,7 @@ function _showQRModal(data) {
         <div style="font-size:2.2rem;font-weight:900;color:var(--gold);line-height:1.1;margin:4px 0;">
           ฿${data.amount}
         </div>
-        <!-- ยอดเงินขนาดใหญ่สีทอง: แสดงจาก data.amount ที่ paynoi ส่งกลับมา -->
+        <!-- ยอดเงินขนาดใหญ่สีทอง: แสดงจาก data.amount ส่งกลับมา -->
 
         <div style="
           display:inline-flex;align-items:center;gap:6px;
@@ -513,13 +503,31 @@ function _setQRStatus(msg, type = 'info') {
 // ON PAYMENT SUCCESS — ดำเนินการเมื่อชำระเงินสำเร็จ
 // ═══════════════════════════════════════════════════════════════════
 
-/* ---- เมื่อจ่ายสำเร็จ ---- */
-// [FIX] ไม่ addCredits หรือ update credit_history เองแล้ว
-// webhook (server-side) เป็นคนทำทั้งหมด — client แค่ refresh balance
 async function _onPaymentSuccess() {
   _setQRStatus('ชำระเงินสำเร็จ! กำลังโหลดเครดิต...', 'success');
 
-  await loadCredits(); // ดึงยอดจริงจาก DB ที่ webhook อัปเดตไว้แล้ว
+  // ✅ insert ประวัติการซื้อ
+  if (selectedPackage) {
+    const inserts = [{
+      user_id: currentUser.id,
+      amount:  selectedPackage.coins,
+      type:    'purchase',
+      note:    `ซื้อ ${selectedPackage.coins} เครดิต (฿${selectedPackage.price})`,
+      tx_id:   _paynoiTransId
+    }];
+    if (selectedPackage.bonus > 0) {
+      inserts.push({
+        user_id: currentUser.id,
+        amount:  selectedPackage.bonus,
+        type:    'bonus',
+        note:    `โบนัส ${selectedPackage.bonus} เครดิต จากแพ็กเกจ ฿${selectedPackage.price}`,
+        tx_id:   _paynoiTransId
+      });
+    }
+    await _sb.from('credit_history').insert(inserts);
+  }
+
+  await loadCredits();
   toast('เติมเครดิตสำเร็จ!', 'success');
 
   setTimeout(() => {
@@ -578,59 +586,6 @@ async function applyTopup(amount) {
   closeTopup();
   // ปิด topup modal
 }
-
-// ═══════════════════════════════════════════════════════════════════
-// FREE CREDITS — รับเครดิตฟรี (เฉพาะ test mode)
-// ═══════════════════════════════════════════════════════════════════
-
-/* ---- FREE CREDITS (test mode only) ---- */
-const FREE_CREDIT_COOLDOWN_MS = 60 * 1000;
-async function freeCredit() {
-  if (!currentUser) { toast('กรุณาเข้าสู่ระบบก่อน', 'warning'); openLogin(); return; }
-  if (DB.settings?.testMode !== 1) { toast('โหมดทดสอบปิดอยู่', 'warning'); return; }
-
-  try {
-    const { data: profile } = await _sb
-      .from('profiles')
-      .select('last_free_credit_at')
-      .eq('id', currentUser.id)
-      .single();
-
-    const last = profile?.last_free_credit_at
-      ? new Date(profile.last_free_credit_at).getTime() : 0;
-    const now  = Date.now();
-
-    if (now - last < FREE_CREDIT_COOLDOWN_MS) {
-      const wait = Math.ceil((FREE_CREDIT_COOLDOWN_MS - (now - last)) / 1000);
-      toast(`รอ ${wait} วินาทีก่อนรับเครดิตฟรีอีกครั้ง`, 'warning');
-      return;
-    }
-
-    // 1. เพิ่มเครดิตก่อน — ถ้าล้มเหลว จะ throw และไม่ set timestamp
-    await applyTopup(10);
-
-    // 2. อัปเดต timestamp หลังจากได้เครดิตแล้วเท่านั้น
-    const { error: tsErr } = await _sb
-      .from('profiles')
-      .update({ last_free_credit_at: new Date().toISOString() })
-      .eq('id', currentUser.id);
-
-    if (tsErr) console.warn('freeCredit: timestamp update failed (non-critical):', tsErr);
-
-    // 3. บันทึก history (fire-and-forget)
-    _sb.from('credit_history').insert({
-      user_id: currentUser.id,
-      amount:  10,
-      type:    'free',
-      note:    'รับเครดิตฟรี (ทดสอบ)'
-    }).then(({ error }) => { if (error) console.warn('history:', error.message); });
-
-  } catch (e) {
-    console.error('freeCredit error:', e);
-    toast('เกิดข้อผิดพลาด กรุณาลองใหม่', 'error');
-  }
-}
-
 // ═══════════════════════════════════════════════════════════════════
 // PAYMENT HISTORY — บันทึกและดึงประวัติการชำระเงิน
 // ═══════════════════════════════════════════════════════════════════

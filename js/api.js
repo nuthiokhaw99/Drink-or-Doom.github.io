@@ -163,7 +163,7 @@ async function _logAdminAction({ action, targetType, targetId, beforeVal, afterV
     const { data: { session } } = await _sb.auth.getSession()
     if (!session) return  // ถ้าไม่มี session ก็ไม่ต้อง log
 
-    await fetch('https://wslevsdsbcqjndskwyhz.supabase.co/functions/v1/admin-action', {
+    await fetch('https://wslevsdsbcqjndskwyhz.supabase.co/functions/v1/confix-admin', {
       method: 'POST',
       headers: {
         'Content-Type':  'application/json',

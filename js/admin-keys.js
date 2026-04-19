@@ -2,17 +2,24 @@
    admin-keys.js — Admin Auth via Supabase Metadata
    ========================================= */
 
-let _cachedIsAdmin = null;
-let _adminCacheTime = 0;
-const ADMIN_CACHE_TTL_MS = 30 * 60 * 1000; // re-check ทุก 5 นาที
+const _adminState = (() => {
+  let cached = null;
+  let cacheTime = 0;
+  const TTL = 30 * 60 * 1000;
+  return {
+    get:       () => cached,
+    set:       (val) => { cached = val; cacheTime = Date.now(); },
+    reset:     () => { cached = null; cacheTime = 0; },
+    isExpired: () => Date.now() - cacheTime >= TTL
+  };
+})();
 
 
 async function isAdminLoggedIn() {
   if (!currentUser) return false;
 
-  const now = Date.now();
-  if (_cachedIsAdmin !== null && now - _adminCacheTime < ADMIN_CACHE_TTL_MS) {
-    return _cachedIsAdmin;
+  if (_adminState.get() !== null && !_adminState.isExpired()) {
+    return _adminState.get();
   }
 
   try {
@@ -20,14 +27,14 @@ async function isAdminLoggedIn() {
     if (!session) return false;
 
     const res = await fetch(
-      'https://wslevsdsbcqjndskwyhz.supabase.co/functions/v1/check-admin',
+      'https://wslevsdsbcqjndskwyhz.supabase.co/functions/v1/confix-check',
       { headers: { 'Authorization': 'Bearer ' + session.access_token } }
     );
 
+    // ✅ ต้องอยู่ใน try และมี await
     const json = await res.json();
-    _cachedIsAdmin = json.is_admin === true;
-    _adminCacheTime = now;
-    return _cachedIsAdmin;
+    _adminState.set(json.is_admin === true);
+    return _adminState.get();
 
   } catch (e) {
     console.error('isAdminLoggedIn error:', e);
@@ -37,8 +44,9 @@ async function isAdminLoggedIn() {
 
 async function showAdmin() {
   if (!currentUser) { toast('กรุณาเข้าสู่ระบบก่อน', 'warning'); openLogin(); return; }
-  if (_cachedIsAdmin === false) { toast('ไม่มีสิทธิ์', 'error'); return; }
-  if (_cachedIsAdmin === null && !(await isAdminLoggedIn())) { toast('คุณไม่มีสิทธิ์เข้าหน้านี้', 'error'); return; }
+  if (_adminState.get() === false) { toast('ไม่มีสิทธิ์', 'error'); return; }
+  if (_adminState.get() === null && !(await isAdminLoggedIn())) { toast('คุณไม่มีสิทธิ์เข้าหน้านี้', 'error'); return; }
+
 
   document.querySelectorAll('#home-screen, #game-screen, #admin-screen')
     .forEach(el => el.style.display = 'none');
@@ -66,7 +74,7 @@ async function showAdmin() {
     if (typeof renderAdmSel      === 'function') renderAdmSel();
     if (typeof loadAdminUserList === 'function') loadAdminUserList();
   }
-
+    if (typeof loadStatsTab === 'function') loadStatsTab();
   const setVal = (id, val) => {
     const el = document.getElementById(id);
     if (el) el.value = val;

@@ -478,12 +478,19 @@ body::before {
   width: calc(100vw - 48px);
   max-width: 400px;
   bottom: 20px;
-  left: 0;
-  right: 0;
+  left: 0; right: 0;
   border-radius: 10px;
+  pointer-events: none; /* ✅ default ไม่บังการ์ด */
+  opacity: 0.85;
 }
+
+.btn-play:not(:disabled) {
+  pointer-events: auto; /* ✅ กดได้เฉพาะตอนเลือกกองแล้ว */
+  opacity: 1;
+}
+
 .btn-play:hover    { background: var(--red3); transform: translateY(-2px); box-shadow: 0 8px 40px var(--glow); }
-.btn-play:disabled { background: #2a2a2a; color: #555; cursor: not-allowed; box-shadow: none; transform: none; }
+.btn-play:disabled { background: #2a2a2a; color: #555; cursor: not-allowed; box-shadow: none; transform: none; opacity: 0.5; }
 
 /* ---- TOAST ---- */
 .toast {
@@ -941,3 +948,19 @@ body.in-game {
   color: #333; font-size: .75rem;
   font-family: monospace; letter-spacing: 1px;
 }
+.ucr-avatar {
+  position: relative;
+}
+
+/* ✅ loading state บนการ์ด */
+.card-loading {
+  animation: card-pulse 0.6s ease-in-out infinite !important;
+}
+@keyframes card-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.6; transform: scale(0.97); }
+}
+
+/* ✅ ป้องกันลากคัดลอก */
+.crd { user-select: none; -webkit-user-select: none; }
+.crd.revealed { user-select: text; -webkit-user-select: text; cursor: text; }

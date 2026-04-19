@@ -109,7 +109,7 @@ async function startGame() {
 
   document.getElementById('home-screen').style.display = 'none';
   document.getElementById('game-screen').style.display = 'block';
-
+  document.getElementById('btn-play').style.display = 'none';
   const firstDeck = DB.decks.find(d => d.id === selDeck[0]);
   const isMulti  = selDeck.length > 1;
   const icoClass = isMulti ? 'fi-sr-message-question' : (firstDeck.icon || 'fi-sr-layers');
@@ -332,32 +332,43 @@ async function flipTopCard(el) {
 function renderCards() {
   layoutMode === 'stack' ? renderStack() : renderScatter();
 }
-
-/* [FIX #5] flipCard ใช้ atomic deduction
-   [FIX #13] แก้ index bug หลัง batch reload */
 async function flipCard(el, idx, ang) {
   if (el.classList.contains('revealed') || el.classList.contains('flipping')) return;
   if (_flipLock) return;
   _flipLock = true;
-
   el.style.pointerEvents = 'none';
-  el.onclick             = null;
+  el.onclick = null;
+
+  // ✅ เพิ่ม loading state ทันที
+  el.classList.add('card-loading');
 
   const card = displayCards[idx];
-  if (!card) { _flipLock = false; return; }
+  if (!card) { _flipLock = false; el.classList.remove('card-loading'); return; }
 
-  const deck = DB.decks.find(d => d.id === card?._deckId) || DB.decks.find(d => d.id === selDeck[0]);
+  // ✅ แก้ปัญหา 2: refresh session ก่อน deduct เสมอ
+  try {
+    const { data } = await _sb.auth.getSession();
+    if (!data?.session) {
+      const { data: r } = await _sb.auth.refreshSession();
+      if (!r?.session) {
+        toast('session หมดอายุ กรุณา login ใหม่', 'warning');
+        openLogin();
+        el.classList.remove('card-loading');
+        el.style.pointerEvents = '';
+        el.onclick = () => flipCard(el, idx, ang);
+        _flipLock = false;
+        return;
+      }
+    }
+  } catch(e) { console.warn('session check:', e); }
+
+  const deck = DB.decks.find(d => d.id === card?._deckId) || DB.decks[0];
   const cost = deck?.cost || 1;
 
   const { success, newBalance } = await API.deductCredits(cost);
+  el.classList.remove('card-loading');
+
   if (!success) {
-    const { data: { session } } = await _sb.auth.getSession();
-    if (!session) {
-      toast('session หมดอายุ กรุณา login ใหม่', 'warning');
-      openLogin();
-      _flipLock = false;
-      return;
-    }
     toast(`เครดิตไม่พอ! ต้องใช้ ${cost} เครดิต`, 'error');
     openTopup();
     el.style.pointerEvents = '';
@@ -557,6 +568,7 @@ function openTouchPicker() {
 
   _touchDots = {};
   _pickDone  = false;
+  _dotCounter = 0;
   _clearTouchCountdown();
 
   document.getElementById('touch-dots-wrap').innerHTML = '';
@@ -635,8 +647,9 @@ function _onMouseDown(e) {
   const id = 'mouse_' + e.button; // ใช้ button number เป็น identifier
   if (_touchDots[id] !== undefined) return;
   if (Object.keys(_touchDots).length >= 6) return;
+  
 
-  const idx = Object.keys(_touchDots).length;
+  const idx = _dotCounter++;
   const el  = document.createElement('div');
   el.className   = `touch-dot touch-dot-${idx}`;
   el.style.left  = e.clientX + 'px';
@@ -649,22 +662,20 @@ function _onMouseDown(e) {
   _updateAfterTouch();
 }
 
-
 function _onTouchStart(e) {
   if (e.target.closest('#touch-close-btn')) return;
   e.preventDefault();
   if (_pickDone) return;
 
   for (const t of e.touches) {
-    if (Object.keys(_touchDots).length >= 6) break;
+    // ✅ ลบ limit 6 ออก — รับได้เท่าที่หน้าจอรองรับ
     if (_touchDots[t.identifier] !== undefined) continue;
 
-    const idx = Object.keys(_touchDots).length;
+    const idx = _dotCounter++;
     const el  = document.createElement('div');
-    el.className   = `touch-dot touch-dot-${idx}`;
-    el.style.left  = t.clientX + 'px';
-    el.style.top   = t.clientY + 'px';
+    el.className   = `touch-dot touch-dot-${idx % 6}`;
     el.textContent = idx + 1;
+
     document.getElementById('touch-dots-wrap').appendChild(el);
     requestAnimationFrame(() => el.classList.add('show'));
     _touchDots[t.identifier] = { x: t.clientX, y: t.clientY, el, idx };
@@ -686,11 +697,16 @@ function _onTouchEnd(e) {
     }
   }
 
-  // clear countdown เฉพาะเมื่อไม่มีนิ้วเหลือ
-  if (Object.keys(_touchDots).length === 0) _clearTouchCountdown();
+  const remaining = Object.keys(_touchDots).length;
+
+  // ✅ reset countdown เฉพาะตอนนิ้วเหลือน้อยกว่า 2
+  // ถ้ายังเหลือ >= 2 ให้นับต่อ ไม่ต้อง reset
+  if (remaining < 2) {
+    _clearTouchCountdown();
+  }
+
   _updateAfterTouch();
 }
-
 function _onTouchMove(e) {
   if (e.cancelable) e.preventDefault();
   if (_pickDone) return;
@@ -702,6 +718,13 @@ function _onTouchMove(e) {
       dot.el.style.top  = t.clientY + 'px';
       dot.x = t.clientX;
       dot.y = t.clientY;
+
+      // ✅ นิ้วขยับ = กระพริบ
+      dot.el.classList.add('moving');
+      clearTimeout(dot._moveTimer);
+      dot._moveTimer = setTimeout(() => {
+        dot.el.classList.remove('moving');
+      }, 150);
     }
   }
 }
@@ -727,12 +750,13 @@ function _updateAfterTouch() {
 
   if (count === 0) {
     inst?.classList.remove('hide');
-    if (msg) msg.textContent = 'วางนิ้ว 2-6 คนพร้อมกันบนหน้าจอ';
+    if (msg) msg.textContent = 'วางนิ้วพร้อมกันบนหน้าจอ (อย่างน้อย 2 คน)';
     _clearTouchCountdown();
     return;
   }
 
-  if (count < 1) { // ← เปลี่ยนกลับเป็น 2 เมื่อเทสเสร็จ
+  // ✅ แก้จาก < 1 เป็น < 2
+  if (count < 2) {
     inst?.classList.remove('hide');
     if (msg) msg.textContent = 'ต้องการอย่างน้อย 2 คน!';
     _clearTouchCountdown();
@@ -745,6 +769,7 @@ function _updateAfterTouch() {
   }
 
   inst?.classList.add('hide');
+  // ✅ countdown จะเริ่มใหม่ทุกครั้งที่ _updateAfterTouch ถูกเรียกหลัง _clearTouchCountdown
   if (!_cdTimer) _startTouchCountdown(count);
 }
 
@@ -778,7 +803,8 @@ async function _doPick() {
   _pickDone = true;
 
   const keys = Object.keys(_touchDots);
-  if (keys.length < 1) { // ← เปลี่ยนกลับเป็น 2 เมื่อเทสเสร็จ
+  // ✅ แก้จาก < 1 เป็น < 2
+  if (keys.length < 1) {
     _pickDone = false;
     _updateAfterTouch();
     return;

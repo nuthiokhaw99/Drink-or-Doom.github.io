@@ -58,6 +58,7 @@ function goHome() {
   document.getElementById('admin-screen').style.display = 'none';
   document.body.classList.remove('in-game');
   history.pushState({}, '', '#');
+  document.getElementById('btn-play').style.display = ''; // ✅ เพิ่ม
   _updateAuthUI();
   renderDecks();
 }
@@ -73,18 +74,113 @@ async function loadAdminUserList() {
     return d.innerHTML;
   };
 
-  container.innerHTML = '<p style="color:var(--text3);font-size:.85rem;">กำลังโหลด...</p>';
-  const users = await API.getAllUsers();
+
+container.innerHTML = '<p style="color:var(--text3);font-size:.85rem;">กำลังโหลด...</p>';
+const users = await API.getAllUsers();
+
+// ✅ เพิ่ม search bar
+const searchBar = `
+  <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+    <div style="flex:1;min-width:200px;position:relative;">
+      <i class="fi fi-sr-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:.85rem;pointer-events:none;"></i>
+      <input id="user-search" type="text" placeholder="ค้นหา username..."
+        oninput="_filterUsers()"
+        style="width:100%;background:#151515;border:1px solid #2a2a2a;border-radius:8px;
+               color:#fff;padding:10px 12px 10px 36px;font-family:'Kanit',sans-serif;
+               font-size:.88rem;outline:none;box-sizing:border-box;">
+    </div>
+    <select id="user-filter" onchange="_filterUsers()"
+      style="background:#151515;border:1px solid #2a2a2a;border-radius:8px;color:#fff;
+             padding:10px 12px;font-family:'Kanit',sans-serif;font-size:.85rem;">
+      <option value="all">ทั้งหมด</option>
+      <option value="admin">Admin</option>
+      <option value="banned">Banned</option>
+      <option value="online">Online วันนี้</option>
+    </select>
+    <div id="user-count" style="display:flex;align-items:center;font-size:.8rem;color:var(--text3);white-space:nowrap;">
+      พบ <span id="user-count-num" style="color:var(--gold);margin:0 4px;font-weight:700;">0</span> คน
+    </div>
+  </div>
+  <div id="user-list-wrap"></div>
+`;
+container.innerHTML = searchBar;
 
   if (!users.length) {
     container.innerHTML = '<p style="color:var(--text3);">ไม่พบผู้ใช้</p>';
     return;
   }
+  window._adminUsers = users;
+_filterUsers();
 
-  container.innerHTML = users.map(u => `
+  // container.innerHTML = users.map(u => `
+  //   <div class="ucr-row ${u.is_banned ? 'ucr-banned' : ''}">
+  //     <div class="ucr-avatar ${u.is_admin ? 'ucr-av-admin' : ''}">
+  //       <i class="fi ${u.is_admin ? 'fi-sr-shield-check' : 'fi-sr-user'}"></i>
+  //     </div>
+  //     <div class="ucr-info">
+  //       <div class="ucr-top">
+  //         <span class="ucr-name">${esc(u.username)}</span>
+  //         ${u.is_admin  ? '<span class="ucr-badge ucr-badge-admin"><i class="fi fi-sr-shield-check"></i> admin</span>' : ''}
+  //         ${u.is_banned ? '<span class="ucr-badge ucr-badge-ban"><i class="fi fi-sr-ban"></i> banned</span>' : ''}
+  //       </div>
+  //       <div class="ucr-sub">
+  //         <i class="fi fi-sr-clock"></i>
+  //         ${u.last_seen
+  //           ? esc(new Date(u.last_seen).toLocaleString('th-TH', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }))
+  //           : 'ไม่มีข้อมูล'}
+  //       </div>
+  //     </div>
+  //     <div class="ucr-ctrl">
+  //       <div class="ucr-credit-wrap">
+  //         <i class="fi fi-sr-coins" style="color:var(--gold);font-size:.8rem;"></i>
+  //         <input class="ucr-input" type="number" value="${esc(u.credits)}" min="0" id="ucr-${esc(u.id)}">
+  //       </div>
+  //       <div class="ucr-btn-row">
+  //         <button class="btn-sm btn-edit" onclick="saveUserCredit('${esc(u.id)}')">
+  //           <i class="fi fi-sr-disk"></i> บันทึก
+  //         </button>
+  //         <button class="btn-sm ${u.is_banned ? 'btn-unban' : 'btn-ban'}" onclick="toggleBanUser('${esc(u.id)}', ${!u.is_banned})">
+  //           <i class="fi fi-sr-${u.is_banned ? 'check' : 'ban'}"></i>
+  //           ${u.is_banned ? 'ปลดแบน' : 'แบน'}
+  //         </button>
+  //       </div>
+  //     </div>
+  //   </div>
+  // `).join('');
+}
+
+function _filterUsers() {
+  const query  = (document.getElementById('user-search')?.value || '').toLowerCase().trim();
+  const filter = document.getElementById('user-filter')?.value || 'all';
+  const wrap   = document.getElementById('user-list-wrap');
+  const users  = window._adminUsers || [];
+  const esc    = str => { const d = document.createElement('div'); d.textContent = String(str ?? ''); return d.innerHTML; };
+
+  const today  = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  let filtered = users.filter(u => {
+    if (query && !u.username?.toLowerCase().includes(query)) return false;
+    if (filter === 'admin'  && !u.is_admin)  return false;
+    if (filter === 'banned' && !u.is_banned) return false;
+    if (filter === 'online' && (!u.last_seen || new Date(u.last_seen) < today)) return false;
+    return true;
+  });
+
+  document.getElementById('user-count-num').textContent = filtered.length;
+
+  if (!filtered.length) {
+    wrap.innerHTML = '<p style="color:var(--text3);padding:16px;">ไม่พบผู้ใช้</p>';
+    return;
+  }
+
+wrap.innerHTML = filtered.map(u => {
+  const isOnline = u.last_seen && (Date.now() - new Date(u.last_seen).getTime()) < 5 * 60 * 1000;
+  return `
     <div class="ucr-row ${u.is_banned ? 'ucr-banned' : ''}">
-      <div class="ucr-avatar ${u.is_admin ? 'ucr-av-admin' : ''}">
+      <div class="ucr-avatar ${u.is_admin ? 'ucr-av-admin' : ''}" style="position:relative;${isOnline ? 'border:2px solid #4caf50;box-shadow:0 0 8px rgba(76,175,80,.4);' : ''}">
         <i class="fi ${u.is_admin ? 'fi-sr-shield-check' : 'fi-sr-user'}"></i>
+        ${isOnline ? '<span style="position:absolute;bottom:-2px;right:-2px;width:10px;height:10px;border-radius:50%;background:#4caf50;border:2px solid #111;"></span>' : ''}
       </div>
       <div class="ucr-info">
         <div class="ucr-top">
@@ -95,7 +191,7 @@ async function loadAdminUserList() {
         <div class="ucr-sub">
           <i class="fi fi-sr-clock"></i>
           ${u.last_seen
-            ? esc(new Date(u.last_seen).toLocaleDateString('th-TH', { day:'2-digit', month:'short', year:'numeric' }))
+            ? esc(new Date(u.last_seen).toLocaleString('th-TH', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }))
             : 'ไม่มีข้อมูล'}
         </div>
       </div>
@@ -115,17 +211,49 @@ async function loadAdminUserList() {
         </div>
       </div>
     </div>
-  `).join('');
+  `;
+}).join('');
 }
 
 async function saveUserCredit(userId) {
   const input = document.getElementById('ucr-' + userId);
   const val   = parseInt(input.value);
   if (isNaN(val) || val < 0) { toast('ใส่จำนวนให้ถูกต้อง', 'error'); return; }
+
+  const { data: profile } = await _sb
+    .from('profiles')
+    .select('credits, username')
+    .eq('id', userId)
+    .maybeSingle();
+
+  const oldVal = profile?.credits ?? 0;
+  const diff   = val - oldVal;
+
   const ok = await API.adminSetCredits(userId, val);
-  if (ok) toast('บันทึกเครดิตแล้ว', 'success');
-  else    toast('เกิดข้อผิดพลาด', 'error');
+  if (!ok) { toast('เกิดข้อผิดพลาด', 'error'); return; }
+
+  if (diff !== 0) {
+    await _sb.from('credit_history').insert({
+      user_id:  userId,
+      username: profile?.username ?? null,
+      amount:   diff,
+      type:     'admin',
+      note:     `Admin ปรับเครดิต (${diff > 0 ? '+' : ''}${diff}) → ${val}`
+    });
+  }
+
+  toast('บันทึกเครดิตแล้ว', 'success');
+  
+  if (userId === currentUser?.id) {
+  credits = val;
+  updateCr();
 }
+
+// ✅ รีโหลด history tab ถ้ากำลังเปิดอยู่
+const histTab = document.getElementById('tc-history');
+if (histTab?.classList.contains('act')) loadHistoryTab();
+}
+
 function customConfirm(message) {
   return new Promise(resolve => {
     document.getElementById('custom-confirm-ov')?.remove();
@@ -316,24 +444,33 @@ window.addEventListener('load', async function () {
     </div>`;
 
   // ✅ รอให้ INITIAL_SESSION ยิงก่อน (Supabase พร้อมแน่นอน)
-  await new Promise(resolve => {
-    // วางไว้ใน window load หลัง onAuthStateChange
-    _sb.auth.onAuthStateChange((event, session) => {
-      if (event === 'TOKEN_REFRESHED' || event === 'SIGNED_IN') {
-        currentUser = session?.user ?? null;
-        loadCredits();
-        _updateAuthUI();
-        _cachedIsAdmin = null;
-        _adminCacheTime = 0;
+await new Promise(resolve => {
+  const { data: { subscription } } = _sb.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+      currentUser = session?.user ?? null;
+      loadCredits();
+      _updateAuthUI();
+      _adminState.reset();
+
+      // ✅ อัปเดต last_seen
+      if (currentUser) {
+        _sb.from('profiles')
+          .update({ last_seen: new Date().toISOString() })
+          .eq('id', currentUser.id)
+          .then(() => {});
       }
-      if (event === 'SIGNED_OUT') {
-        currentUser = null;
-        credits = 0;
-        updateCr();
-        _updateAuthUI();
-      }
-    });
+    }
+
+    if (event === 'SIGNED_OUT') {
+      currentUser = null;
+      credits = 0;
+      updateCr();
+      _updateAuthUI();
+    }
+
+    resolve(); // ✅ resolve หลัง event แรกเสมอ
   });
+});
 
 
   await Promise.all([initDB(), loadCredits()]);

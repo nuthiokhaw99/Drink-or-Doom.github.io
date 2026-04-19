@@ -52,6 +52,8 @@ async function loadStatsTab() {
   const now        = new Date();
   const weekAgo    = new Date(now - 7  * 86400000);
   const monthAgo   = new Date(now - 30 * 86400000);
+  const fiveMinAgo = new Date(now - 5  * 60 * 1000); // ✅ ย้ายมาตรงนี้
+  const onlineNow  = users.filter(u => u.last_seen && new Date(u.last_seen) >= fiveMinAgo).length; // ✅ ย้ายมาตรงนี้
 
   // ---- ผู้ใช้ ----
   const totalUsers    = users.length;
@@ -79,13 +81,14 @@ async function loadStatsTab() {
   const totalUsed    = Math.abs(deducts.reduce((s, h) => s + (h.amount || 0), 0));
 
   const purchaseThisMonth = purchases.filter(h => new Date(h.created_at) >= monthAgo);
-  const revenueEst        = purchaseThisMonth.reduce((s, h) => {
-    const pkg = (packages || []).find(p => {
-      const total = p.coins + p.bonus;
-      return total === h.amount;
-    });
-    return s + (pkg ? pkg.price : 0);
-  }, 0);
+// แทนที่ revenueEst เดิม
+  const uniqueTxIds = [...new Set(purchaseThisMonth.map(h => h.tx_id).filter(Boolean))];
+  const revenueEst = purchaseThisMonth
+    .filter(h => h.type === 'purchase' && h.tx_id)
+    .reduce((s, h) => {
+      const pkg = (packages || []).find(p => p.coins === h.amount);
+      return s + (pkg ? pkg.price : 0);
+    }, 0);
 
   // ---- ผู้ใช้ลงทะเบียนใหม่ ----
   const newThisWeek  = users.filter(u => {
@@ -93,8 +96,31 @@ async function loadStatsTab() {
     return u.last_seen && new Date(u.last_seen) >= weekAgo;
   }).length;
 
-  // ---- สร้าง HTML ----
   container.innerHTML = `
+      <!-- ONLINE NOW -->
+      <div class="sheet-sec">
+        <h3><i class="fi fi-sr-signal-alt" style="color:#4caf50;"></i> Online ตอนนี้</h3>
+        <div class="stats-grid-4">
+          <div class="stat-card2">
+            <div class="sc2-ico" style="background:rgba(76,175,80,.15);color:#4caf50;"><i class="fi fi-sr-user-check"></i></div>
+            <div class="sc2-body">
+              <div class="sc2-val" style="color:#4caf50;display:flex;align-items:center;gap:8px;">
+                <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#4caf50;box-shadow:0 0 6px #4caf50;"></span>
+                ${onlineNow}
+              </div>
+              <div class="sc2-lbl">Online (5 นาทีล่าสุด)</div>
+            </div>
+          </div>
+          <div class="stat-card2">
+            <div class="sc2-ico" style="background:rgba(76,175,80,.1);color:#4caf50;"><i class="fi fi-sr-calendar"></i></div>
+            <div class="sc2-body">
+              <div class="sc2-val" style="color:#4caf50;">${activeWeek}</div>
+              <div class="sc2-lbl">Active 7 วัน</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     <!-- ROW 1: ตัวเลขหลัก -->
     <div class="sheet-sec">
       <h3><i class="fi fi-sr-users" style="color:var(--gold);"></i> ผู้ใช้งาน</h3>
@@ -267,9 +293,16 @@ async function loadStatsTab() {
   `;
 
   // update legacy stat elements ด้านบน (stat bar)
-  const elUsers = document.getElementById('stat-users');
-  if (elUsers) elUsers.textContent = totalUsers;
+  const elUsers   = document.getElementById('stat-users');
+  const elRevenue = document.getElementById('stat-revenue');
+  const elDecks   = document.getElementById('stat-decks');
+  const elCards   = document.getElementById('stat-cards');
+  if (elUsers)   elUsers.textContent   = totalUsers;
+  if (elRevenue) elRevenue.textContent = '฿' + revenueEst.toLocaleString();
+  if (elDecks)   elDecks.textContent   = activeDecks;
+  if (elCards)   elCards.textContent   = totalCards.toLocaleString();
 }
+
 async function loadHistoryTab() {
   const container = document.getElementById('tc-history');
   if (!container) return;

@@ -80,7 +80,7 @@ if (event === 'INITIAL_SESSION') {
 
   if (event === 'SIGNED_OUT') {
     if (_announceAbortController) { _announceAbortController.abort(); _announceAbortController = null; }
-    _cachedIsAdmin = null;
+    _adminState.reset();
     credits = 0;
     updateCr();
     _updateAuthUI();
@@ -207,14 +207,20 @@ async function _showBanPopup() {
     const btn = document.getElementById('ban-confirm-btn');
     if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fi fi-sr-spinner fi-spin"></i> กำลังออกจากระบบ...'; }
     if (_announceAbortController) { _announceAbortController.abort(); _announceAbortController = null; }
-    _cachedIsAdmin = null;
+    _adminState.reset();
     await _sb.auth.signOut();
     ov.remove();
   });
 }
 
 function openLogin() {
-  document.getElementById('login-overlay').classList.add('show');
+  const overlay = document.getElementById('login-overlay');
+  if (!overlay) {
+    // รอ DOM แล้วค่อยเปิด
+    setTimeout(openLogin, 200);
+    return;
+  }
+  overlay.classList.add('show');
   switchLoginTab('login');
 }
 
@@ -327,7 +333,7 @@ async function doRegister() {
 
 async function logout() {
   if (_announceAbortController) { _announceAbortController.abort(); _announceAbortController = null; }
-  _cachedIsAdmin = null;
+  _adminState.reset();
   _stopBanWatcher();
   await _sb.auth.signOut();
   toast('ออกจากระบบแล้ว', 'info');
@@ -585,3 +591,10 @@ function closeProfile() {
 document.getElementById('profile-overlay')?.addEventListener('click', function(e) {
   if (e.target === this) closeProfile();
 });
+
+function togglePw(inputId, btn) {
+  const input = document.getElementById(inputId);
+  const isHidden = input.type === 'password';
+  input.type = isHidden ? 'text' : 'password';
+  btn.innerHTML = `<i class="fi fi-sr-${isHidden ? 'eye-crossed' : 'eye'}"></i>`;
+}
