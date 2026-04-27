@@ -262,10 +262,10 @@
     <div class="res-ico-wrap" id="res-ico-wrap"><i id="res-ico" class="fi fi-sr-flame"></i></div>
     <div class="res-cat" id="res-cat"></div>
     <div class="res-txt" id="res-txt"></div>
-    <div class="res-acts">
-      <button class="btn-close-r" onclick="closeRes()"><i class="fi fi-sr-cross"></i> ปิด</button>
-      <button class="btn-next" onclick="closeRes()">ไพ่ใบต่อไป <i class="fi fi-sr-arrow-right"></i></button>
-    </div>
+<div class="res-acts">
+  <button class="btn-close-r" onclick="closeRes(); autoFlip()"><i class="fi fi-sr-shuffle"></i> สุ่มอัตโนมัติ</button>
+  <button class="btn-next" onclick="closeRes()"><i class="fi fi-sr-arrow-right"></i>ไพ่ใบต่อไป</button>
+</div>
   </div>
 </div>
 

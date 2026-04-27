@@ -3,11 +3,59 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 12,
             "patches": [
                 {
                     "date": 1776566042465,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1777320485825,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -261,12 +261,12 @@\n     <div class=\"res-deck-lbl\" id=\"res-dlbl\"></div>\r\n     <div class=\"res-ico-wrap\" id=\"res-ico-wrap\"><i id=\"res-ico\" class=\"fi fi-sr-flame\"></i></div>\r\n     <div class=\"res-cat\" id=\"res-cat\"></div>\r\n     <div class=\"res-txt\" id=\"res-txt\"></div>\r\n-    <div class=\"res-acts\">\r\n-      <button class=\"btn-close-r\" onclick=\"closeRes()\"><i class=\"fi fi-sr-cross\"></i> ปิด</button>\r\n-      <button class=\"btn-next\" onclick=\"closeRes()\">ไพ่ใบต่อไป <i class=\"fi fi-sr-arrow-right\"></i></button>\r\n-    </div>\r\n+<div class=\"res-acts\">\r\n+  <button class=\"btn-next\" onclick=\"closeRes()\"><i class=\"fi fi-sr-cross\"></i> ปิด</button>\r\n+  <button class=\"btn-next\" onclick=\"closeRes()\">ไพ่ใบต่อไป <i class=\"fi fi-sr-arrow-right\"></i></button>\r\n+</div>\r\n   </div>\r\n </div>\r\n \r\n <!-- TOP-UP MODAL -->\r\n"
+                },
+                {
+                    "date": 1777320718704,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -261,13 +261,13 @@\n     <div class=\"res-deck-lbl\" id=\"res-dlbl\"></div>\r\n     <div class=\"res-ico-wrap\" id=\"res-ico-wrap\"><i id=\"res-ico\" class=\"fi fi-sr-flame\"></i></div>\r\n     <div class=\"res-cat\" id=\"res-cat\"></div>\r\n     <div class=\"res-txt\" id=\"res-txt\"></div>\r\n-<div class=\"res-acts\">\r\n-  <button class=\"btn-next\" onclick=\"closeRes()\"><i class=\"fi fi-sr-cross\"></i> ปิด</button>\r\n-  <button class=\"btn-next\" onclick=\"closeRes()\">ไพ่ใบต่อไป <i class=\"fi fi-sr-arrow-right\"></i></button>\r\n-</div>\r\n+  <div class=\"res-acts\">\r\n+    <button class=\"btn-next\" onclick=\"closeRes()\"><i class=\"fi fi-sr-cross\"></i> ปิด</button>\r\n+    <button class=\"btn-next\" onclick=\"closeRes()\">ไพ่ใบต่อไป <i class=\"fi fi-sr-arrow-right\"></i></button>\r\n   </div>\r\n+  </div>\r\n </div>\r\n \r\n <!-- TOP-UP MODAL -->\r\n <div class=\"overlay\" id=\"topup-overlay\">\r\n"
+                },
+                {
+                    "date": 1777320754800,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -261,13 +261,13 @@\n     <div class=\"res-deck-lbl\" id=\"res-dlbl\"></div>\r\n     <div class=\"res-ico-wrap\" id=\"res-ico-wrap\"><i id=\"res-ico\" class=\"fi fi-sr-flame\"></i></div>\r\n     <div class=\"res-cat\" id=\"res-cat\"></div>\r\n     <div class=\"res-txt\" id=\"res-txt\"></div>\r\n-  <div class=\"res-acts\">\r\n-    <button class=\"btn-next\" onclick=\"closeRes()\"><i class=\"fi fi-sr-cross\"></i> ปิด</button>\r\n-    <button class=\"btn-next\" onclick=\"closeRes()\">ไพ่ใบต่อไป <i class=\"fi fi-sr-arrow-right\"></i></button>\r\n+    <div class=\"res-acts\">\r\n+      <button class=\"btn-close-r\" onclick=\"closeRes()\">ไพ่ใบต่อไป <i class=\"fi fi-sr-arrow-right\"></i></button>\r\n+      <button class=\"btn-next\" onclick=\"closeRes()\">ไพ่ใบต่อไป <i class=\"fi fi-sr-arrow-right\"></i></button>\r\n+    </div>\r\n   </div>\r\n-  </div>\r\n </div>\r\n \r\n <!-- TOP-UP MODAL -->\r\n <div class=\"overlay\" id=\"topup-overlay\">\r\n"
+                },
+                {
+                    "date": 1777320851287,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -262,9 +262,9 @@\n     <div class=\"res-ico-wrap\" id=\"res-ico-wrap\"><i id=\"res-ico\" class=\"fi fi-sr-flame\"></i></div>\r\n     <div class=\"res-cat\" id=\"res-cat\"></div>\r\n     <div class=\"res-txt\" id=\"res-txt\"></div>\r\n     <div class=\"res-acts\">\r\n-      <button class=\"btn-close-r\" onclick=\"closeRes()\">ไพ่ใบต่อไป <i class=\"fi fi-sr-arrow-right\"></i></button>\r\n+      // <button class=\"btn-close-r\" onclick=\"closeRes()\">ไพ่ใบต่อไป <i class=\"fi fi-sr-arrow-right\"></i></button>\r\n       <button class=\"btn-next\" onclick=\"closeRes()\">ไพ่ใบต่อไป <i class=\"fi fi-sr-arrow-right\"></i></button>\r\n     </div>\r\n   </div>\r\n </div>\r\n"
+                },
+                {
+                    "date": 1777320870404,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -262,9 +262,9 @@\n     <div class=\"res-ico-wrap\" id=\"res-ico-wrap\"><i id=\"res-ico\" class=\"fi fi-sr-flame\"></i></div>\r\n     <div class=\"res-cat\" id=\"res-cat\"></div>\r\n     <div class=\"res-txt\" id=\"res-txt\"></div>\r\n     <div class=\"res-acts\">\r\n-      // <button class=\"btn-close-r\" onclick=\"closeRes()\">ไพ่ใบต่อไป <i class=\"fi fi-sr-arrow-right\"></i></button>\r\n+\r\n       <button class=\"btn-next\" onclick=\"closeRes()\">ไพ่ใบต่อไป <i class=\"fi fi-sr-arrow-right\"></i></button>\r\n     </div>\r\n   </div>\r\n </div>\r\n"
+                },
+                {
+                    "date": 1777320889132,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -262,9 +262,9 @@\n     <div class=\"res-ico-wrap\" id=\"res-ico-wrap\"><i id=\"res-ico\" class=\"fi fi-sr-flame\"></i></div>\r\n     <div class=\"res-cat\" id=\"res-cat\"></div>\r\n     <div class=\"res-txt\" id=\"res-txt\"></div>\r\n     <div class=\"res-acts\">\r\n-\r\n+      // <button class=\"btn-close-r\" onclick=\"closeRes()\">ไพ่ใบต่อไป <i class=\"fi fi-sr-arrow-right\"></i></button>\r\n       <button class=\"btn-next\" onclick=\"closeRes()\">ไพ่ใบต่อไป <i class=\"fi fi-sr-arrow-right\"></i></button>\r\n     </div>\r\n   </div>\r\n </div>\r\n"
+                },
+                {
+                    "date": 1777320906887,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -262,9 +262,9 @@\n     <div class=\"res-ico-wrap\" id=\"res-ico-wrap\"><i id=\"res-ico\" class=\"fi fi-sr-flame\"></i></div>\r\n     <div class=\"res-cat\" id=\"res-cat\"></div>\r\n     <div class=\"res-txt\" id=\"res-txt\"></div>\r\n     <div class=\"res-acts\">\r\n-      // <button class=\"btn-close-r\" onclick=\"closeRes()\">ไพ่ใบต่อไป <i class=\"fi fi-sr-arrow-right\"></i></button>\r\n+       <button class=\"btn-close-r\" onclick=\"closeRes()\">ไพ่ใบต่อไป <i class=\"fi fi-sr-arrow-right\"></i></button>\r\n       <button class=\"btn-next\" onclick=\"closeRes()\">ไพ่ใบต่อไป <i class=\"fi fi-sr-arrow-right\"></i></button>\r\n     </div>\r\n   </div>\r\n </div>\r\n"
+                },
+                {
+                    "date": 1777320921447,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -262,9 +262,9 @@\n     <div class=\"res-ico-wrap\" id=\"res-ico-wrap\"><i id=\"res-ico\" class=\"fi fi-sr-flame\"></i></div>\r\n     <div class=\"res-cat\" id=\"res-cat\"></div>\r\n     <div class=\"res-txt\" id=\"res-txt\"></div>\r\n     <div class=\"res-acts\">\r\n-       <button class=\"btn-close-r\" onclick=\"closeRes()\">ไพ่ใบต่อไป <i class=\"fi fi-sr-arrow-right\"></i></button>\r\n+      <button class=\"btn-close-r\" onclick=\"closeRes()\"><i class=\"fi fi-sr-cross\"></i> ปิด</button>\r\n       <button class=\"btn-next\" onclick=\"closeRes()\">ไพ่ใบต่อไป <i class=\"fi fi-sr-arrow-right\"></i></button>\r\n     </div>\r\n   </div>\r\n </div>\r\n"
+                },
+                {
+                    "date": 1777320975949,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -261,12 +261,12 @@\n     <div class=\"res-deck-lbl\" id=\"res-dlbl\"></div>\r\n     <div class=\"res-ico-wrap\" id=\"res-ico-wrap\"><i id=\"res-ico\" class=\"fi fi-sr-flame\"></i></div>\r\n     <div class=\"res-cat\" id=\"res-cat\"></div>\r\n     <div class=\"res-txt\" id=\"res-txt\"></div>\r\n-    <div class=\"res-acts\">\r\n-      <button class=\"btn-close-r\" onclick=\"closeRes()\"><i class=\"fi fi-sr-cross\"></i> ปิด</button>\r\n-      <button class=\"btn-next\" onclick=\"closeRes()\">ไพ่ใบต่อไป <i class=\"fi fi-sr-arrow-right\"></i></button>\r\n-    </div>\r\n+<div class=\"res-acts\">\r\n+  <button class=\"btn-next\" onclick=\"closeRes(); autoFlip()\"><i class=\"fi fi-sr-shuffle\"></i> สุ่มอัตโนมัติ</button>\r\n+  <button class=\"btn-next\" onclick=\"closeRes()\">ไพ่ใบต่อไป <i class=\"fi fi-sr-arrow-right\"></i></button>\r\n+</div>\r\n   </div>\r\n </div>\r\n \r\n <!-- TOP-UP MODAL -->\r\n"
+                },
+                {
+                    "date": 1777321047812,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -261,12 +261,12 @@\n     <div class=\"res-deck-lbl\" id=\"res-dlbl\"></div>\r\n     <div class=\"res-ico-wrap\" id=\"res-ico-wrap\"><i id=\"res-ico\" class=\"fi fi-sr-flame\"></i></div>\r\n     <div class=\"res-cat\" id=\"res-cat\"></div>\r\n     <div class=\"res-txt\" id=\"res-txt\"></div>\r\n-<div class=\"res-acts\">\r\n-  <button class=\"btn-next\" onclick=\"closeRes(); autoFlip()\"><i class=\"fi fi-sr-shuffle\"></i> สุ่มอัตโนมัติ</button>\r\n-  <button class=\"btn-next\" onclick=\"closeRes()\">ไพ่ใบต่อไป <i class=\"fi fi-sr-arrow-right\"></i></button>\r\n-</div>\r\n+    <div class=\"res-acts\">\r\n+      <button class=\"btn-close-r\" onclick=\"closeRes()\"><i class=\"fi fi-sr-cross\"></i> ปิด</button>\r\n+      <button class=\"btn-next\" onclick=\"closeRes()\">ไพ่ใบต่อไป <i class=\"fi fi-sr-arrow-right\"></i></button>\r\n+    </div>\r\n   </div>\r\n </div>\r\n \r\n <!-- TOP-UP MODAL -->\r\n"
+                },
+                {
+                    "date": 1777321106047,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -261,12 +261,12 @@\n     <div class=\"res-deck-lbl\" id=\"res-dlbl\"></div>\r\n     <div class=\"res-ico-wrap\" id=\"res-ico-wrap\"><i id=\"res-ico\" class=\"fi fi-sr-flame\"></i></div>\r\n     <div class=\"res-cat\" id=\"res-cat\"></div>\r\n     <div class=\"res-txt\" id=\"res-txt\"></div>\r\n-    <div class=\"res-acts\">\r\n-      <button class=\"btn-close-r\" onclick=\"closeRes()\"><i class=\"fi fi-sr-cross\"></i> ปิด</button>\r\n-      <button class=\"btn-next\" onclick=\"closeRes()\">ไพ่ใบต่อไป <i class=\"fi fi-sr-arrow-right\"></i></button>\r\n-    </div>\r\n+<div class=\"res-acts\">\r\n+  <button class=\"btn-close-r\" onclick=\"closeRes(); autoFlip()\"><i class=\"fi fi-sr-shuffle\"></i> สุ่มอัตโนมัติ</button>\r\n+  <button class=\"btn-next\" onclick=\"closeRes()\">ไพ่ใบต่อไป <i class=\"fi fi-sr-arrow-right\"></i></button>\r\n+</div>\r\n   </div>\r\n </div>\r\n \r\n <!-- TOP-UP MODAL -->\r\n"
+                },
+                {
+                    "date": 1777321142461,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -263,9 +263,9 @@\n     <div class=\"res-cat\" id=\"res-cat\"></div>\r\n     <div class=\"res-txt\" id=\"res-txt\"></div>\r\n <div class=\"res-acts\">\r\n   <button class=\"btn-close-r\" onclick=\"closeRes(); autoFlip()\"><i class=\"fi fi-sr-shuffle\"></i> สุ่มอัตโนมัติ</button>\r\n-  <button class=\"btn-next\" onclick=\"closeRes()\">ไพ่ใบต่อไป <i class=\"fi fi-sr-arrow-right\"></i></button>\r\n+  <button class=\"btn-next\" onclick=\"closeRes()\">ไพ่ใบต่อไป</button>\r\n </div>\r\n   </div>\r\n </div>\r\n \r\n"
                 }
             ],
             "date": 1776566042465,

@@ -435,6 +435,14 @@ function showRes(card, deck) {
   document.getElementById('res-cat').textContent    = card.cat;
   document.getElementById('res-txt').textContent    = card.text;
   document.getElementById('res-overlay').classList.add('show');
+
+  const txtEl = document.getElementById('res-txt');
+  const len = card.text.length;
+  if (len > 80)      txtEl.style.fontSize = '1.1rem';
+  else if (len > 50) txtEl.style.fontSize = '1.4rem';
+  else if (len > 30) txtEl.style.fontSize = '1.8rem';
+  else               txtEl.style.fontSize = '2.2rem';
+
 }
 
 function closeRes() {
@@ -667,18 +675,24 @@ function _onTouchStart(e) {
   e.preventDefault();
   if (_pickDone) return;
 
+  const rect = document.getElementById('touch-area').getBoundingClientRect();
+
   for (const t of e.touches) {
-    // ✅ ลบ limit 6 ออก — รับได้เท่าที่หน้าจอรองรับ
     if (_touchDots[t.identifier] !== undefined) continue;
 
     const idx = _dotCounter++;
-    const el  = document.createElement('div');
+    const x   = t.clientX - rect.left;
+    const y   = t.clientY - rect.top;
+
+    const el = document.createElement('div');
     el.className   = `touch-dot touch-dot-${idx % 6}`;
     el.textContent = idx + 1;
+    el.style.left  = x + 'px';
+    el.style.top   = y + 'px';
 
     document.getElementById('touch-dots-wrap').appendChild(el);
     requestAnimationFrame(() => el.classList.add('show'));
-    _touchDots[t.identifier] = { x: t.clientX, y: t.clientY, el, idx };
+    _touchDots[t.identifier] = { x, y, el, idx };
   }
 
   _updateAfterTouch();
@@ -698,28 +712,30 @@ function _onTouchEnd(e) {
   }
 
   const remaining = Object.keys(_touchDots).length;
-
-  // ✅ reset countdown เฉพาะตอนนิ้วเหลือน้อยกว่า 2
-  // ถ้ายังเหลือ >= 2 ให้นับต่อ ไม่ต้อง reset
   if (remaining < 2) {
     _clearTouchCountdown();
   }
 
   _updateAfterTouch();
 }
+
 function _onTouchMove(e) {
   if (e.cancelable) e.preventDefault();
   if (_pickDone) return;
 
+  const rect = document.getElementById('touch-area').getBoundingClientRect();
+
   for (const t of e.changedTouches) {
     const dot = _touchDots[t.identifier];
     if (dot) {
-      dot.el.style.left = t.clientX + 'px';
-      dot.el.style.top  = t.clientY + 'px';
-      dot.x = t.clientX;
-      dot.y = t.clientY;
+      const x = t.clientX - rect.left;
+      const y = t.clientY - rect.top;
 
-      // ✅ นิ้วขยับ = กระพริบ
+      dot.el.style.left = x + 'px';
+      dot.el.style.top  = y + 'px';
+      dot.x = x;
+      dot.y = y;
+
       dot.el.classList.add('moving');
       clearTimeout(dot._moveTimer);
       dot._moveTimer = setTimeout(() => {
@@ -731,12 +747,15 @@ function _onTouchMove(e) {
 
 function _onMouseMove(e) {
   if (_pickDone) return;
-  const dot = _touchDots['mouse_0'];
+  const rect = document.getElementById('touch-area').getBoundingClientRect();
+  const dot  = _touchDots['mouse_0'];
   if (dot) {
-    dot.el.style.left = e.clientX + 'px';
-    dot.el.style.top  = e.clientY + 'px';
-    dot.x = e.clientX;
-    dot.y = e.clientY;
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    dot.el.style.left = x + 'px';
+    dot.el.style.top  = y + 'px';
+    dot.x = x;
+    dot.y = y;
   }
 }
 
@@ -901,4 +920,19 @@ async function _doPick() {
       }, 1800);
     }
   }, 120);
+}
+
+function autoFlip() {
+  setTimeout(() => {
+    if (layoutMode === 'stack') {
+      const topCard = document.querySelector('#stack-pile-wrap .crd');
+      if (topCard) topCard.click();
+    } else {
+      const cards = document.querySelectorAll('.crd:not(.revealed):not(.flipping)');
+      if (cards.length) {
+        const rand = cards[Math.floor(Math.random() * cards.length)];
+        rand.click();
+      }
+    }
+  }, 300);
 }

@@ -494,19 +494,21 @@ body::before {
 
 /* ---- TOAST ---- */
 .toast {
-  position: fixed; bottom: 28px; left: 50%;
+  position: fixed; bottom: 90px; left: 50%;
   transform: translateX(-50%) translateY(80px);
   background: #1e1e1e; border: 1px solid #333; border-radius: 30px;
   padding: 11px 22px; font-size: .88rem; z-index: 1000;
   transition: transform .3s, opacity .3s;
-  pointer-events: auto;
+  pointer-events: none; /* ← แก้จาก auto เป็น none */
   opacity: 0;
   display: flex; align-items: center; gap: 9px;
   cursor: pointer;
 }
+
 .toast.show {
   transform: translateX(-50%) translateY(0);
   opacity: 1;
+  pointer-events: auto; /* ← เพิ่ม กดได้เฉพาะตอนแสดง */
 }
 
 /* ---- SPARKLE ---- */
